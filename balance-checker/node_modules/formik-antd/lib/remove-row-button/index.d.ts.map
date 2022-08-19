@@ -1,0 +1,1 @@
+{"version":3,"file":"index.d.ts","sourceRoot":"","sources":["../../src/remove-row-button/index.tsx"],"names":[],"mappings":";AACA,OAAO,EAAE,WAAW,EAAE,MAAM,iBAAiB,CAAA;AAG7C,wBAAgB,eAAe,CAAC,EAC9B,IAAI,EACJ,KAAK,EACL,GAAG,SAAS,EACb,EAAE;IAAE,IAAI,EAAE,MAAM,CAAC;IAAC,KAAK,EAAE,MAAM,CAAA;CAAE,GAAG,IAAI,CAAC,WAAW,EAAE,SAAS,CAAC,eAQhE;AAED,eAAe,eAAe,CAAA"}
