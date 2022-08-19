@@ -1,0 +1,56 @@
+{
+  "name": "@cosmicdapp/design",
+  "version": "0.4.5",
+  "license": "Apache-2.0",
+  "description": "Styles and components for CosmJS-based dApps",
+  "contributors": [
+    "Abel Fernández <abefernan@users.noreply.github.com>",
+    "Will Clark <willclarktech@users.noreply.github.com>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CosmWasm/dApps/tree/master/packages/design"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "dist/index.js",
+  "module": "dist/design.esm.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "test": "tsdx test --passWithNoTests",
+    "lint": "tsdx lint",
+    "prepare": "tsdx build"
+  },
+  "dependencies": {
+    "@ant-design/icons": "^4.2.2",
+    "@cosmicdapp/logic": "^0.4.5",
+    "clipboard-copy": "^3.1.0"
+  },
+  "peerDependencies": {
+    "antd": ">=4",
+    "react": ">=16",
+    "react-router-dom": ">=5",
+    "styled-components": ">=5"
+  },
+  "devDependencies": {
+    "@types/react": "^16.9.46",
+    "@types/react-dom": "^16.9.8",
+    "@types/styled-components": "^5.1.2",
+    "antd": "^4.5.4",
+    "husky": "^4.2.5",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-router-dom": "^5.2.0",
+    "styled-components": "^5.1.1",
+    "tsdx": "^0.13.2",
+    "tslib": "^2.0.1",
+    "typescript": "^3.9.7"
+  }
+}

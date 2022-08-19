@@ -1,0 +1,33 @@
+{
+  "name": "d-apps",
+  "license": "Apache-2.0",
+  "private": true,
+  "description": "Decentralized Apps showcasing CosmJS",
+  "homepage": "https://dapps.cosmwasm.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CosmWasm/dApps.git"
+  },
+  "bugs": {
+    "url": "https://github.com/CosmWasm/dApps/issues"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "bootstrap": "lerna bootstrap",
+    "format": "lerna run format",
+    "lint": "lerna run lint",
+    "lint-fix": "lerna run lint-fix",
+    "build": "lerna run build --stream",
+    "build-deps": "lerna run --scope '{@cosmicdapp/logic,@cosmicdapp/design}' build",
+    "predeploy": "./gh-pages-config/.predeploy.sh",
+    "deploy": "gh-pages --dist gh-pages-config",
+    "postdeploy": "./gh-pages-config/.postdeploy.sh"
+  },
+  "devDependencies": {
+    "gh-pages": "^3.1.0",
+    "lerna": "^3.22.1",
+    "prettier": "^2.0.5"
+  }
+}
