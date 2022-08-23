@@ -1,0 +1,54 @@
+{
+  "name": "next-connect",
+  "version": "0.13.0",
+  "description": "The method routing and middleware layer for Next.js (and many others)",
+  "keywords": [
+    "javascript",
+    "nextjs",
+    "middleware",
+    "router",
+    "connect"
+  ],
+  "type": "module",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    "require": "./dist/index.cjs",
+    "import": "./dist/index.js"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "lint": "eslint src -c .eslintrc --ext js",
+    "test": "c8 mocha",
+    "test-import": "cd test-import && npm i && npm start",
+    "build": "rollup --config",
+    "prepublishOnly": "npm run test && npm run build",
+    "coverage": "c8 report --reporter=text-lcov > coverage.lcov"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hoangvvo/next-connect.git"
+  },
+  "author": "Hoang Vo (https://www.hoangvvo.com)",
+  "bugs": {
+    "url": "https://github.com/hoangvvo/next-connect/issues"
+  },
+  "homepage": "https://github.com/hoangvvo/next-connect#readme",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^18.0.6",
+    "c8": "^7.12.0",
+    "eslint": "^8.20.0",
+    "mocha": "^10.0.0",
+    "rollup": "^2.77.0",
+    "rollup-plugin-copy": "^3.4.0",
+    "supertest": "^6.2.4"
+  },
+  "dependencies": {
+    "trouter": "^3.2.0"
+  }
+}

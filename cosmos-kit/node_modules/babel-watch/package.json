@@ -1,0 +1,57 @@
+{
+  "name": "babel-watch",
+  "version": "7.7.0",
+  "description": "Reload your babel-node app on JS source file changes. And do it *fast*.",
+  "main": "babel-watch.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": ">= 8"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kmagiera/babel-watch.git"
+  },
+  "files": [
+    "babel-watch.js",
+    "runner.js"
+  ],
+  "keywords": [
+    "babel",
+    "nodemon",
+    "babel-node",
+    "watch"
+  ],
+  "author": {
+    "email": "krzys.magiera@gmail.com",
+    "name": "Krzysztof Magiera"
+  },
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/kmagiera/babel-watch/issues"
+  },
+  "homepage": "https://github.com/kmagiera/babel-watch#readme",
+  "dependencies": {
+    "chalk": "^4.1.0",
+    "chokidar": "^3.4.3",
+    "commander": "^6.2.0",
+    "debug": "^4.3.1",
+    "lodash.debounce": "^4.0.8",
+    "lodash.isregexp": "^4.0.1",
+    "lodash.isstring": "^4.0.1",
+    "source-map-support": "^0.5.19",
+    "string-argv": "^0.3.1"
+  },
+  "peerDependencies": {
+    "@babel/core": "^7.0.0"
+  },
+  "bin": {
+    "babel-watch": "./babel-watch.js"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.10",
+    "flow-bin": "^0.141.0"
+  }
+}
