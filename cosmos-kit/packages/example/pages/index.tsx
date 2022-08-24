@@ -24,7 +24,9 @@ const Home: NextPage = () => {
 
     try {
       // Parse message.
-      const msgObject = JSON.parse(msg)
+      const msgObject = {
+        "msg": msg
+      };
 
       // Execute message.
       const result = await signingCosmWasmClient.execute(
