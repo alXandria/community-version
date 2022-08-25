@@ -21,7 +21,7 @@ export default function Document({allDocumentsData}) {
                 <li key={id}>
                 <Link href={`/documents/${id}`}>{title}</Link>
                 <br />
-                <em>edited: {date}</em>
+                <em>last edited: {date}</em>
                 </li>
             ))}
             </ul>
