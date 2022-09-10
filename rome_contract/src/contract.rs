@@ -1,7 +1,8 @@
 #[cfg(not(feature = "library"))]
-use cosmwasm_std::entry_point;
-use cosmwasm_std::{Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult};
+use cosmwasm_std::{Addr, entry_point};
+use cosmwasm_std::{Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult, Uint64};
 use cw2::set_contract_version;
+use desmos_bindings::posts::models::{Entities, RawPostAttachment, ReplySetting, PostReference};
 
 use crate::error::ContractError;
 use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg};
@@ -33,10 +34,79 @@ pub fn instantiate(
 
 #[cfg_attr(not(feature = "library"), entry_point)]
 pub fn execute(
-    _deps: DepsMut,
+    deps: DepsMut,
+    env: Env,
+    info: MessageInfo,
+    msg: ExecuteMsg,
+) -> Result<Response, ContractError> {
+    match msg{
+        ExecuteMsg::CreatePost { 
+            subspace_id, 
+            section_id, 
+            external_id, 
+            text, 
+            entities, 
+            attachments, 
+            author, 
+            conversation_id, 
+            reply_settings, 
+            referenced_posts 
+        } => execute_create_post(
+            deps, 
+            env, 
+            info,
+            subspace_id,
+            section_id,
+            external_id,
+            text,
+            entities,
+            attachments,
+            author,
+            conversation_id,
+            reply_settings,
+            referenced_posts
+         ),
+        ExecuteMsg::AddPostAttachment { 
+            subspace_id, 
+            post_id, 
+            content, 
+            editor 
+        } => unimplemented!(),
+        ExecuteMsg::RemovePostAttachment { 
+            subspace_id, 
+            post_id, 
+            attachement_id, 
+            editor
+         } => unimplemented!(),
+         ExecuteMsg::EditPost { 
+            subspace_id,
+            post_id, 
+            text, 
+            entities, 
+            editor
+         } => unimplemented!(),
+         ExecuteMsg::DeletePost { 
+            subspace_id, 
+            post_id, 
+            signer
+         } => unimplemented!(),
+    }
+}
+
+fn execute_create_post(
+    deps: DepsMut,
     _env: Env,
-    _info: MessageInfo,
-    _msg: ExecuteMsg,
+    info: MessageInfo,
+    subspace_id: Uint64,
+    section_id: u32,
+    external_id: Option<String>,
+    text: Option<String>,
+    entities: Option<Entities>,
+    attachments: Option<Vec<RawPostAttachment>>,
+    author: Addr,
+    conversation_id: Option<Uint64>,
+    reply_setting: ReplySetting,
+    referenced_posts: Vec<PostReference>
 ) -> Result<Response, ContractError> {
     unimplemented!()
 }

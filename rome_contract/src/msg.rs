@@ -64,7 +64,13 @@ pub enum QueryMsg {
         pagination: Option<PageRequest>,
     },
     Post{
-        
+        subspace_id: Uint64,
+        post_id: Uint64,
+    },
+    PostAttachments{
+        subspace_id: Uint64,
+        post_id: Uint64,
+        pagination: Option<PageRequest>,
     }
 }
 
