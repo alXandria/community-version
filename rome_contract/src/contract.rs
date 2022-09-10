@@ -71,7 +71,15 @@ pub fn execute(
             post_id, 
             content, 
             editor 
-        } => unimplemented!(),
+        } => execute_add_post_attachment(
+            deps, 
+            env, 
+            info,
+            subspace_id,
+            post_id,
+            content,
+            editor
+        ),
         ExecuteMsg::RemovePostAttachment { 
             subspace_id, 
             post_id, 
@@ -105,8 +113,19 @@ fn execute_create_post(
     attachments: Option<Vec<RawPostAttachment>>,
     author: Addr,
     conversation_id: Option<Uint64>,
-    reply_setting: ReplySetting,
+    reply_settings: ReplySetting,
     referenced_posts: Vec<PostReference>
+) -> Result<Response, ContractError> {
+    unimplemented!()
+}
+fn execute_add_post_attachment(
+    deps: DepsMut,
+    _env: Env,
+    info: MessageInfo,
+    subspace_id: Uint64,
+    post_id: Uint64,
+    content: RawPostAttachment,
+    editor: Addr
 ) -> Result<Response, ContractError> {
     unimplemented!()
 }
