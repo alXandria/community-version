@@ -170,7 +170,8 @@ fn execute_create_post(
         last_edit_date: None,
     };
     POST.save(deps.storage, &post)?;
-    unimplemented!()
+    
+    Ok(Response::new())
 }
 fn execute_add_post_attachment(
     deps: DepsMut,
