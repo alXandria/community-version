@@ -140,6 +140,9 @@ fn execute_create_post(
     reply_settings: ReplySetting,
     referenced_posts: Vec<PostReference>
 ) -> Result<Response, ContractError> {
+    if text.is_some() {
+        return Err(ContractError::NoTextAllowed {  });
+    }
     unimplemented!()
 }
 fn execute_add_post_attachment(
