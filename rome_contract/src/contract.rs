@@ -85,19 +85,43 @@ pub fn execute(
             post_id, 
             attachement_id, 
             editor
-         } => unimplemented!(),
+         } => execute_remove_post_attachment(
+            deps,
+            env,
+            info,
+            subspace_id,
+            post_id,
+            attachement_id,
+            editor
+         ),
          ExecuteMsg::EditPost { 
             subspace_id,
             post_id, 
             text, 
             entities, 
             editor
-         } => unimplemented!(),
+         } => execute_edit_post(
+            deps,
+            env,
+            info,
+            subspace_id,
+            post_id,
+            text,
+            entities,
+            editor
+         ),
          ExecuteMsg::DeletePost { 
             subspace_id, 
             post_id, 
             signer
-         } => unimplemented!(),
+         } => execute_delete_post(
+            deps,
+            env,
+            info,
+            subspace_id,
+            post_id,
+            signer
+         ),
     }
 }
 
@@ -129,6 +153,39 @@ fn execute_add_post_attachment(
 ) -> Result<Response, ContractError> {
     unimplemented!()
 }
+fn execute_remove_post_attachment(
+    deps: DepsMut,
+    _env: Env,
+    info: MessageInfo,
+    subspace_id: Uint64,
+    post_id: Uint64,
+    attachement_id: u32,
+    editor: Addr
+) -> Result<Response, ContractError> {
+    unimplemented!()
+}
+fn execute_edit_post(
+    deps: DepsMut,
+    _env: Env,
+    info: MessageInfo,
+    subspace_id: Uint64,
+    post_id: Uint64,
+    text: String,
+    entities: Option<Entities>,
+    editor: Addr
+) -> Result<Response, ContractError> {
+    unimplemented!()
+}
+fn execute_delete_post(
+    deps: DepsMut,
+    _env: Env,
+    info: MessageInfo,
+    subspace_id: Uint64,
+    post_id: Uint64,
+    signer: Addr
+) -> Result<Response, ContractError> {
+    unimplemented!()
+} 
 
 #[cfg_attr(not(feature = "library"), entry_point)]
 pub fn query(_deps: Deps, _env: Env, _msg: QueryMsg) -> StdResult<Binary> {
