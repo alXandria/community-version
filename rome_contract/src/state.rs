@@ -1,8 +1,7 @@
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-use cosmwasm_std::{Addr, Uint64};
-use desmos_bindings::posts::models::{Entities, PostReference, ReplySetting};
+use cosmwasm_std::Addr;
 use cw_storage_plus::{Item, Map};
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
@@ -12,7 +11,7 @@ pub struct Config {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct Post {
     pub post_id: u64,
-    pub external_id: Option<String>,
+    pub external_id: String,
     pub text: Option<String>,
     pub tags: Vec<String>,
     pub author: Addr,

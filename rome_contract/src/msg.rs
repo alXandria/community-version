@@ -2,7 +2,6 @@ use cosmwasm_std::{Uint64, Addr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use desmos_bindings::types::PageRequest;
-use desmos_bindings::posts::models::{Entities, RawPostAttachment, ReplySetting, PostReference};
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 #[serde(rename_all = "snake_case")]
@@ -15,18 +14,20 @@ pub struct InstantiateMsg {
 pub enum ExecuteMsg {
     CreatePost{
         post_id: u64,
-        external_id: Option<String>,
+        external_id: String,
         tags: Vec<String>,
         text: Option<String>,
         author: Addr,
     },
     EditPost{
         post_id: u64,
-        external_id: Option<String>,
-        text: String,
+        external_id: String,
+        text: Option<String>,
         tags: Vec<String>,
         author: Addr,
         editor: Addr,
+        creation_date: String,
+        last_edit_date: String,
     },
     DeletePost{
         post_id: u64,

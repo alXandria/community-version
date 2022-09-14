@@ -2,10 +2,8 @@ use std::env;
 
 #[cfg(not(feature = "library"))]
 use cosmwasm_std::{Addr, entry_point};
-use cosmwasm_std::{Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult, Uint64, BlockInfo};
+use cosmwasm_std::{Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult};
 use cw2::set_contract_version;
-use desmos_bindings::posts::models::{Entities, RawPostAttachment, ReplySetting, PostReference};
-// use random_number::random;
 
 use crate::error::ContractError;
 use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg};
@@ -60,20 +58,26 @@ pub fn execute(
             author,
          ),
          ExecuteMsg::EditPost { 
-            post_id, 
+            post_id,
+            external_id, 
             text,
             tags,
             author, 
-            editor
+            editor,
+            creation_date,
+            last_edit_date
          } => execute_edit_post(
             deps,
             env,
             info,
             post_id,
+            external_id,
             text,
             tags,
             author,
-            editor
+            editor,
+            creation_date,
+            last_edit_date
          ),
          ExecuteMsg::DeletePost { 
             post_id, 
@@ -93,7 +97,7 @@ fn execute_create_post(
     env: Env,
     info: MessageInfo,
     post_id: u64,
-    external_id: Option<String>,
+    external_id: String,
     text: Option<String>,
     tags: Vec<String>,
     author: Addr,
@@ -112,7 +116,7 @@ fn execute_create_post(
         creation_date: env.block.time.to_string(),
         last_edit_date: None,
     };
-    POST.save(deps.storage, (post_id), &post)?;
+    POST.save(deps.storage, post_id, &post)?;
     
     Ok(Response::new())
 }
@@ -122,7 +126,7 @@ fn execute_edit_post(
     env: Env,
     info: MessageInfo,
     post_id: u64,
-    external_id: Option<String>,
+    external_id: String,
     text: Option<String>,
     tags: Vec<String>,
     author: Addr,
@@ -130,19 +134,18 @@ fn execute_edit_post(
     creation_date: String,
     last_edit_date: String,
 ) -> Result<Response, ContractError> {
-    //post_id here helps sensibly load post
-    let post = POST.may_load(deps.storage, post_id.clone())?;
-    
-    let post: Post = Post {
-        post_id,
-        external_id,
-        text,
-        tags,
-        author: info.sender,
-        creation_date: env.block.time.to_string(),
-        last_edit_date: None,
-    };
-    POST.save(deps.storage, post_id, &post)?;
+    let post = POST.load(deps.storage, post_id.clone())?;
+        let new_post: Post = Post {
+            post_id: post.post_id,
+            external_id,
+            text,
+            tags,
+            author: post.author,
+            creation_date: post.creation_date,
+            last_edit_date: Some(env.block.time.to_string())
+        };
+        POST.save(deps.storage, post_id, &new_post)?;
+        Ok(Response::new())
 }
 fn execute_delete_post(
     deps: DepsMut,
