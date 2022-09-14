@@ -61,7 +61,8 @@ pub fn execute(
          ),
          ExecuteMsg::EditPost { 
             post_id, 
-            text, 
+            text,
+            author, 
             editor
          } => execute_edit_post(
             deps,
@@ -69,6 +70,7 @@ pub fn execute(
             info,
             post_id,
             text,
+            author,
             editor
          ),
          ExecuteMsg::DeletePost { 
@@ -108,42 +110,35 @@ fn execute_create_post(
         creation_date: env.block.time.to_string(),
         last_edit_date: None,
     };
-    POST.save(deps.storage, post_id, &post)?;
+    POST.save(deps.storage, (author, post_id), &post)?;
     
     Ok(Response::new())
-    
 }
 
 fn execute_edit_post(
     deps: DepsMut,
-    _env: Env,
+    env: Env,
     info: MessageInfo,
     post_id: u64,
-    text: String,
-    editor: Addr
+    text: Option<String>,
+    tags: Vec<String>,
+    author: Addr,
+    editor: Addr,
+    creation_date: String,
+    last_edit_date: String,
 ) -> Result<Response, ContractError> {
     //post_id here helps sensibly load post
-    let post = POST.may_load(deps.storage, post_id.clone())?;
+    let post = POST.may_load(deps.storage, (author, post_id.clone()))?;
     
-    match post {
-        Some(mut post) => {
-            POST.update(
-                deps.storage,
-                post_id.clone(),
-                &post);
-                |post| -> StdResult<Post> {
-                    match post {
-                        Some(post) => {
-                            let old_post = post
-                            .options
-                            .
-                        }
-                    }
-                }
-        },
-        //if post isn't there, error
-        None => Err(ContractError::Unauthorized {  }),
-    }
+    let post: Post = Post {
+        post_id,
+        external_id,
+        text,
+        tags,
+        author: info.sender,
+        creation_date: env.block.time.to_string(),
+        last_edit_date: None,
+    };
 }
 fn execute_delete_post(
     deps: DepsMut,

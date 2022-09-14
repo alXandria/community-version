@@ -23,6 +23,7 @@ pub enum ExecuteMsg {
     EditPost{
         post_id: u64,
         text: String,
+        author: Addr,
         editor: Addr,
     },
     DeletePost{

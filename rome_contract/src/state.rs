@@ -21,5 +21,5 @@ pub struct Post {
 }
 
 pub const CONFIG: Item<Config> = Item::new("config");
-//create a map of post. Uint64 is post_id
-pub const POST: Map<u64, Post> = Map::new("post");
+//create a map of post. Addr is creator. u64 is post_id
+pub const POST: Map<(Addr, u64), Post> = Map::new("post");
