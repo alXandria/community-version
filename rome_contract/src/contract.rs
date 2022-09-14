@@ -45,87 +45,39 @@ pub fn execute(
     match msg{
         ExecuteMsg::CreatePost { 
             post_id,
-            subspace_id, 
-            section_id, 
             external_id,
             text, 
-            entities, 
             tags, 
-            attachments, 
             author, 
-            conversation_id, 
-            reply_settings, 
-            referenced_posts 
         } => execute_create_post(
             deps, 
             env, 
             info,
             post_id,
-            subspace_id,
-            section_id,
             external_id,
             text,
-            entities,
             tags,
-            attachments,
             author,
-            conversation_id,
-            reply_settings,
-            referenced_posts
-         ),
-        ExecuteMsg::AddPostAttachment { 
-            subspace_id, 
-            post_id, 
-            content, 
-            editor 
-        } => execute_add_post_attachment(
-            deps, 
-            env, 
-            info,
-            subspace_id,
-            post_id,
-            content,
-            editor
-        ),
-        ExecuteMsg::RemovePostAttachment { 
-            subspace_id, 
-            post_id, 
-            attachement_id, 
-            editor
-         } => execute_remove_post_attachment(
-            deps,
-            env,
-            info,
-            subspace_id,
-            post_id,
-            attachement_id,
-            editor
          ),
          ExecuteMsg::EditPost { 
-            subspace_id,
             post_id, 
             text, 
-            entities, 
             editor
          } => execute_edit_post(
             deps,
             env,
             info,
-            subspace_id,
             post_id,
             text,
-            entities,
             editor
          ),
          ExecuteMsg::DeletePost { 
-            subspace_id, 
             post_id, 
             signer
          } => execute_delete_post(
             deps,
             env,
             info,
-            subspace_id,
             post_id,
             signer
          ),
@@ -137,17 +89,10 @@ fn execute_create_post(
     env: Env,
     info: MessageInfo,
     post_id: u64,
-    subspace_id: Uint64,
-    section_id: u32,
     external_id: Option<String>,
     text: Option<String>,
-    entities: Option<Vec<Entities>>,
     tags: Vec<String>,
-    attachments: Option<Vec<RawPostAttachment>>,
     author: Addr,
-    conversation_id: Option<Uint64>,
-    reply_settings: ReplySetting,
-    referenced_posts: Vec<PostReference>
 ) -> Result<Response, ContractError> {
     if text.is_some() {
         return Err(ContractError::NoTextAllowed {  });
@@ -156,16 +101,10 @@ fn execute_create_post(
     // let mut input_id: Uint64 = cosmwasm_std::Uint64::from(random!());
     let post: Post = Post {
         post_id,
-        subspace_id,
-        section_id,
         external_id,
         text,
-        entities,
         tags,
         author: info.sender,
-        conversation_id,
-        referenced_posts,
-        reply_settings,
         creation_date: env.block.time.to_string(),
         last_edit_date: None,
     };
@@ -175,46 +114,41 @@ fn execute_create_post(
     
 }
 
-fn execute_add_post_attachment(
-    deps: DepsMut,
-    _env: Env,
-    info: MessageInfo,
-    subspace_id: Uint64,
-    post_id: u64,
-    content: RawPostAttachment,
-    editor: Addr
-) -> Result<Response, ContractError> {
-    unimplemented!()
-}
-fn execute_remove_post_attachment(
-    deps: DepsMut,
-    _env: Env,
-    info: MessageInfo,
-    subspace_id: Uint64,
-    post_id: u64,
-    attachement_id: u32,
-    editor: Addr
-) -> Result<Response, ContractError> {
-    unimplemented!()
-}
 fn execute_edit_post(
     deps: DepsMut,
     _env: Env,
     info: MessageInfo,
-    subspace_id: Uint64,
     post_id: u64,
     text: String,
-    entities: Option<Vec<Entities>>,
     editor: Addr
 ) -> Result<Response, ContractError> {
+    //post_id here helps sensibly load post
     let post = POST.may_load(deps.storage, post_id.clone())?;
-    unimplemented!()
+    
+    match post {
+        Some(mut post) => {
+            POST.update(
+                deps.storage,
+                post_id.clone(),
+                &post);
+                |post| -> StdResult<Post> {
+                    match post {
+                        Some(post) => {
+                            let old_post = post
+                            .options
+                            .
+                        }
+                    }
+                }
+        },
+        //if post isn't there, error
+        None => Err(ContractError::Unauthorized {  }),
+    }
 }
 fn execute_delete_post(
     deps: DepsMut,
     _env: Env,
     info: MessageInfo,
-    subspace_id: Uint64,
     post_id: u64,
     signer: Addr
 ) -> Result<Response, ContractError> {

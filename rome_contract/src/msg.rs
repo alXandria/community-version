@@ -15,42 +15,20 @@ pub struct InstantiateMsg {
 pub enum ExecuteMsg {
     CreatePost{
         post_id: u64,
-        subspace_id: Uint64,
-        section_id: u32,
         external_id: Option<String>,
         tags: Vec<String>,
         text: Option<String>,
-        entities: Option<Vec<Entities>>,
-        attachments: Option<Vec<RawPostAttachment>>,
         author: Addr,
-        conversation_id: Option<Uint64>,
-        reply_settings: ReplySetting,
-        referenced_posts: Vec<PostReference>,
     },
     EditPost{
-        subspace_id: Uint64,
         post_id: u64,
         text: String,
-        entities: Option<Vec<Entities>>,
         editor: Addr,
     },
     DeletePost{
-        subspace_id: Uint64,
         post_id: u64,
         signer: Addr,
     },
-    AddPostAttachment{
-        subspace_id: Uint64,
-        post_id: u64,
-        content: RawPostAttachment,
-        editor: Addr,
-    },
-    RemovePostAttachment{
-        subspace_id: Uint64,
-        post_id: u64,
-        attachement_id: u32,
-        editor: Addr,
-    }
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
