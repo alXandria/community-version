@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 
 use cosmwasm_std::{Addr, Uint64};
 use desmos_bindings::posts::models::{Entities, PostReference, ReplySetting};
-use cw_storage_plus::Item;
+use cw_storage_plus::{Item, Map};
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct Config {
@@ -11,7 +11,7 @@ pub struct Config {
 }
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct Post {
-    pub id: Uint64,
+    pub post_id: u64,
     pub subspace_id: Uint64,
     pub section_id: u32,
     pub external_id: Option<String>,
@@ -27,4 +27,5 @@ pub struct Post {
 }
 
 pub const CONFIG: Item<Config> = Item::new("config");
-pub const POST: Item<Post> = Item::new("post");
+//create a map of post. Uint64 is post_id
+pub const POST: Map<u64, Post> = Map::new("post");

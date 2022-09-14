@@ -14,7 +14,7 @@ pub struct InstantiateMsg {
 #[serde(rename_all = "snake_case")]
 pub enum ExecuteMsg {
     CreatePost{
-        id: Uint64,
+        post_id: u64,
         subspace_id: Uint64,
         section_id: u32,
         external_id: Option<String>,
@@ -29,25 +29,25 @@ pub enum ExecuteMsg {
     },
     EditPost{
         subspace_id: Uint64,
-        post_id: Uint64,
+        post_id: u64,
         text: String,
         entities: Option<Vec<Entities>>,
         editor: Addr,
     },
     DeletePost{
         subspace_id: Uint64,
-        post_id: Uint64,
+        post_id: u64,
         signer: Addr,
     },
     AddPostAttachment{
         subspace_id: Uint64,
-        post_id: Uint64,
+        post_id: u64,
         content: RawPostAttachment,
         editor: Addr,
     },
     RemovePostAttachment{
         subspace_id: Uint64,
-        post_id: Uint64,
+        post_id: u64,
         attachement_id: u32,
         editor: Addr,
     }

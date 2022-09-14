@@ -5,7 +5,7 @@ use cosmwasm_std::{Addr, entry_point};
 use cosmwasm_std::{Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult, Uint64, BlockInfo};
 use cw2::set_contract_version;
 use desmos_bindings::posts::models::{Entities, RawPostAttachment, ReplySetting, PostReference};
-use random_number::random;
+// use random_number::random;
 
 use crate::error::ContractError;
 use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg};
@@ -44,7 +44,7 @@ pub fn execute(
 ) -> Result<Response, ContractError> {
     match msg{
         ExecuteMsg::CreatePost { 
-            id,
+            post_id,
             subspace_id, 
             section_id, 
             external_id,
@@ -60,7 +60,7 @@ pub fn execute(
             deps, 
             env, 
             info,
-            id,
+            post_id,
             subspace_id,
             section_id,
             external_id,
@@ -136,7 +136,7 @@ fn execute_create_post(
     deps: DepsMut,
     env: Env,
     info: MessageInfo,
-    id: Uint64,
+    post_id: u64,
     subspace_id: Uint64,
     section_id: u32,
     external_id: Option<String>,
@@ -155,30 +155,32 @@ fn execute_create_post(
     //id is out of scope, make a random number and wrap it in Uint64
     // let mut input_id: Uint64 = cosmwasm_std::Uint64::from(random!());
     let post: Post = Post {
-        id,
+        post_id,
         subspace_id,
         section_id,
         external_id,
         text,
         entities,
         tags,
-        author,
+        author: info.sender,
         conversation_id,
         referenced_posts,
         reply_settings,
         creation_date: env.block.time.to_string(),
         last_edit_date: None,
     };
-    POST.save(deps.storage, &post)?;
+    POST.save(deps.storage, post_id, &post)?;
     
     Ok(Response::new())
+    
 }
+
 fn execute_add_post_attachment(
     deps: DepsMut,
     _env: Env,
     info: MessageInfo,
     subspace_id: Uint64,
-    post_id: Uint64,
+    post_id: u64,
     content: RawPostAttachment,
     editor: Addr
 ) -> Result<Response, ContractError> {
@@ -189,7 +191,7 @@ fn execute_remove_post_attachment(
     _env: Env,
     info: MessageInfo,
     subspace_id: Uint64,
-    post_id: Uint64,
+    post_id: u64,
     attachement_id: u32,
     editor: Addr
 ) -> Result<Response, ContractError> {
@@ -200,11 +202,12 @@ fn execute_edit_post(
     _env: Env,
     info: MessageInfo,
     subspace_id: Uint64,
-    post_id: Uint64,
+    post_id: u64,
     text: String,
     entities: Option<Vec<Entities>>,
     editor: Addr
 ) -> Result<Response, ContractError> {
+    let post = POST.may_load(deps.storage, post_id.clone())?;
     unimplemented!()
 }
 fn execute_delete_post(
@@ -212,7 +215,7 @@ fn execute_delete_post(
     _env: Env,
     info: MessageInfo,
     subspace_id: Uint64,
-    post_id: Uint64,
+    post_id: u64,
     signer: Addr
 ) -> Result<Response, ContractError> {
     unimplemented!()
