@@ -80,14 +80,26 @@ pub fn execute(
             last_edit_date
          ),
          ExecuteMsg::DeletePost { 
-            post_id, 
-            signer
+            post_id,
+            external_id,
+            text,
+            tags,
+            author, 
+            creation_date,
+            last_edit_date,
+            deleter
          } => execute_delete_post(
             deps,
             env,
             info,
             post_id,
-            signer
+            external_id,
+            text,
+            tags,
+            author,
+            creation_date,
+            last_edit_date,
+            deleter
          ),
     }
 }
@@ -115,6 +127,7 @@ fn execute_create_post(
         author: info.sender,
         creation_date: env.block.time.to_string(),
         last_edit_date: None,
+        deleter: None,
     };
     POST.save(deps.storage, post_id, &post)?;
     
@@ -142,7 +155,8 @@ fn execute_edit_post(
             tags,
             author: post.author,
             creation_date: post.creation_date,
-            last_edit_date: Some(env.block.time.to_string())
+            last_edit_date: Some(env.block.time.to_string()),
+            deleter: None,
         };
         POST.save(deps.storage, post_id, &new_post)?;
         Ok(Response::new())
@@ -152,9 +166,27 @@ fn execute_delete_post(
     _env: Env,
     info: MessageInfo,
     post_id: u64,
-    signer: Addr
+    external_id: String,
+    text: Option<String>,
+    tags: Vec<String>,
+    author: Addr,
+    creation_date: String,
+    last_edit_date: Option<String>,
+    deleter: Option<String>,
 ) -> Result<Response, ContractError> {
-    unimplemented!()
+    let post = POST.load(deps.storage, post_id.clone())?;
+    let deleted_post: Post = Post {
+        post_id,
+        external_id,
+        text,
+        tags,
+        author,
+        creation_date,
+        last_edit_date,
+        deleter,
+    };
+    POST.save(deps.storage, post_id, &deleted_post)?;
+    Ok(Response::new())
 } 
 
 #[cfg_attr(not(feature = "library"), entry_point)]

@@ -17,6 +17,7 @@ pub struct Post {
     pub author: Addr,
     pub creation_date: String,
     pub last_edit_date: Option<String>,
+    pub deleter: Option<String>
 }
 
 pub const CONFIG: Item<Config> = Item::new("config");

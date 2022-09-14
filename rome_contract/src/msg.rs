@@ -31,7 +31,13 @@ pub enum ExecuteMsg {
     },
     DeletePost{
         post_id: u64,
-        signer: Addr,
+        external_id: String,
+        text: Option<String>,
+        tags: Vec<String>,
+        author: Addr,
+        creation_date: String,
+        last_edit_date: Option<String>,
+        deleter: Option<String>,
     },
 }
 
