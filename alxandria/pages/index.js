@@ -15,12 +15,12 @@ export default function Home() {
         </Head>
       
         <h1 className="title">
-          Welcome to <Link href="/documents/alxandria" >AlXandria</Link>
+          Welcome to <Link href="/documents/16c59def-2889-4365-9a97-931ca92efe2a" >AlXandria</Link>
         </h1>
-        <span>The Decentralized <Link href="/documents/encyclopedia">Encyclopedia</Link></span>
+        <span>The Decentralized <Link href="/documents/8f584ad2-c4dd-4314-a84e-16739c8af645">Encyclopedia</Link></span>
 
         <input type="text" placeholder="Search..."></input>
-        <span>or <Link href="/documents">browse</Link></span>
+        <span>or <Link href="/browse">browse</Link></span>
       </main>
 
       <footer>
