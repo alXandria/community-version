@@ -62,6 +62,7 @@ pub fn execute(
          ExecuteMsg::EditPost { 
             post_id, 
             text,
+            tags,
             author, 
             editor
          } => execute_edit_post(
@@ -70,6 +71,7 @@ pub fn execute(
             info,
             post_id,
             text,
+            tags,
             author,
             editor
          ),
@@ -110,7 +112,7 @@ fn execute_create_post(
         creation_date: env.block.time.to_string(),
         last_edit_date: None,
     };
-    POST.save(deps.storage, (author, post_id), &post)?;
+    POST.save(deps.storage, (post_id), &post)?;
     
     Ok(Response::new())
 }
@@ -120,6 +122,7 @@ fn execute_edit_post(
     env: Env,
     info: MessageInfo,
     post_id: u64,
+    external_id: Option<String>,
     text: Option<String>,
     tags: Vec<String>,
     author: Addr,
@@ -128,7 +131,7 @@ fn execute_edit_post(
     last_edit_date: String,
 ) -> Result<Response, ContractError> {
     //post_id here helps sensibly load post
-    let post = POST.may_load(deps.storage, (author, post_id.clone()))?;
+    let post = POST.may_load(deps.storage, post_id.clone())?;
     
     let post: Post = Post {
         post_id,
@@ -139,6 +142,7 @@ fn execute_edit_post(
         creation_date: env.block.time.to_string(),
         last_edit_date: None,
     };
+    POST.save(deps.storage, post_id, &post)?;
 }
 fn execute_delete_post(
     deps: DepsMut,

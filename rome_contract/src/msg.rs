@@ -22,7 +22,9 @@ pub enum ExecuteMsg {
     },
     EditPost{
         post_id: u64,
+        external_id: Option<String>,
         text: String,
+        tags: Vec<String>,
         author: Addr,
         editor: Addr,
     },
