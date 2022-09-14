@@ -117,8 +117,7 @@ fn execute_create_post(
     if text.is_some() {
         return Err(ContractError::NoTextAllowed {  });
     }
-    //id is out of scope, make a random number and wrap it in Uint64
-    // let mut input_id: Uint64 = cosmwasm_std::Uint64::from(random!());
+
     let post: Post = Post {
         post_id,
         external_id,
