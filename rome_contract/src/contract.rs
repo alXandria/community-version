@@ -112,18 +112,19 @@ fn execute_create_post(
     external_id: String,
     text: Option<String>,
     tags: Vec<String>,
-    author: Addr,
+    author: String,
 ) -> Result<Response, ContractError> {
     if text.is_some() {
         return Err(ContractError::NoTextAllowed {  });
     }
-
+    let author = info.sender.to_string();
+    let validated_author = deps.api.addr_validate(&author)?;
     let post: Post = Post {
         post_id,
         external_id,
         text,
         tags,
-        author: info.sender,
+        author: validated_author.to_string(),
         creation_date: env.block.time.to_string(),
         last_edit_date: None,
         deleter: None,
@@ -141,18 +142,20 @@ fn execute_edit_post(
     external_id: String,
     text: Option<String>,
     tags: Vec<String>,
-    author: Addr,
-    editor: Addr,
+    author: String,
+    editor: String,
     creation_date: String,
     last_edit_date: String,
 ) -> Result<Response, ContractError> {
     let post = POST.load(deps.storage, post_id.clone())?;
+    let author = post.author.to_string();
+    let validated_author = deps.api.addr_validate(&author)?;
         let new_post: Post = Post {
             post_id: post.post_id,
             external_id,
             text,
             tags,
-            author: post.author,
+            author: validated_author.to_string(),
             creation_date: post.creation_date,
             last_edit_date: Some(env.block.time.to_string()),
             deleter: None,
@@ -168,12 +171,14 @@ fn execute_delete_post(
     external_id: String,
     text: Option<String>,
     tags: Vec<String>,
-    author: Addr,
+    author: String,
     creation_date: String,
     last_edit_date: Option<String>,
     deleter: Option<String>,
 ) -> Result<Response, ContractError> {
     let post = POST.load(deps.storage, post_id.clone())?;
+    let deleter = info.sender.to_string();
+    let validated_deleter = deps.api.addr_validate(&deleter)?;
     let deleted_post: Post = Post {
         post_id,
         external_id,
@@ -182,7 +187,7 @@ fn execute_delete_post(
         author,
         creation_date,
         last_edit_date,
-        deleter,
+        deleter: Some(validated_deleter.to_string()),
     };
     POST.save(deps.storage, post_id, &deleted_post)?;
     Ok(Response::new())
