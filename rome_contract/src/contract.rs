@@ -2,10 +2,8 @@ use std::env;
 
 #[cfg(not(feature = "library"))]
 use cosmwasm_std::{Addr, entry_point};
-use cosmwasm_std::{Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult, Uint64, BlockInfo};
+use cosmwasm_std::{Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult};
 use cw2::set_contract_version;
-use desmos_bindings::posts::models::{Entities, RawPostAttachment, ReplySetting, PostReference};
-// use random_number::random;
 
 use crate::error::ContractError;
 use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg};
@@ -60,28 +58,48 @@ pub fn execute(
             author,
          ),
          ExecuteMsg::EditPost { 
-            post_id, 
+            post_id,
+            external_id, 
             text,
+            tags,
             author, 
-            editor
+            editor,
+            creation_date,
+            last_edit_date
          } => execute_edit_post(
             deps,
             env,
             info,
             post_id,
+            external_id,
             text,
+            tags,
             author,
-            editor
+            editor,
+            creation_date,
+            last_edit_date
          ),
          ExecuteMsg::DeletePost { 
-            post_id, 
-            signer
+            post_id,
+            external_id,
+            text,
+            tags,
+            author, 
+            creation_date,
+            last_edit_date,
+            deleter
          } => execute_delete_post(
             deps,
             env,
             info,
             post_id,
-            signer
+            external_id,
+            text,
+            tags,
+            author,
+            creation_date,
+            last_edit_date,
+            deleter
          ),
     }
 }
@@ -91,7 +109,7 @@ fn execute_create_post(
     env: Env,
     info: MessageInfo,
     post_id: u64,
-    external_id: Option<String>,
+    external_id: String,
     text: Option<String>,
     tags: Vec<String>,
     author: Addr,
@@ -99,8 +117,7 @@ fn execute_create_post(
     if text.is_some() {
         return Err(ContractError::NoTextAllowed {  });
     }
-    //id is out of scope, make a random number and wrap it in Uint64
-    // let mut input_id: Uint64 = cosmwasm_std::Uint64::from(random!());
+
     let post: Post = Post {
         post_id,
         external_id,
@@ -109,8 +126,9 @@ fn execute_create_post(
         author: info.sender,
         creation_date: env.block.time.to_string(),
         last_edit_date: None,
+        deleter: None,
     };
-    POST.save(deps.storage, (author, post_id), &post)?;
+    POST.save(deps.storage, post_id, &post)?;
     
     Ok(Response::new())
 }
@@ -120,6 +138,7 @@ fn execute_edit_post(
     env: Env,
     info: MessageInfo,
     post_id: u64,
+    external_id: String,
     text: Option<String>,
     tags: Vec<String>,
     author: Addr,
@@ -127,27 +146,46 @@ fn execute_edit_post(
     creation_date: String,
     last_edit_date: String,
 ) -> Result<Response, ContractError> {
-    //post_id here helps sensibly load post
-    let post = POST.may_load(deps.storage, (author, post_id.clone()))?;
-    
-    let post: Post = Post {
-        post_id,
-        external_id,
-        text,
-        tags,
-        author: info.sender,
-        creation_date: env.block.time.to_string(),
-        last_edit_date: None,
-    };
+    let post = POST.load(deps.storage, post_id.clone())?;
+        let new_post: Post = Post {
+            post_id: post.post_id,
+            external_id,
+            text,
+            tags,
+            author: post.author,
+            creation_date: post.creation_date,
+            last_edit_date: Some(env.block.time.to_string()),
+            deleter: None,
+        };
+        POST.save(deps.storage, post_id, &new_post)?;
+        Ok(Response::new())
 }
 fn execute_delete_post(
     deps: DepsMut,
     _env: Env,
     info: MessageInfo,
     post_id: u64,
-    signer: Addr
+    external_id: String,
+    text: Option<String>,
+    tags: Vec<String>,
+    author: Addr,
+    creation_date: String,
+    last_edit_date: Option<String>,
+    deleter: Option<String>,
 ) -> Result<Response, ContractError> {
-    unimplemented!()
+    let post = POST.load(deps.storage, post_id.clone())?;
+    let deleted_post: Post = Post {
+        post_id,
+        external_id,
+        text,
+        tags,
+        author,
+        creation_date,
+        last_edit_date,
+        deleter,
+    };
+    POST.save(deps.storage, post_id, &deleted_post)?;
+    Ok(Response::new())
 } 
 
 #[cfg_attr(not(feature = "library"), entry_point)]

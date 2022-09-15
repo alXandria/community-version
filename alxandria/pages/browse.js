@@ -22,10 +22,11 @@ export default function Browse({documents}) {
           <ul>
           { documents.map((document) => (
               <li key={document.id}>
-              <Link href={`/documents/${document.id}`}>{document.title + " v" + document.version}</Link>
+              <Link href={`/documents/view/${document.id}`}>{document.title + " v" + document.version}</Link>
               </li>
           )) }
           </ul>
+          <Link href="/documents/create">Create a document!</Link>
       </section>
     </Layout>
   ) 
