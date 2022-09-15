@@ -14,6 +14,7 @@ datasource db {
 model Document {
   id String @id @default(uuid())
   title String
-  version Int
+  version String
+  date String
   markdown String
 }

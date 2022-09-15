@@ -12,7 +12,7 @@ export default function Layout({ children, home }) {
       <Head>
         <link rel="icon" href="/favicon.ico" />
         <meta
-          name="The Decentralized Encyclopedia"
+          name="AlXandria"
           content="Decentralizing the production of the sum of human knowledge"
         />
         <meta name="og:title" content={siteTitle} />
