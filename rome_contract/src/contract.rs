@@ -207,10 +207,13 @@ pub fn query(_deps: Deps, _env: Env, _msg: QueryMsg) -> StdResult<Binary> {
 
 #[cfg(test)]
 mod tests {
-    use cosmwasm_std::attr;
+    use cosmwasm_std::{attr, Api};
     use cosmwasm_std::testing::{mock_dependencies, mock_env, mock_info};
+    use random_number::random;
     use crate::contract::instantiate;
-    use crate::msg::InstantiateMsg;
+    use crate::msg::{InstantiateMsg, ExecuteMsg};
+
+    use super::execute;
 
     pub const ADDR1: &str = "addr1";
     pub const ADDR2: &str = "addr2";
@@ -242,5 +245,32 @@ mod tests {
             res.attributes,
             vec![attr("action", "instantiate"), attr("admin", ADDR2)]
         )
+    }
+    #[test]
+    fn test_execute_create_post_valid() {
+        let mut deps = mock_dependencies();
+        let env = mock_env();
+        let info = mock_info(ADDR1, &vec![]);
+        //instatiate
+        let msg = InstantiateMsg{admin:None};
+        let _res = instantiate(
+            deps.as_mut(), 
+            env.clone(), 
+            info.clone(), 
+            msg)
+            .unwrap();
+        //new execute message
+        let msg = ExecuteMsg::CreatePost { 
+            post_id: random!(), 
+            external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(), 
+            tags: vec!["Blockchain".to_string(), "Governance".to_string(), "Rejected".to_string()], 
+            text: None, 
+            author: info.sender.to_string(), 
+        };
+        let _res = execute(
+            deps.as_mut(),
+            env, 
+            info, 
+            msg).unwrap();
     }
 }
