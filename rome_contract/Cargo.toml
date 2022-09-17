@@ -48,6 +48,7 @@ schemars = "0.8.10"
 serde = { version = "1.0.144", default-features = false, features = ["derive"] }
 thiserror = { version = "1.0.31" }
 desmos-bindings = "1.0.0"
+random-number = "0.1.7"
 
 [dev-dependencies]
 cosmwasm-schema = "1.1.1"

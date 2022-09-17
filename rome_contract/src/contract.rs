@@ -4,6 +4,7 @@ use std::env;
 use cosmwasm_std::{Addr, entry_point};
 use cosmwasm_std::{Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult};
 use cw2::set_contract_version;
+use random_number::random;
 
 use crate::error::ContractError;
 use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg};
@@ -87,7 +88,8 @@ pub fn execute(
             author, 
             creation_date,
             last_edit_date,
-            deleter
+            deleter,
+            editor
          } => execute_delete_post(
             deps,
             env,
@@ -99,7 +101,8 @@ pub fn execute(
             author,
             creation_date,
             last_edit_date,
-            deleter
+            deleter,
+            editor,
          ),
     }
 }
@@ -120,7 +123,7 @@ fn execute_create_post(
     let author = info.sender.to_string();
     let validated_author = deps.api.addr_validate(&author)?;
     let post: Post = Post {
-        post_id,
+        post_id: random!(),
         external_id,
         text,
         tags,
@@ -128,6 +131,7 @@ fn execute_create_post(
         creation_date: env.block.time.to_string(),
         last_edit_date: None,
         deleter: None,
+        editor: None,
     };
     POST.save(deps.storage, post_id, &post)?;
     
@@ -148,17 +152,18 @@ fn execute_edit_post(
     last_edit_date: String,
 ) -> Result<Response, ContractError> {
     let post = POST.load(deps.storage, post_id.clone())?;
-    let author = post.author.to_string();
-    let validated_author = deps.api.addr_validate(&author)?;
+    let editor = info.sender.to_string();
+    let validated_editor = deps.api.addr_validate(&editor)?;
         let new_post: Post = Post {
             post_id: post.post_id,
             external_id,
             text,
             tags,
-            author: validated_author.to_string(),
+            author: post.author,
             creation_date: post.creation_date,
             last_edit_date: Some(env.block.time.to_string()),
             deleter: None,
+            editor: Some(validated_editor.to_string()),
         };
         POST.save(deps.storage, post_id, &new_post)?;
         Ok(Response::new())
@@ -175,6 +180,7 @@ fn execute_delete_post(
     creation_date: String,
     last_edit_date: Option<String>,
     deleter: Option<String>,
+    editor: Option<String>,
 ) -> Result<Response, ContractError> {
     let post = POST.load(deps.storage, post_id.clone())?;
     let deleter = info.sender.to_string();
@@ -188,6 +194,7 @@ fn execute_delete_post(
         creation_date,
         last_edit_date,
         deleter: Some(validated_deleter.to_string()),
+        editor,
     };
     POST.save(deps.storage, post_id, &deleted_post)?;
     Ok(Response::new())

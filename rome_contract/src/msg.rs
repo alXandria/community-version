@@ -38,6 +38,7 @@ pub enum ExecuteMsg {
         creation_date: String,
         last_edit_date: Option<String>,
         deleter: Option<String>,
+        editor: Option<String>
     },
 }
 
