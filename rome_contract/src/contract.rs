@@ -4,6 +4,7 @@ use std::env;
 use cosmwasm_std::{Addr, entry_point};
 use cosmwasm_std::{Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult};
 use cw2::set_contract_version;
+use random_number::random;
 
 use crate::error::ContractError;
 use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg};
@@ -87,7 +88,8 @@ pub fn execute(
             author, 
             creation_date,
             last_edit_date,
-            deleter
+            deleter,
+            editor
          } => execute_delete_post(
             deps,
             env,
@@ -99,7 +101,8 @@ pub fn execute(
             author,
             creation_date,
             last_edit_date,
-            deleter
+            deleter,
+            editor,
          ),
     }
 }
@@ -112,21 +115,23 @@ fn execute_create_post(
     external_id: String,
     text: Option<String>,
     tags: Vec<String>,
-    author: Addr,
+    author: String,
 ) -> Result<Response, ContractError> {
     if text.is_some() {
         return Err(ContractError::NoTextAllowed {  });
     }
-
+    let author = info.sender.to_string();
+    let validated_author = deps.api.addr_validate(&author)?;
     let post: Post = Post {
-        post_id,
+        post_id: random!(),
         external_id,
         text,
         tags,
-        author: info.sender,
+        author: validated_author.to_string(),
         creation_date: env.block.time.to_string(),
         last_edit_date: None,
         deleter: None,
+        editor: None,
     };
     POST.save(deps.storage, post_id, &post)?;
     
@@ -141,12 +146,14 @@ fn execute_edit_post(
     external_id: String,
     text: Option<String>,
     tags: Vec<String>,
-    author: Addr,
-    editor: Addr,
+    author: String,
+    editor: String,
     creation_date: String,
     last_edit_date: String,
 ) -> Result<Response, ContractError> {
     let post = POST.load(deps.storage, post_id.clone())?;
+    let editor = info.sender.to_string();
+    let validated_editor = deps.api.addr_validate(&editor)?;
         let new_post: Post = Post {
             post_id: post.post_id,
             external_id,
@@ -156,6 +163,7 @@ fn execute_edit_post(
             creation_date: post.creation_date,
             last_edit_date: Some(env.block.time.to_string()),
             deleter: None,
+            editor: Some(validated_editor.to_string()),
         };
         POST.save(deps.storage, post_id, &new_post)?;
         Ok(Response::new())
@@ -168,12 +176,15 @@ fn execute_delete_post(
     external_id: String,
     text: Option<String>,
     tags: Vec<String>,
-    author: Addr,
+    author: String,
     creation_date: String,
     last_edit_date: Option<String>,
     deleter: Option<String>,
+    editor: Option<String>,
 ) -> Result<Response, ContractError> {
     let post = POST.load(deps.storage, post_id.clone())?;
+    let deleter = info.sender.to_string();
+    let validated_deleter = deps.api.addr_validate(&deleter)?;
     let deleted_post: Post = Post {
         post_id,
         external_id,
@@ -182,7 +193,8 @@ fn execute_delete_post(
         author,
         creation_date,
         last_edit_date,
-        deleter,
+        deleter: Some(validated_deleter.to_string()),
+        editor,
     };
     POST.save(deps.storage, post_id, &deleted_post)?;
     Ok(Response::new())
@@ -195,10 +207,13 @@ pub fn query(_deps: Deps, _env: Env, _msg: QueryMsg) -> StdResult<Binary> {
 
 #[cfg(test)]
 mod tests {
-    use cosmwasm_std::attr;
+    use cosmwasm_std::{attr, Api};
     use cosmwasm_std::testing::{mock_dependencies, mock_env, mock_info};
+    use random_number::random;
     use crate::contract::instantiate;
-    use crate::msg::InstantiateMsg;
+    use crate::msg::{InstantiateMsg, ExecuteMsg};
+
+    use super::execute;
 
     pub const ADDR1: &str = "addr1";
     pub const ADDR2: &str = "addr2";
@@ -230,5 +245,32 @@ mod tests {
             res.attributes,
             vec![attr("action", "instantiate"), attr("admin", ADDR2)]
         )
+    }
+    #[test]
+    fn test_execute_create_post_valid() {
+        let mut deps = mock_dependencies();
+        let env = mock_env();
+        let info = mock_info(ADDR1, &vec![]);
+        //instatiate
+        let msg = InstantiateMsg{admin:None};
+        let _res = instantiate(
+            deps.as_mut(), 
+            env.clone(), 
+            info.clone(), 
+            msg)
+            .unwrap();
+        //new execute message
+        let msg = ExecuteMsg::CreatePost { 
+            post_id: random!(), 
+            external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(), 
+            tags: vec!["Blockchain".to_string(), "Governance".to_string(), "Rejected".to_string()], 
+            text: None, 
+            author: info.sender.to_string(), 
+        };
+        let _res = execute(
+            deps.as_mut(),
+            env, 
+            info, 
+            msg).unwrap();
     }
 }

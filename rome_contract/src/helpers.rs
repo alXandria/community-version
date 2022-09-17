@@ -27,20 +27,20 @@ impl CwTemplateContract {
         .into())
     }
 
-    /// Get Custom
-    pub fn custom_query<Q, T, CQ>(&self, querier: &Q, val: String) -> StdResult<CustomResponse>
-    where
-        Q: Querier,
-        T: Into<String>,
-        CQ: CustomQuery,
-    {
-        let msg = QueryMsg::CustomMsg { val };
-        let query = WasmQuery::Smart {
-            contract_addr: self.addr().into(),
-            msg: to_binary(&msg)?,
-        }
-        .into();
-        let res: CustomResponse = QuerierWrapper::<CQ>::new(querier).query(&query)?;
-        Ok(res)
-    }
+    // Get Custom
+    // pub fn custom_query<Q, T, CQ>(&self, querier: &Q, val: String) -> StdResult<CustomResponse>
+    // where
+    //     Q: Querier,
+    //     T: Into<String>,
+    //     CQ: CustomQuery,
+    // {
+    //     let msg = QueryMsg::Post { subspace_id: (), post_id: () };
+    //     let query = WasmQuery::Smart {
+    //         contract_addr: self.addr().into(),
+    //         msg: to_binary(&msg)?,
+    //     }
+    //     .into();
+    //     let res: CustomResponse = QuerierWrapper::<CQ>::new(querier).query(&query)?;
+    //     Ok(res)
+    // }
 }

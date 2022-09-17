@@ -14,10 +14,11 @@ pub struct Post {
     pub external_id: String,
     pub text: Option<String>,
     pub tags: Vec<String>,
-    pub author: Addr,
+    pub author: String,
     pub creation_date: String,
     pub last_edit_date: Option<String>,
-    pub deleter: Option<String>
+    pub deleter: Option<String>,
+    pub editor: Option<String>
 }
 
 pub const CONFIG: Item<Config> = Item::new("config");

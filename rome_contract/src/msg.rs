@@ -1,4 +1,4 @@
-use cosmwasm_std::{Uint64, Addr};
+use cosmwasm_std::Uint64;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use desmos_bindings::types::PageRequest;
@@ -17,15 +17,15 @@ pub enum ExecuteMsg {
         external_id: String,
         tags: Vec<String>,
         text: Option<String>,
-        author: Addr,
+        author: String,
     },
     EditPost{
         post_id: u64,
         external_id: String,
         text: Option<String>,
         tags: Vec<String>,
-        author: Addr,
-        editor: Addr,
+        author: String,
+        editor: String,
         creation_date: String,
         last_edit_date: String,
     },
@@ -34,25 +34,17 @@ pub enum ExecuteMsg {
         external_id: String,
         text: Option<String>,
         tags: Vec<String>,
-        author: Addr,
+        author: String,
         creation_date: String,
         last_edit_date: Option<String>,
         deleter: Option<String>,
+        editor: Option<String>
     },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum QueryMsg {
-    SubspacePosts{
-        subspace_id: Uint64,
-        pagination: Option<PageRequest>,
-    },
-    SectionPosts{
-        subspace_id: Uint64,
-        section_id: u32,
-        pagination: Option<PageRequest>,
-    },
     Post{
         subspace_id: Uint64,
         post_id: Uint64,
