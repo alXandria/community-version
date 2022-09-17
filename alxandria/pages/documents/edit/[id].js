@@ -39,6 +39,7 @@ export default function Document({ document }) {
         <h1>{ document.title }</h1>
 
         <p><em>{"editing: v" + document.version}</em> <Link href={"/documents/view/" + document.id}>{" View"}</Link></p>
+        <p>other versions:</p>
 
         <SimpleMDE id="document-markdown"
             value={document.markdown}

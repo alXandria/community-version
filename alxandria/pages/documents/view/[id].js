@@ -30,7 +30,8 @@ export default function Document({ document }) {
         <h1>{document.title}</h1>
 
         <p><em>{"viewing: v" + document.version}</em> <Link href={"/documents/edit/" + document.id}>{" Edit"}</Link></p>
-
+        <p>other versions:</p>
+        
         <div dangerouslySetInnerHTML={{ __html: document.markdown }}/>
         
     </Layout>

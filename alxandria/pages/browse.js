@@ -26,7 +26,7 @@ export default function Browse({documents}) {
               </li>
           )) }
           </ul>
-          <Link href="/documents/create">Create a document!</Link>
+          <Link href="/documents/create">+</Link>
       </section>
     </Layout>
   ) 
