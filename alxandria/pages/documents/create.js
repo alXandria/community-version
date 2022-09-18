@@ -44,3 +44,16 @@ export default function Document({ document }) {
 
   ) 
 }
+
+async function save(document) {
+    const response = await fetch('/api/documents', {
+        method: 'POST',
+        body: JSON.stringify(document)
+    });
+
+    if (!response.ok) {
+        throw new Error(response.statusText);
+    }
+
+    return await response.json();
+}
