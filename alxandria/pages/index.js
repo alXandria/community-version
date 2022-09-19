@@ -11,16 +11,29 @@ export default function Home() {
 
         <Head>
           <title>{siteTitle}</title>
-          <link rel="icon" href="/favicon.ico" />
+          <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"></link>
+          <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"></link>
+          <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"></link>
+          <link rel="manifest" href="/site.webmanifest"></link>
         </Head>
-      
-        <h1 className="title">
-          Welcome to <Link href="/documents/view/9151c072-685d-4fdc-963e-c86cad604621" >AlXandria</Link>
-        </h1>
-        <span>The Decentralized <Link href="/documents/view/531147f5-2b10-49f4-8256-375181bddb79">Encyclopedia</Link></span>
 
-        <input type="text" placeholder="Search..."></input>
-        <span>or <Link href="/browse">browse</Link></span>
+          <Image
+            id="logo"
+            src="/../public/images/logo.png"
+            width={ 100 }
+            height={ 100 }
+          />
+
+          <br />
+
+          <h1 className="title">
+            Welcome to <Link href="/documents/view/9151c072-685d-4fdc-963e-c86cad604621">AlXandria</Link>
+          </h1>
+          <span>The Decentralized Library</span>
+
+          <input type="text" placeholder="Search..."></input>
+          <span>or <Link href="/browse">browse</Link></span>
+
       </main>
 
       <footer>
@@ -129,12 +142,3 @@ export default function Home() {
     </div>
   )
 }
-
-const CoverImage = () => (
-  <Image
-    src="/images/alxandria.jpg"
-    height={820}
-    width={1500}
-    alt="Your Name"
-  />
-);

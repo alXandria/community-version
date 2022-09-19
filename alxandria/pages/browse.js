@@ -17,16 +17,20 @@ export async function getServerSideProps(context) {
 export default function Browse({documents}) {
 
   return (
+    
       <Layout>
-          <section>
+        <section>
+
           <ul>
-          { documents.map((document) => (
-              <li key={document.id}>
-              <Link href={`/documents/view/${document.id}`}>{document.title + " v" + document.version}</Link>
-              </li>
-          )) }
+            { documents.map((document) => (
+                <li key={document.id}>
+                <Link href={`/documents/view/${document.id}`}>{document.title + " v" + document.version}</Link>
+                </li>
+            )) }
           </ul>
+
           <Link href="/documents/create">+</Link>
+
       </section>
     </Layout>
   ) 
