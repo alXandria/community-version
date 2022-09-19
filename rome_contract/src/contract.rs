@@ -210,7 +210,7 @@ fn execute_delete_post(
 pub fn query(deps: Deps, env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
         QueryMsg::AllPosts {  } => query_all_posts(deps, env),
-        QueryMsg::Post { post_id } => unimplemented!(),
+        QueryMsg::Post { post_id } => query_post(deps, env, post_id),
     }
 }
 
@@ -221,6 +221,11 @@ fn query_all_posts (deps: Deps, _env: Env) -> StdResult<Binary> {
         .collect::<StdResult<Vec<_>>>()?;
     
     to_binary(&AllPostsResponse {posts})
+}
+
+fn query_post (deps: Deps, _env: Env, post_id: u64) -> StdResult<Binary> {
+    let post = POST.may_load(deps.storage, post_id)?;
+    to_binary(&PostResponse { post })
 }
 
 #[cfg(test)]
