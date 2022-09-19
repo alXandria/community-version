@@ -207,12 +207,22 @@ fn execute_delete_post(
 } 
 
 #[cfg_attr(not(feature = "library"), entry_point)]
-pub fn query(_deps: Deps, env: Env, msg: QueryMsg) -> StdResult<Binary> {
+pub fn query(deps: Deps, env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
-        QueryMsg::AllPosts {  } => unimplemented!(),
+        QueryMsg::AllPosts {  } => query_all_posts(deps, env),
         QueryMsg::Post { post_id } => unimplemented!(),
     }
 }
+
+fn query_all_posts (deps: Deps, _env: Env) -> StdResult<Binary> {
+    let posts = POST
+        .range(deps.storage, None, None, Order::Ascending)
+        .map(|p| Ok(p?.1))
+        .collect::<StdResult<Vec<_>>>()?;
+    
+    to_binary(&AllPostsResponse {posts})
+}
+
 #[cfg(test)]
 mod tests {
     use cosmwasm_std::{attr, Api};
