@@ -213,6 +213,7 @@ mod tests {
     use random_number::random;
     use crate::contract::instantiate;
     use crate::msg::{InstantiateMsg, ExecuteMsg};
+    use crate::state::{Post, POST};
 
     use super::execute;
 
@@ -298,5 +299,46 @@ mod tests {
         env, 
         info, 
         msg).unwrap_err();
+    }
+    #[test]
+    fn test_execute_edit_post_valid() {
+        let mut deps = mock_dependencies();
+        let env = mock_env();
+        let info = mock_info(ADDR1, &vec![]);
+        let msg = InstantiateMsg{admin:None};
+        let _res = instantiate(
+            deps.as_mut(), 
+            env.clone(), 
+            info.clone(), 
+            msg).unwrap();
+        //create a post
+        let msg = ExecuteMsg::CreatePost { 
+            post_id: 16409, 
+            external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(), 
+            tags: vec!["Blockchain".to_string(), "Governance".to_string(), "Rejected".to_string()], 
+            text: None, 
+            author: info.sender.to_string(), 
+        };
+        let _res = execute(
+            deps.as_mut(),
+            env.clone(), 
+            info.clone(), 
+            msg).unwrap();
+        //edit message
+        let msg = ExecuteMsg::EditPost { 
+            post_id: 16409, 
+            external_id: "https://stake.tax/".to_string(), 
+            text: None, 
+            tags: vec!["Tax".to_string(), "Website".to_string()], 
+            author: "desmos1d2wmr92lphgtpv9xl9ux2cssd5ras7t8atryzy".to_string(), 
+            editor: info.sender.to_string(), 
+            creation_date: "20220921212209".to_string(), 
+            last_edit_date: env.block.time.to_string(), 
+        };
+        let _res = execute(
+            deps.as_mut(), 
+            env.clone(), 
+            info.clone(), 
+            msg).unwrap();
     }
 }
