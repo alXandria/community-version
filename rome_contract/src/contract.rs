@@ -2,12 +2,12 @@ use std::env;
 
 #[cfg(not(feature = "library"))]
 use cosmwasm_std::{Addr, entry_point};
-use cosmwasm_std::{Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult};
+use cosmwasm_std::{Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult, Order, to_binary};
 use cw2::set_contract_version;
 use random_number::random;
 
 use crate::error::ContractError;
-use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg};
+use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg, AllPostsResponse, PostResponse};
 use crate::state::{Config, CONFIG, Post, POST};
 
 
@@ -151,6 +151,9 @@ fn execute_edit_post(
     creation_date: String,
     last_edit_date: String,
 ) -> Result<Response, ContractError> {
+    if text.is_some() {
+        return Err(ContractError::NoTextAllowed {  });
+    }
     let post = POST.load(deps.storage, post_id.clone())?;
     let editor = info.sender.to_string();
     let validated_editor = deps.api.addr_validate(&editor)?;
@@ -182,36 +185,58 @@ fn execute_delete_post(
     deleter: Option<String>,
     editor: Option<String>,
 ) -> Result<Response, ContractError> {
+    if text.is_some() || external_id.len() > 0 || tags.len() > 0 {
+        return Err(ContractError::DeletedPost {  });
+    }
     let post = POST.load(deps.storage, post_id.clone())?;
     let deleter = info.sender.to_string();
     let validated_deleter = deps.api.addr_validate(&deleter)?;
     let deleted_post: Post = Post {
-        post_id,
+        post_id: post.post_id,
         external_id,
         text,
         tags,
-        author,
-        creation_date,
+        author: post.author,
+        creation_date: post.creation_date,
         last_edit_date,
         deleter: Some(validated_deleter.to_string()),
-        editor,
+        editor: post.editor,
     };
     POST.save(deps.storage, post_id, &deleted_post)?;
     Ok(Response::new())
 } 
 
 #[cfg_attr(not(feature = "library"), entry_point)]
-pub fn query(_deps: Deps, _env: Env, _msg: QueryMsg) -> StdResult<Binary> {
-    unimplemented!()
+pub fn query(deps: Deps, env: Env, msg: QueryMsg) -> StdResult<Binary> {
+    match msg {
+        QueryMsg::AllPosts {  } => query_all_posts(deps, env),
+        QueryMsg::Post { post_id } => query_post(deps, env, post_id),
+    }
+}
+
+fn query_all_posts (deps: Deps, _env: Env) -> StdResult<Binary> {
+    let posts = POST
+        .range(deps.storage, None, None, Order::Ascending)
+        .map(|p| Ok(p?.1))
+        .collect::<StdResult<Vec<_>>>()?;
+    
+    to_binary(&AllPostsResponse {posts})
+}
+
+fn query_post (deps: Deps, _env: Env, post_id: u64) -> StdResult<Binary> {
+    let post = POST.may_load(deps.storage, post_id)?;
+    to_binary(&PostResponse { post })
 }
 
 #[cfg(test)]
 mod tests {
     use cosmwasm_std::{attr, Api};
     use cosmwasm_std::testing::{mock_dependencies, mock_env, mock_info};
+    use random_number::rand::rngs::mock;
     use random_number::random;
     use crate::contract::instantiate;
     use crate::msg::{InstantiateMsg, ExecuteMsg};
+    use crate::state::{Post, POST};
 
     use super::execute;
 
@@ -272,5 +297,194 @@ mod tests {
             env, 
             info, 
             msg).unwrap();
+    }
+    #[test]
+    fn test_execute_create_post_invalid() {
+        let mut deps = mock_dependencies();
+        let env = mock_env();
+        let info = mock_info(ADDR1, &vec![]);
+        let msg = InstantiateMsg{admin:None};
+        let _res = instantiate(
+            deps.as_mut(), 
+            env.clone(), 
+            info.clone(), 
+            msg)
+            .unwrap();
+        //new execute message
+        let msg = ExecuteMsg::CreatePost { 
+            post_id: random!(), 
+            external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(), 
+            tags: vec!["Blockchain".to_string(), "Governance".to_string(), "Rejected".to_string()], 
+            text: Some("This will fail".to_string()), 
+            author: info.sender.to_string(), 
+        };
+        let _err = execute(deps.as_mut(), 
+        env, 
+        info, 
+        msg).unwrap_err();
+    }
+    #[test]
+    fn test_execute_edit_post_valid() {
+        let mut deps = mock_dependencies();
+        let env = mock_env();
+        let info = mock_info(ADDR1, &vec![]);
+        let msg = InstantiateMsg{admin:None};
+        let _res = instantiate(
+            deps.as_mut(), 
+            env.clone(), 
+            info.clone(), 
+            msg).unwrap();
+        //create a post
+        let msg = ExecuteMsg::CreatePost { 
+            post_id: 16409, 
+            external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(), 
+            tags: vec!["Blockchain".to_string(), "Governance".to_string(), "Rejected".to_string()], 
+            text: None, 
+            author: info.sender.to_string(), 
+        };
+        let _res = execute(
+            deps.as_mut(),
+            env.clone(), 
+            info.clone(), 
+            msg).unwrap();
+        //edit message
+        let msg = ExecuteMsg::EditPost { 
+            post_id: 16409, 
+            external_id: "https://stake.tax/".to_string(), 
+            text: None, 
+            tags: vec!["Tax".to_string(), "Website".to_string()], 
+            author: "desmos1d2wmr92lphgtpv9xl9ux2cssd5ras7t8atryzy".to_string(), 
+            editor: info.sender.to_string(), 
+            creation_date: "20220921212209".to_string(), 
+            last_edit_date: env.block.time.to_string(), 
+        };
+        let _res = execute(
+            deps.as_mut(), 
+            env.clone(), 
+            info.clone(), 
+            msg).unwrap();
+    }
+    #[test]
+    fn test_execute_edit_post_invalid() {
+        let mut deps = mock_dependencies();
+        let env = mock_env();
+        let info = mock_info(ADDR1, &vec![]);
+        let msg = InstantiateMsg{admin:None};
+        let _res = instantiate(
+            deps.as_mut(), 
+            env.clone(), 
+            info.clone(), 
+            msg).unwrap();
+        //edit a post and add text (fail)
+        let msg = ExecuteMsg::CreatePost { 
+            post_id: 16409, 
+            external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(), 
+            tags: vec!["Blockchain".to_string(), "Governance".to_string(), "Rejected".to_string()], 
+            text: None, 
+            author: info.sender.to_string(), 
+        };
+        let _res = execute(
+            deps.as_mut(),
+            env.clone(), 
+            info.clone(), 
+            msg).unwrap();
+        let msg = ExecuteMsg::EditPost { 
+            post_id: 16409, 
+            external_id: "https://stake.tax/".to_string(), 
+            text: Some("This will fail".to_string()), 
+            tags: vec!["Tax".to_string(), "Website".to_string()], 
+            author: "desmos1d2wmr92lphgtpv9xl9ux2cssd5ras7t8atryzy".to_string(), 
+            editor: info.sender.to_string(), 
+            creation_date: "20220921212209".to_string(), 
+            last_edit_date: env.block.time.to_string(), 
+        };
+        let _err = execute(
+            deps.as_mut(),
+            env.clone(), 
+            info.clone(), 
+            msg).unwrap_err();
+    }
+    #[test]
+    fn test_execute_delete_post_valid() {
+        let mut deps = mock_dependencies();
+        let env = mock_env();
+        let info = mock_info(ADDR1, &vec![]);
+        let msg = InstantiateMsg{admin:None};
+        let _res = instantiate(
+            deps.as_mut(), 
+            env.clone(), 
+            info.clone(), 
+            msg).unwrap();
+        //create a post
+        let msg = ExecuteMsg::CreatePost { 
+            post_id: 16409, 
+            external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(), 
+            tags: vec!["Blockchain".to_string(), "Governance".to_string(), "Rejected".to_string()], 
+            text: None, 
+            author: info.sender.to_string(), 
+        };
+        let _res = execute(
+            deps.as_mut(),
+            env.clone(), 
+            info.clone(), 
+            msg).unwrap();
+        //delete message
+        let msg = ExecuteMsg::DeletePost { 
+            post_id: 16409, 
+            external_id: "".to_string(), 
+            text: None, 
+            tags: vec![], 
+            author: "desmos1d2wmr92lphgtpv9xl9ux2cssd5ras7t8atryzy".to_string(), 
+            creation_date: "20220921212209".to_string(), 
+            last_edit_date: Some(env.block.time.to_string()), 
+            deleter: Some(info.sender.to_string()), 
+            editor: None, 
+        };
+        let _res = execute(
+            deps.as_mut(), 
+            env.clone(), 
+            info.clone(), 
+            msg).unwrap();
+    }
+    #[test]
+    fn test_execute_delete_post_invalid() {
+        let mut deps = mock_dependencies();
+        let env = mock_env();
+        let info = mock_info(ADDR1, &vec![]);
+        let msg = InstantiateMsg{admin:None};
+        let _res = instantiate(
+            deps.as_mut(), 
+            env.clone(), 
+            info.clone(), 
+            msg).unwrap();
+        //edit a post and add text (fail)
+        let msg = ExecuteMsg::CreatePost { 
+            post_id: 16409, 
+            external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(), 
+            tags: vec!["Blockchain".to_string(), "Governance".to_string(), "Rejected".to_string()], 
+            text: None, 
+            author: info.sender.to_string(), 
+        };
+        let _res = execute(
+            deps.as_mut(),
+            env.clone(), 
+            info.clone(), 
+            msg).unwrap();
+        let msg = ExecuteMsg::DeletePost { 
+            post_id: 16409, 
+            external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(), 
+            text: None, 
+            tags: vec!["".to_string()], 
+            author: "desmos1d2wmr92lphgtpv9xl9ux2cssd5ras7t8atryzy".to_string(), 
+            creation_date: "20220921212209".to_string(), 
+            last_edit_date: Some(env.block.time.to_string()), 
+            deleter: Some(info.sender.to_string()), 
+            editor: None, 
+        };
+        let _err = execute(
+            deps.as_mut(),
+            env.clone(), 
+            info.clone(), 
+            msg).unwrap_err();
     }
 }

@@ -11,4 +11,7 @@ pub enum ContractError {
 
     #[error("No Text Allowed")]
     NoTextAllowed {},
+
+    #[error("Deleted post content must be empty.")]
+    DeletedPost {},
 }

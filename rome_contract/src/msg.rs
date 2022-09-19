@@ -1,7 +1,6 @@
-use cosmwasm_std::Uint64;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
-use desmos_bindings::types::PageRequest;
+use crate::state::Post;
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 #[serde(rename_all = "snake_case")]
@@ -43,23 +42,21 @@ pub enum ExecuteMsg {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-#[serde(rename_all = "snake_case")]
-pub enum QueryMsg {
-    Post{
-        subspace_id: Uint64,
-        post_id: Uint64,
-    },
-    PostAttachments{
-        subspace_id: Uint64,
-        post_id: Uint64,
-        pagination: Option<PageRequest>,
-    }
+pub struct AllPostsResponse {
+    pub posts: Vec<Post>,
+}
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+pub struct PostResponse {
+    pub post: Option<Post>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 #[serde(rename_all = "snake_case")]
-pub struct CustomResponse {
-    val: String,
+pub enum QueryMsg {
+    AllPosts {},
+    Post{
+        post_id: u64,
+    },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
