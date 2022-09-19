@@ -209,6 +209,7 @@ pub fn query(_deps: Deps, _env: Env, _msg: QueryMsg) -> StdResult<Binary> {
 mod tests {
     use cosmwasm_std::{attr, Api};
     use cosmwasm_std::testing::{mock_dependencies, mock_env, mock_info};
+    use random_number::rand::rngs::mock;
     use random_number::random;
     use crate::contract::instantiate;
     use crate::msg::{InstantiateMsg, ExecuteMsg};
@@ -272,5 +273,30 @@ mod tests {
             env, 
             info, 
             msg).unwrap();
+    }
+    #[test]
+    fn test_execute_create_post_invalid() {
+        let mut deps = mock_dependencies();
+        let env = mock_env();
+        let info = mock_info(ADDR1, &vec![]);
+        let msg = InstantiateMsg{admin:None};
+        let _res = instantiate(
+            deps.as_mut(), 
+            env.clone(), 
+            info.clone(), 
+            msg)
+            .unwrap();
+        //new execute message
+        let msg = ExecuteMsg::CreatePost { 
+            post_id: random!(), 
+            external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(), 
+            tags: vec!["Blockchain".to_string(), "Governance".to_string(), "Rejected".to_string()], 
+            text: Some("This will fail".to_string()), 
+            author: info.sender.to_string(), 
+        };
+        let _err = execute(deps.as_mut(), 
+        env, 
+        info, 
+        msg).unwrap_err();
     }
 }
