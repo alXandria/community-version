@@ -5,6 +5,7 @@ import Head from 'next/head';
 import dynamic from 'next/dynamic';
 import "easymde/dist/easymde.min.css";
 import { getDocument } from '../../../db/utils'
+import md from 'markdown-it'
 
 export async function getServerSideProps({ params }) {
         
@@ -32,7 +33,7 @@ export default function Document({ document }) {
         <p><em>{"viewing: v" + document.version}</em> <Link href={"/documents/edit/" + document.id}>{" Edit"}</Link></p>
         <p>other versions:</p>
         
-        <div dangerouslySetInnerHTML={{ __html: document.markdown }}/>
+        <div dangerouslySetInnerHTML={{ __html: md().render(document.markdown) }}/>
         
     </Layout>
 
