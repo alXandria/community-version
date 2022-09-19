@@ -185,19 +185,22 @@ fn execute_delete_post(
     deleter: Option<String>,
     editor: Option<String>,
 ) -> Result<Response, ContractError> {
+    if text.is_some() || external_id.len() > 0 || tags.len() > 0 {
+        return Err(ContractError::DeletedPost {  });
+    }
     let post = POST.load(deps.storage, post_id.clone())?;
     let deleter = info.sender.to_string();
     let validated_deleter = deps.api.addr_validate(&deleter)?;
     let deleted_post: Post = Post {
-        post_id,
+        post_id: post.post_id,
         external_id,
         text,
         tags,
-        author,
-        creation_date,
+        author: post.author,
+        creation_date: post.creation_date,
         last_edit_date,
         deleter: Some(validated_deleter.to_string()),
-        editor,
+        editor: post.editor,
     };
     POST.save(deps.storage, post_id, &deleted_post)?;
     Ok(Response::new())
@@ -377,6 +380,89 @@ mod tests {
             editor: info.sender.to_string(), 
             creation_date: "20220921212209".to_string(), 
             last_edit_date: env.block.time.to_string(), 
+        };
+        let _err = execute(
+            deps.as_mut(),
+            env.clone(), 
+            info.clone(), 
+            msg).unwrap_err();
+    }
+    #[test]
+    fn test_execute_delete_post_valid() {
+        let mut deps = mock_dependencies();
+        let env = mock_env();
+        let info = mock_info(ADDR1, &vec![]);
+        let msg = InstantiateMsg{admin:None};
+        let _res = instantiate(
+            deps.as_mut(), 
+            env.clone(), 
+            info.clone(), 
+            msg).unwrap();
+        //create a post
+        let msg = ExecuteMsg::CreatePost { 
+            post_id: 16409, 
+            external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(), 
+            tags: vec!["Blockchain".to_string(), "Governance".to_string(), "Rejected".to_string()], 
+            text: None, 
+            author: info.sender.to_string(), 
+        };
+        let _res = execute(
+            deps.as_mut(),
+            env.clone(), 
+            info.clone(), 
+            msg).unwrap();
+        //delete message
+        let msg = ExecuteMsg::DeletePost { 
+            post_id: 16409, 
+            external_id: "".to_string(), 
+            text: None, 
+            tags: vec![], 
+            author: "desmos1d2wmr92lphgtpv9xl9ux2cssd5ras7t8atryzy".to_string(), 
+            creation_date: "20220921212209".to_string(), 
+            last_edit_date: Some(env.block.time.to_string()), 
+            deleter: Some(info.sender.to_string()), 
+            editor: None, 
+        };
+        let _res = execute(
+            deps.as_mut(), 
+            env.clone(), 
+            info.clone(), 
+            msg).unwrap();
+    }
+    #[test]
+    fn test_execute_delete_post_invalid() {
+        let mut deps = mock_dependencies();
+        let env = mock_env();
+        let info = mock_info(ADDR1, &vec![]);
+        let msg = InstantiateMsg{admin:None};
+        let _res = instantiate(
+            deps.as_mut(), 
+            env.clone(), 
+            info.clone(), 
+            msg).unwrap();
+        //edit a post and add text (fail)
+        let msg = ExecuteMsg::CreatePost { 
+            post_id: 16409, 
+            external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(), 
+            tags: vec!["Blockchain".to_string(), "Governance".to_string(), "Rejected".to_string()], 
+            text: None, 
+            author: info.sender.to_string(), 
+        };
+        let _res = execute(
+            deps.as_mut(),
+            env.clone(), 
+            info.clone(), 
+            msg).unwrap();
+        let msg = ExecuteMsg::DeletePost { 
+            post_id: 16409, 
+            external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(), 
+            text: None, 
+            tags: vec!["".to_string()], 
+            author: "desmos1d2wmr92lphgtpv9xl9ux2cssd5ras7t8atryzy".to_string(), 
+            creation_date: "20220921212209".to_string(), 
+            last_edit_date: Some(env.block.time.to_string()), 
+            deleter: Some(info.sender.to_string()), 
+            editor: None, 
         };
         let _err = execute(
             deps.as_mut(),
