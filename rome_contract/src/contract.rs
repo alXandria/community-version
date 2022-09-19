@@ -2,12 +2,12 @@ use std::env;
 
 #[cfg(not(feature = "library"))]
 use cosmwasm_std::{Addr, entry_point};
-use cosmwasm_std::{Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult};
+use cosmwasm_std::{Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult, Order, to_binary};
 use cw2::set_contract_version;
 use random_number::random;
 
 use crate::error::ContractError;
-use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg};
+use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg, AllPostsResponse, PostResponse};
 use crate::state::{Config, CONFIG, Post, POST};
 
 
@@ -207,10 +207,12 @@ fn execute_delete_post(
 } 
 
 #[cfg_attr(not(feature = "library"), entry_point)]
-pub fn query(_deps: Deps, _env: Env, _msg: QueryMsg) -> StdResult<Binary> {
-    unimplemented!()
+pub fn query(_deps: Deps, env: Env, msg: QueryMsg) -> StdResult<Binary> {
+    match msg {
+        QueryMsg::AllPosts {  } => unimplemented!(),
+        QueryMsg::Post { post_id } => unimplemented!(),
+    }
 }
-
 #[cfg(test)]
 mod tests {
     use cosmwasm_std::{attr, Api};
