@@ -24,10 +24,6 @@ pub enum ExecuteMsg {
         external_id: String,
         text: Option<String>,
         tags: Vec<String>,
-        author: String,
-        editor: String,
-        creation_date: String,
-        last_edit_date: String,
     },
     DeletePost {
         post_id: u64,

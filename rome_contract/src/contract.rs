@@ -64,10 +64,6 @@ pub fn execute(
             external_id,
             text,
             tags,
-            author,
-            editor,
-            creation_date,
-            last_edit_date,
         } => execute_edit_post(
             deps,
             env,
@@ -76,10 +72,6 @@ pub fn execute(
             external_id,
             text,
             tags,
-            author,
-            editor,
-            creation_date,
-            last_edit_date,
         ),
         ExecuteMsg::DeletePost {
             post_id,
@@ -148,10 +140,6 @@ fn execute_edit_post(
     external_id: String,
     text: Option<String>,
     tags: Vec<String>,
-    _author: String,
-    _editor: String,
-    _creation_date: String,
-    _last_edit_date: String,
 ) -> Result<Response, ContractError> {
     if text.is_some() {
         return Err(ContractError::NoTextAllowed {});
@@ -345,10 +333,6 @@ mod tests {
             external_id: "https://stake.tax/".to_string(),
             text: None,
             tags: vec!["Tax".to_string(), "Website".to_string()],
-            author: "desmos1d2wmr92lphgtpv9xl9ux2cssd5ras7t8atryzy".to_string(),
-            editor: info.sender.to_string(),
-            creation_date: "20220921212209".to_string(),
-            last_edit_date: env.block.time.to_string(),
         };
         let _res = execute(deps.as_mut(), env, info, msg).unwrap();
     }
@@ -378,10 +362,6 @@ mod tests {
             external_id: "https://stake.tax/".to_string(),
             text: Some("This will fail".to_string()),
             tags: vec!["Tax".to_string(), "Website".to_string()],
-            author: "desmos1d2wmr92lphgtpv9xl9ux2cssd5ras7t8atryzy".to_string(),
-            editor: info.sender.to_string(),
-            creation_date: "20220921212209".to_string(),
-            last_edit_date: env.block.time.to_string(),
         };
         let _err = execute(deps.as_mut(), env, info, msg).unwrap_err();
     }
