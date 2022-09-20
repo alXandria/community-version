@@ -22,7 +22,7 @@ pub fn instantiate(
     msg: InstantiateMsg,
 ) -> Result<Response, ContractError> {
     set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
-    let admin = msg.admin.unwrap_or(info.sender.to_string());
+    let admin = msg.admin.unwrap_or_else(|| info.sender.to_string());
     let validated_admin = deps.api.addr_validate(&admin)?;
     let config = Config {
         admin: validated_admin.clone(),
@@ -156,7 +156,7 @@ fn execute_edit_post(
     if text.is_some() {
         return Err(ContractError::NoTextAllowed {});
     }
-    let post = POST.load(deps.storage, post_id.clone())?;
+    let post = POST.load(deps.storage, post_id)?;
     let editor = info.sender.to_string();
     let validated_editor = deps.api.addr_validate(&editor)?;
     let new_post: Post = Post {
@@ -187,10 +187,10 @@ fn execute_delete_post(
     _deleter: Option<String>,
     _editor: Option<String>,
 ) -> Result<Response, ContractError> {
-    if text.is_some() || external_id.len() > 0 || tags.len() > 0 {
+    if text.is_some() || !external_id.is_empty() || !tags.is_empty() {
         return Err(ContractError::DeletedPost {});
     }
-    let post = POST.load(deps.storage, post_id.clone())?;
+    let post = POST.load(deps.storage, post_id)?;
     let deleter = info.sender.to_string();
     let validated_deleter = deps.api.addr_validate(&deleter)?;
     let deleted_post: Post = Post {
@@ -247,7 +247,7 @@ mod tests {
     fn test_instantiate() {
         let mut deps = mock_dependencies();
         let env = mock_env();
-        let info = mock_info(ADDR1, &vec![]);
+        let info = mock_info(ADDR1, &[]);
 
         let msg = InstantiateMsg { admin: None };
         let res = instantiate(deps.as_mut(), env, info, msg).unwrap();
@@ -261,7 +261,7 @@ mod tests {
     fn test_instantiate_with_admin() {
         let mut deps = mock_dependencies();
         let env = mock_env();
-        let info = mock_info(ADDR1, &vec![]);
+        let info = mock_info(ADDR1, &[]);
 
         let msg = InstantiateMsg {
             admin: Some(ADDR2.to_string()),
@@ -277,7 +277,7 @@ mod tests {
     fn test_execute_create_post_valid() {
         let mut deps = mock_dependencies();
         let env = mock_env();
-        let info = mock_info(ADDR1, &vec![]);
+        let info = mock_info(ADDR1, &[]);
         //instatiate
         let msg = InstantiateMsg { admin: None };
         let _res = instantiate(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
@@ -300,7 +300,7 @@ mod tests {
     fn test_execute_create_post_invalid() {
         let mut deps = mock_dependencies();
         let env = mock_env();
-        let info = mock_info(ADDR1, &vec![]);
+        let info = mock_info(ADDR1, &[]);
         let msg = InstantiateMsg { admin: None };
         let _res = instantiate(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
         //new execute message
@@ -350,7 +350,7 @@ mod tests {
             creation_date: "20220921212209".to_string(),
             last_edit_date: env.block.time.to_string(),
         };
-        let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
+        let _res = execute(deps.as_mut(), env, info, msg).unwrap();
     }
     #[test]
     fn test_execute_edit_post_invalid() {
@@ -508,7 +508,7 @@ mod tests {
         };
         let _res = execute(deps.as_mut(), env.clone(), info, msg).unwrap();
         //query post
-        let msg = QueryMsg::Post { post_id: 01 };
+        let msg = QueryMsg::Post { post_id: 1 };
         let bin = query(deps.as_ref(), env.clone(), msg).unwrap();
         let res: PostResponse = from_binary(&bin).unwrap();
         assert!(res.post.is_some());
