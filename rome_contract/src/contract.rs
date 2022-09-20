@@ -1,7 +1,7 @@
 use std::env;
 
 #[cfg(not(feature = "library"))]
-use cosmwasm_std::{Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult, Order, attr, entry_point, from_binary, to_binary};
+use cosmwasm_std::{Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult, Order, entry_point, to_binary};
 use cw2::set_contract_version;
 use random_number::random;
 
@@ -229,14 +229,11 @@ fn query_post (deps: Deps, _env: Env, post_id: u64) -> StdResult<Binary> {
 
 #[cfg(test)]
 mod tests {
-    use cosmwasm_std::{attr, Api, from_binary};
+    use cosmwasm_std::{attr, from_binary};
     use cosmwasm_std::testing::{mock_dependencies, mock_env, mock_info};
-    use desmos_bindings::posts::query;
-    use random_number::rand::rngs::mock;
     use random_number::random;
     use crate::contract::instantiate;
     use crate::msg::{InstantiateMsg, ExecuteMsg, QueryMsg, AllPostsResponse, self, PostResponse};
-    use crate::state::{Post, POST};
 
     use super::{execute, query};
 
