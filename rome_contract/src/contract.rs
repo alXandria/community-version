@@ -443,7 +443,7 @@ mod tests {
         let msg = InstantiateMsg { admin: None };
         let _res = instantiate(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
         let msg = ExecuteMsg::CreatePost {
-            post_id: 01,
+            post_id: 1,
             external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(),
             tags: vec![
                 "Blockchain".to_string(),
@@ -455,7 +455,7 @@ mod tests {
         };
         let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
         let msg = ExecuteMsg::CreatePost {
-            post_id: 02,
+            post_id: 2,
             external_id: "https://www.google.com".to_string(),
             tags: vec!["Search".to_string(), "Google".to_string()],
             text: None,
@@ -475,7 +475,7 @@ mod tests {
         let msg = InstantiateMsg { admin: None };
         let _res = instantiate(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
         let msg = ExecuteMsg::CreatePost {
-            post_id: 01,
+            post_id: 1,
             external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(),
             tags: vec![
                 "Blockchain".to_string(),
