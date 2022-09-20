@@ -235,7 +235,7 @@ mod tests {
     use random_number::rand::rngs::mock;
     use random_number::random;
     use crate::contract::instantiate;
-    use crate::msg::{InstantiateMsg, ExecuteMsg, QueryMsg, AllPostsResponse};
+    use crate::msg::{InstantiateMsg, ExecuteMsg, QueryMsg, AllPostsResponse, self, PostResponse};
     use crate::state::{Post, POST};
 
     use super::{execute, query};
@@ -525,6 +525,43 @@ mod tests {
         let bin = query(deps.as_ref(), env, msg).unwrap();
         let res: AllPostsResponse = from_binary(&bin).unwrap();
         assert_eq!(res.posts.len(), 2);
-
+    }
+    #[test]
+    fn test_query_post() {
+        let mut deps = mock_dependencies();
+        let env = mock_env();
+        let info = mock_info(ADDR1, &vec![]);
+        let msg = InstantiateMsg{ admin: None };
+        let _res = instantiate(
+            deps.as_mut(),
+            env.clone(), 
+            info.clone(), 
+            msg).unwrap();
+        let msg = ExecuteMsg::CreatePost { 
+            post_id: 01, 
+            external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(), 
+            tags: vec!["Blockchain".to_string(), "Governance".to_string(), "Rejected".to_string()], 
+            text: None, 
+            author: info.sender.to_string(), 
+        };
+        let _res = execute(
+            deps.as_mut(),
+            env.clone(), 
+            info.clone(), 
+            msg).unwrap();
+        //query post
+        let msg = QueryMsg::Post { 
+            post_id: 01,
+        };
+        let bin = query(deps.as_ref(), env.clone(), msg).unwrap();
+        let res: PostResponse = from_binary(&bin).unwrap();
+        assert!(res.post.is_some());
+        //query nonexistent post
+        let msg = QueryMsg::Post { 
+            post_id: 78476, 
+        };
+        let bin = query(deps.as_ref(), env.clone(), msg).unwrap();
+        let res: PostResponse = from_binary(&bin).unwrap();
+        assert!(res.post.is_none()); 
     }
 }
