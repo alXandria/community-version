@@ -16,8 +16,6 @@ pub enum ExecuteMsg {
         external_id: String,
         text: Option<String>,
         tags: Vec<String>,
-        author: String,
-        creation_date: String,
     },
     EditPost {
         post_id: u64,
@@ -30,11 +28,7 @@ pub enum ExecuteMsg {
         external_id: String,
         text: Option<String>,
         tags: Vec<String>,
-        author: String,
-        creation_date: String,
         last_edit_date: Option<String>,
-        deleter: Option<String>,
-        editor: Option<String>,
     },
 }
 

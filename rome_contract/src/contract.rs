@@ -46,57 +46,20 @@ pub fn execute(
             external_id,
             text,
             tags,
-            author,
-            creation_date,
-        } => execute_create_post(
-            deps,
-            env,
-            info,
-            post_id,
-            external_id,
-            text,
-            tags,
-            author,
-            creation_date,
-        ),
+        } => execute_create_post(deps, env, info, post_id, external_id, text, tags),
         ExecuteMsg::EditPost {
             post_id,
             external_id,
             text,
             tags,
-        } => execute_edit_post(
-            deps,
-            env,
-            info,
-            post_id,
-            external_id,
-            text,
-            tags,
-        ),
+        } => execute_edit_post(deps, env, info, post_id, external_id, text, tags),
         ExecuteMsg::DeletePost {
             post_id,
             external_id,
             text,
             tags,
-            author,
-            creation_date,
             last_edit_date,
-            deleter,
-            editor,
-        } => execute_delete_post(
-            deps,
-            env,
-            info,
-            post_id,
-            external_id,
-            text,
-            tags,
-            author,
-            creation_date,
-            last_edit_date,
-            deleter,
-            editor,
-        ),
+        } => execute_delete_post(deps, info, post_id, external_id, text, tags, last_edit_date),
     }
 }
 
@@ -108,8 +71,6 @@ fn execute_create_post(
     external_id: String,
     text: Option<String>,
     tags: Vec<String>,
-    _author: String,
-    _creation_date: String,
 ) -> Result<Response, ContractError> {
     if text.is_some() {
         return Err(ContractError::NoTextAllowed {});
@@ -163,17 +124,12 @@ fn execute_edit_post(
 }
 fn execute_delete_post(
     deps: DepsMut,
-    _env: Env,
     info: MessageInfo,
     post_id: u64,
     external_id: String,
     text: Option<String>,
     tags: Vec<String>,
-    _author: String,
-    _creation_date: String,
     last_edit_date: Option<String>,
-    _deleter: Option<String>,
-    _editor: Option<String>,
 ) -> Result<Response, ContractError> {
     if text.is_some() || !external_id.is_empty() || !tags.is_empty() {
         return Err(ContractError::DeletedPost {});
@@ -279,8 +235,6 @@ mod tests {
                 "Rejected".to_string(),
             ],
             text: None,
-            author: info.sender.to_string(),
-            creation_date: env.block.time.to_string(),
         };
         let _res = execute(deps.as_mut(), env, info, msg).unwrap();
     }
@@ -301,8 +255,6 @@ mod tests {
                 "Rejected".to_string(),
             ],
             text: Some("This will fail".to_string()),
-            author: info.sender.to_string(),
-            creation_date: env.block.time.to_string(),
         };
         let _err = execute(deps.as_mut(), env, info, msg).unwrap_err();
     }
@@ -323,8 +275,6 @@ mod tests {
                 "Rejected".to_string(),
             ],
             text: None,
-            author: info.sender.to_string(),
-            creation_date: env.block.time.to_string(),
         };
         let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
         //edit message
@@ -353,8 +303,6 @@ mod tests {
                 "Rejected".to_string(),
             ],
             text: None,
-            author: info.sender.to_string(),
-            creation_date: env.block.time.to_string(),
         };
         let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
         let msg = ExecuteMsg::EditPost {
@@ -382,8 +330,6 @@ mod tests {
                 "Rejected".to_string(),
             ],
             text: None,
-            author: info.sender.to_string(),
-            creation_date: env.block.time.to_string(),
         };
         let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
         //delete message
@@ -392,11 +338,7 @@ mod tests {
             external_id: "".to_string(),
             text: None,
             tags: vec![],
-            author: "desmos1d2wmr92lphgtpv9xl9ux2cssd5ras7t8atryzy".to_string(),
-            creation_date: "20220921212209".to_string(),
             last_edit_date: Some(env.block.time.to_string()),
-            deleter: Some(info.sender.to_string()),
-            editor: None,
         };
         let _res = execute(deps.as_mut(), env, info, msg).unwrap();
     }
@@ -416,8 +358,6 @@ mod tests {
                 "Rejected".to_string(),
             ],
             text: None,
-            author: info.sender.to_string(),
-            creation_date: env.block.time.to_string(),
         };
         let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
         let msg = ExecuteMsg::DeletePost {
@@ -425,11 +365,7 @@ mod tests {
             external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(),
             text: None,
             tags: vec!["".to_string()],
-            author: "desmos1d2wmr92lphgtpv9xl9ux2cssd5ras7t8atryzy".to_string(),
-            creation_date: "20220921212209".to_string(),
             last_edit_date: Some(env.block.time.to_string()),
-            deleter: Some(info.sender.to_string()),
-            editor: None,
         };
         let _err = execute(deps.as_mut(), env, info, msg).unwrap_err();
     }
@@ -449,8 +385,6 @@ mod tests {
                 "Rejected".to_string(),
             ],
             text: None,
-            author: info.sender.to_string(),
-            creation_date: env.block.time.to_string(),
         };
         let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
         let msg = ExecuteMsg::CreatePost {
@@ -458,8 +392,6 @@ mod tests {
             external_id: "https://www.google.com".to_string(),
             tags: vec!["Search".to_string(), "Google".to_string()],
             text: None,
-            author: info.sender.to_string(),
-            creation_date: env.block.time.to_string(),
         };
         let _res = execute(deps.as_mut(), env.clone(), info, msg).unwrap();
         let msg = QueryMsg::AllPosts {};
@@ -483,8 +415,6 @@ mod tests {
                 "Rejected".to_string(),
             ],
             text: None,
-            author: info.sender.to_string(),
-            creation_date: env.block.time.to_string(),
         };
         let _res = execute(deps.as_mut(), env.clone(), info, msg).unwrap();
         //query post
