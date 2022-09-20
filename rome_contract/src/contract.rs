@@ -1,8 +1,7 @@
 use std::env;
 
 #[cfg(not(feature = "library"))]
-use cosmwasm_std::{Addr, entry_point};
-use cosmwasm_std::{Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult, Order, to_binary};
+use cosmwasm_std::{Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult, Order, attr, entry_point, from_binary, to_binary};
 use cw2::set_contract_version;
 use random_number::random;
 
@@ -230,15 +229,16 @@ fn query_post (deps: Deps, _env: Env, post_id: u64) -> StdResult<Binary> {
 
 #[cfg(test)]
 mod tests {
-    use cosmwasm_std::{attr, Api};
+    use cosmwasm_std::{attr, Api, from_binary};
     use cosmwasm_std::testing::{mock_dependencies, mock_env, mock_info};
+    use desmos_bindings::posts::query;
     use random_number::rand::rngs::mock;
     use random_number::random;
     use crate::contract::instantiate;
-    use crate::msg::{InstantiateMsg, ExecuteMsg};
+    use crate::msg::{InstantiateMsg, ExecuteMsg, QueryMsg, AllPostsResponse};
     use crate::state::{Post, POST};
 
-    use super::execute;
+    use super::{execute, query};
 
     pub const ADDR1: &str = "addr1";
     pub const ADDR2: &str = "addr2";
@@ -457,7 +457,6 @@ mod tests {
             env.clone(), 
             info.clone(), 
             msg).unwrap();
-        //edit a post and add text (fail)
         let msg = ExecuteMsg::CreatePost { 
             post_id: 16409, 
             external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(), 
@@ -486,5 +485,46 @@ mod tests {
             env.clone(), 
             info.clone(), 
             msg).unwrap_err();
+    }
+    #[test]
+    fn test_query_all_posts() {
+        let mut deps = mock_dependencies();
+        let env = mock_env();
+        let info = mock_info(ADDR1, &vec![]);
+        let msg = InstantiateMsg{ admin: None };
+        let _res = instantiate(
+            deps.as_mut(),
+            env.clone(), 
+            info.clone(), 
+            msg).unwrap();
+        let msg = ExecuteMsg::CreatePost { 
+            post_id: 01, 
+            external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(), 
+            tags: vec!["Blockchain".to_string(), "Governance".to_string(), "Rejected".to_string()], 
+            text: None, 
+            author: info.sender.to_string(), 
+        };
+        let _res = execute(
+            deps.as_mut(),
+            env.clone(), 
+            info.clone(), 
+            msg).unwrap();
+        let msg = ExecuteMsg::CreatePost { 
+            post_id: 02, 
+            external_id: "https://www.google.com".to_string(), 
+            tags: vec!["Search".to_string(), "Google".to_string()], 
+            text: None, 
+            author: info.sender.to_string(), 
+        };
+        let _res = execute(
+            deps.as_mut(),
+            env.clone(), 
+            info.clone(), 
+            msg).unwrap();
+        let msg = QueryMsg::AllPosts {  };
+        let bin = query(deps.as_ref(), env, msg).unwrap();
+        let res: AllPostsResponse = from_binary(&bin).unwrap();
+        assert_eq!(res.posts.len(), 2);
+
     }
 }
