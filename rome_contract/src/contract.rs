@@ -457,7 +457,7 @@ mod tests {
     fn test_query_all_posts() {
         let mut deps = mock_dependencies();
         let env = mock_env();
-        let info = mock_info(ADDR1, &vec![]);
+        let info = mock_info(ADDR1, &[]);
         let msg = InstantiateMsg { admin: None };
         let _res = instantiate(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
         let msg = ExecuteMsg::CreatePost {
@@ -481,7 +481,7 @@ mod tests {
             author: info.sender.to_string(),
             creation_date: env.block.time.to_string()
         };
-        let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
+        let _res = execute(deps.as_mut(), env.clone(), info, msg).unwrap();
         let msg = QueryMsg::AllPosts {};
         let bin = query(deps.as_ref(), env, msg).unwrap();
         let res: AllPostsResponse = from_binary(&bin).unwrap();
@@ -506,7 +506,7 @@ mod tests {
             author: info.sender.to_string(),
             creation_date: env.block.time.to_string()
         };
-        let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
+        let _res = execute(deps.as_mut(), env.clone(), info, msg).unwrap();
         //query post
         let msg = QueryMsg::Post { post_id: 01 };
         let bin = query(deps.as_ref(), env.clone(), msg).unwrap();
@@ -514,7 +514,7 @@ mod tests {
         assert!(res.post.is_some());
         //query nonexistent post
         let msg = QueryMsg::Post { post_id: 78476 };
-        let bin = query(deps.as_ref(), env.clone(), msg).unwrap();
+        let bin = query(deps.as_ref(), env, msg).unwrap();
         let res: PostResponse = from_binary(&bin).unwrap();
         assert!(res.post.is_none());
     }
