@@ -322,7 +322,7 @@ mod tests {
     fn test_execute_edit_post_valid() {
         let mut deps = mock_dependencies();
         let env = mock_env();
-        let info = mock_info(ADDR1, &vec![]);
+        let info = mock_info(ADDR1, &[]);
         let msg = InstantiateMsg { admin: None };
         let _res = instantiate(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
         //create a post
@@ -356,7 +356,7 @@ mod tests {
     fn test_execute_edit_post_invalid() {
         let mut deps = mock_dependencies();
         let env = mock_env();
-        let info = mock_info(ADDR1, &vec![]);
+        let info = mock_info(ADDR1, &[]);
         let msg = InstantiateMsg { admin: None };
         let _res = instantiate(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
         //edit a post and add text (fail)
@@ -383,13 +383,13 @@ mod tests {
             creation_date: "20220921212209".to_string(),
             last_edit_date: env.block.time.to_string(),
         };
-        let _err = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap_err();
+        let _err = execute(deps.as_mut(), env, info, msg).unwrap_err();
     }
     #[test]
     fn test_execute_delete_post_valid() {
         let mut deps = mock_dependencies();
         let env = mock_env();
-        let info = mock_info(ADDR1, &vec![]);
+        let info = mock_info(ADDR1, &[]);
         let msg = InstantiateMsg { admin: None };
         let _res = instantiate(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
         //create a post
@@ -418,13 +418,13 @@ mod tests {
             deleter: Some(info.sender.to_string()),
             editor: None,
         };
-        let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
+        let _res = execute(deps.as_mut(), env, info, msg).unwrap();
     }
     #[test]
     fn test_execute_delete_post_invalid() {
         let mut deps = mock_dependencies();
         let env = mock_env();
-        let info = mock_info(ADDR1, &vec![]);
+        let info = mock_info(ADDR1, &[]);
         let msg = InstantiateMsg { admin: None };
         let _res = instantiate(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
         let msg = ExecuteMsg::CreatePost {
@@ -451,7 +451,7 @@ mod tests {
             deleter: Some(info.sender.to_string()),
             editor: None,
         };
-        let _err = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap_err();
+        let _err = execute(deps.as_mut(), env, info, msg).unwrap_err();
     }
     #[test]
     fn test_query_all_posts() {
