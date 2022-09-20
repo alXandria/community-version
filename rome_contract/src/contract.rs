@@ -47,7 +47,18 @@ pub fn execute(
             text,
             tags,
             author,
-        } => execute_create_post(deps, env, info, post_id, external_id, text, tags, author),
+            creation_date
+        } => execute_create_post(
+            deps, 
+            env, 
+            info, 
+            post_id, 
+            external_id, 
+            text, 
+            tags, 
+            author,
+            creation_date
+        ),
         ExecuteMsg::EditPost {
             post_id,
             external_id,
@@ -106,6 +117,7 @@ fn execute_create_post(
     text: Option<String>,
     tags: Vec<String>,
     author: String,
+    creation_date: String,
 ) -> Result<Response, ContractError> {
     if text.is_some() {
         return Err(ContractError::NoTextAllowed {});
@@ -280,6 +292,7 @@ mod tests {
             ],
             text: None,
             author: info.sender.to_string(),
+            creation_date: env.block.time.to_string()
         };
         let _res = execute(deps.as_mut(), env, info, msg).unwrap();
     }
@@ -301,6 +314,7 @@ mod tests {
             ],
             text: Some("This will fail".to_string()),
             author: info.sender.to_string(),
+            creation_date: env.block.time.to_string()
         };
         let _err = execute(deps.as_mut(), env, info, msg).unwrap_err();
     }
@@ -322,6 +336,7 @@ mod tests {
             ],
             text: None,
             author: info.sender.to_string(),
+            creation_date: env.block.time.to_string()
         };
         let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
         //edit message
@@ -355,6 +370,7 @@ mod tests {
             ],
             text: None,
             author: info.sender.to_string(),
+            creation_date: env.block.time.to_string()
         };
         let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
         let msg = ExecuteMsg::EditPost {
@@ -387,6 +403,7 @@ mod tests {
             ],
             text: None,
             author: info.sender.to_string(),
+            creation_date: env.block.time.to_string()
         };
         let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
         //delete message
@@ -420,6 +437,7 @@ mod tests {
             ],
             text: None,
             author: info.sender.to_string(),
+            creation_date: env.block.time.to_string()
         };
         let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
         let msg = ExecuteMsg::DeletePost {
@@ -452,6 +470,7 @@ mod tests {
             ],
             text: None,
             author: info.sender.to_string(),
+            creation_date: env.block.time.to_string()
         };
         let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
         let msg = ExecuteMsg::CreatePost {
@@ -460,6 +479,7 @@ mod tests {
             tags: vec!["Search".to_string(), "Google".to_string()],
             text: None,
             author: info.sender.to_string(),
+            creation_date: env.block.time.to_string()
         };
         let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
         let msg = QueryMsg::AllPosts {};
@@ -484,6 +504,7 @@ mod tests {
             ],
             text: None,
             author: info.sender.to_string(),
+            creation_date: env.block.time.to_string()
         };
         let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
         //query post

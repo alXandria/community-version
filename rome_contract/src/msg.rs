@@ -14,9 +14,10 @@ pub enum ExecuteMsg {
     CreatePost {
         post_id: u64,
         external_id: String,
-        tags: Vec<String>,
         text: Option<String>,
+        tags: Vec<String>,
         author: String,
+        creation_date: String,
     },
     EditPost {
         post_id: u64,
