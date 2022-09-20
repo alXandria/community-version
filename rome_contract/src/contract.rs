@@ -116,8 +116,8 @@ fn execute_create_post(
     external_id: String,
     text: Option<String>,
     tags: Vec<String>,
-    author: String,
-    creation_date: String,
+    _author: String,
+    _creation_date: String,
 ) -> Result<Response, ContractError> {
     if text.is_some() {
         return Err(ContractError::NoTextAllowed {});
@@ -148,10 +148,10 @@ fn execute_edit_post(
     external_id: String,
     text: Option<String>,
     tags: Vec<String>,
-    author: String,
-    editor: String,
-    creation_date: String,
-    last_edit_date: String,
+    _author: String,
+    _editor: String,
+    _creation_date: String,
+    _last_edit_date: String,
 ) -> Result<Response, ContractError> {
     if text.is_some() {
         return Err(ContractError::NoTextAllowed {});
@@ -181,11 +181,11 @@ fn execute_delete_post(
     external_id: String,
     text: Option<String>,
     tags: Vec<String>,
-    author: String,
-    creation_date: String,
+    _author: String,
+    _creation_date: String,
     last_edit_date: Option<String>,
-    deleter: Option<String>,
-    editor: Option<String>,
+    _deleter: Option<String>,
+    _editor: Option<String>,
 ) -> Result<Response, ContractError> {
     if text.is_some() || external_id.len() > 0 || tags.len() > 0 {
         return Err(ContractError::DeletedPost {});
@@ -233,7 +233,7 @@ fn query_post(deps: Deps, _env: Env, post_id: u64) -> StdResult<Binary> {
 #[cfg(test)]
 mod tests {
     use crate::contract::instantiate;
-    use crate::msg::{self, AllPostsResponse, ExecuteMsg, InstantiateMsg, PostResponse, QueryMsg};
+    use crate::msg::{AllPostsResponse, ExecuteMsg, InstantiateMsg, PostResponse, QueryMsg};
     use cosmwasm_std::testing::{mock_dependencies, mock_env, mock_info};
     use cosmwasm_std::{attr, from_binary};
     use random_number::random;
