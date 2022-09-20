@@ -1,6 +1,6 @@
+use crate::state::Post;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
-use crate::state::Post;
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 #[serde(rename_all = "snake_case")]
@@ -11,14 +11,14 @@ pub struct InstantiateMsg {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum ExecuteMsg {
-    CreatePost{
+    CreatePost {
         post_id: u64,
         external_id: String,
         tags: Vec<String>,
         text: Option<String>,
         author: String,
     },
-    EditPost{
+    EditPost {
         post_id: u64,
         external_id: String,
         text: Option<String>,
@@ -28,7 +28,7 @@ pub enum ExecuteMsg {
         creation_date: String,
         last_edit_date: String,
     },
-    DeletePost{
+    DeletePost {
         post_id: u64,
         external_id: String,
         text: Option<String>,
@@ -37,7 +37,7 @@ pub enum ExecuteMsg {
         creation_date: String,
         last_edit_date: Option<String>,
         deleter: Option<String>,
-        editor: Option<String>
+        editor: Option<String>,
     },
 }
 
@@ -54,9 +54,7 @@ pub struct PostResponse {
 #[serde(rename_all = "snake_case")]
 pub enum QueryMsg {
     AllPosts {},
-    Post{
-        post_id: u64,
-    },
+    Post { post_id: u64 },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
