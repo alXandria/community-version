@@ -242,7 +242,8 @@ mod tests {
                 "Governance".to_string(),
                 "Rejected".to_string(),
             ],
-            text: "This will fail".to_string(),
+            //text over 500 characters
+            text: "This will fail vdfjkvjdfnksvkndsvjsndjkvnkjfnvnsdjkvnsdfnvjkdfnsvnjdksnvkldsnvjkdfnvjkfdnvkdnfjvkndjsknvjksdnknjfknvjkdsfnjvknskdnvjkndsjkvsjkdnvjksdfnvjksdfnvjkdfsnjvksvndfjkvnjsdkfnvjksdfnvkjlsdfvjnldsfknvjkdsvnjdksjkvcjkdnkm dkfs vkdnjkvndfkjsvjkfdnvjksdfnjkvkdfnvdnskvnsdfvjkdsnvjkdfnvjkdnvjksdnvjkdsvnjkdfnsdvfdknvjksdnvjfkdsnvjkdfsnvjksdnvjkfdsnvjkdsvlnsjknvjkdsnvjksdfnvkndsfjkvnjdskvnksdflvnjdknvjksdnvjkdfsnvjkdsnvjksdnvkdsnvfjkdnvjkdnvjkfndsvkdsfnjvksdnvsdfjklnvjdkslnvjdksnvjdfknvsdfjklnvdjksfnvjkdlsfnvkd".to_string(),
         };
         let _err = execute(deps.as_mut(), env, info, msg).unwrap_err();
     }
@@ -296,7 +297,7 @@ mod tests {
         let msg = ExecuteMsg::EditPost {
             post_id: 16409,
             external_id: "https://stake.tax/".to_string(),
-            text: "This will fail".to_string(),
+            text: "This will fail vdfjkvjdfnksvkndsvjsndjkvnkjfnvnsdjkvnsdfnvjkdfnsvnjdksnvkldsnvjkdfnvjkfdnvkdnfjvkndjsknvjksdnknjfknvjkdsfnjvknskdnvjkndsjkvsjkdnvjksdfnvjksdfnvjkdfsnjvksvndfjkvnjsdkfnvjksdfnvkjlsdfvjnldsfknvjkdsvnjdksjkvcjkdnkm dkfs vkdnjkvndfkjsvjkfdnvjksdfnjkvkdfnvdnskvnsdfvjkdsnvjkdfnvjkdnvjksdnvjkdsvnjkdfnsdvfdknvjksdnvjfkdsnvjkdfsnvjksdnvjkfdsnvjkdsvlnsjknvjkdsnvjksdfnvkndsfjkvnjdskvnksdflvnjdknvjksdnvjkdfsnvjkdsnvjksdnvkdsnvfjkdnvjkdnvjkfndsvkdsfnjvksdnvsdfjklnvjdkslnvjdksnvjdfknvsdfjklnvdjksfnvjkdlsfnvkd".to_string(),
             tags: vec!["Tax".to_string(), "Website".to_string()],
         };
         let _err = execute(deps.as_mut(), env, info, msg).unwrap_err();
@@ -343,7 +344,7 @@ mod tests {
             text: "".to_string(),
         };
         let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
-        let msg = ExecuteMsg::DeletePost { post_id: 16409 };
+        let msg = ExecuteMsg::DeletePost { post_id: 164099 };
         let _err = execute(deps.as_mut(), env, info, msg).unwrap_err();
     }
     #[test]
