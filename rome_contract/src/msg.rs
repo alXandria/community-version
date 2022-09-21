@@ -14,13 +14,13 @@ pub enum ExecuteMsg {
     CreatePost {
         post_id: u64,
         external_id: String,
-        text: Option<String>,
+        text: String,
         tags: Vec<String>,
     },
     EditPost {
         post_id: u64,
         external_id: String,
-        text: Option<String>,
+        text: String,
         tags: Vec<String>,
     },
     DeletePost {

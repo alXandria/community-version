@@ -63,11 +63,11 @@ fn execute_create_post(
     info: MessageInfo,
     post_id: u64,
     external_id: String,
-    text: Option<String>,
+    text: String,
     tags: Vec<String>,
 ) -> Result<Response, ContractError> {
-    if text.is_some() {
-        return Err(ContractError::NoTextAllowed {});
+    if text.len() > 499 {
+        return Err(ContractError::TooMuchText {});
     }
     let author = info.sender.to_string();
     let validated_author = deps.api.addr_validate(&author)?;
@@ -93,11 +93,11 @@ fn execute_edit_post(
     info: MessageInfo,
     post_id: u64,
     external_id: String,
-    text: Option<String>,
+    text: String,
     tags: Vec<String>,
 ) -> Result<Response, ContractError> {
-    if text.is_some() {
-        return Err(ContractError::NoTextAllowed {});
+    if text.len() > 499 {
+        return Err(ContractError::TooMuchText {});
     }
     let post = POST.load(deps.storage, post_id)?;
     let editor = info.sender.to_string();
@@ -128,7 +128,7 @@ fn execute_delete_post(
     let deleted_post: Post = Post {
         post_id: post.post_id,
         external_id: "".to_string(),
-        text: None,
+        text: "This post has been deleted.".to_string(),
         tags: vec!["Deleted".to_string()],
         author: post.author,
         creation_date: post.creation_date,
@@ -222,7 +222,7 @@ mod tests {
                 "Governance".to_string(),
                 "Rejected".to_string(),
             ],
-            text: None,
+            text: "Hi".to_string(),
         };
         let _res = execute(deps.as_mut(), env, info, msg).unwrap();
     }
@@ -242,7 +242,7 @@ mod tests {
                 "Governance".to_string(),
                 "Rejected".to_string(),
             ],
-            text: Some("This will fail".to_string()),
+            text: "This will fail".to_string(),
         };
         let _err = execute(deps.as_mut(), env, info, msg).unwrap_err();
     }
@@ -262,14 +262,14 @@ mod tests {
                 "Governance".to_string(),
                 "Rejected".to_string(),
             ],
-            text: None,
+            text: "".to_string(),
         };
         let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
         //edit message
         let msg = ExecuteMsg::EditPost {
             post_id: 16409,
             external_id: "https://stake.tax/".to_string(),
-            text: None,
+            text: "".to_string(),
             tags: vec!["Tax".to_string(), "Website".to_string()],
         };
         let _res = execute(deps.as_mut(), env, info, msg).unwrap();
@@ -290,13 +290,13 @@ mod tests {
                 "Governance".to_string(),
                 "Rejected".to_string(),
             ],
-            text: None,
+            text: "".to_string(),
         };
         let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
         let msg = ExecuteMsg::EditPost {
             post_id: 16409,
             external_id: "https://stake.tax/".to_string(),
-            text: Some("This will fail".to_string()),
+            text: "This will fail".to_string(),
             tags: vec!["Tax".to_string(), "Website".to_string()],
         };
         let _err = execute(deps.as_mut(), env, info, msg).unwrap_err();
@@ -317,7 +317,7 @@ mod tests {
                 "Governance".to_string(),
                 "Rejected".to_string(),
             ],
-            text: None,
+            text: "".to_string(),
         };
         let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
         //delete message
@@ -340,7 +340,7 @@ mod tests {
                 "Governance".to_string(),
                 "Rejected".to_string(),
             ],
-            text: None,
+            text: "".to_string(),
         };
         let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
         let msg = ExecuteMsg::DeletePost { post_id: 16409 };
@@ -361,14 +361,14 @@ mod tests {
                 "Governance".to_string(),
                 "Rejected".to_string(),
             ],
-            text: None,
+            text: "".to_string(),
         };
         let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
         let msg = ExecuteMsg::CreatePost {
             post_id: 2,
             external_id: "https://www.google.com".to_string(),
             tags: vec!["Search".to_string(), "Google".to_string()],
-            text: None,
+            text: "".to_string(),
         };
         let _res = execute(deps.as_mut(), env.clone(), info, msg).unwrap();
         let msg = QueryMsg::AllPosts {};
@@ -391,7 +391,7 @@ mod tests {
                 "Governance".to_string(),
                 "Rejected".to_string(),
             ],
-            text: None,
+            text: "".to_string(),
         };
         let _res = execute(deps.as_mut(), env.clone(), info, msg).unwrap();
         //query post

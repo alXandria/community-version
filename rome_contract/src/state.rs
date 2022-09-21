@@ -12,7 +12,7 @@ pub struct Config {
 pub struct Post {
     pub post_id: u64,
     pub external_id: String,
-    pub text: Option<String>,
+    pub text: String,
     pub tags: Vec<String>,
     pub author: String,
     pub creation_date: String,
