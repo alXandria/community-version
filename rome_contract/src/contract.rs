@@ -53,13 +53,7 @@ pub fn execute(
             text,
             tags,
         } => execute_edit_post(deps, env, info, post_id, external_id, text, tags),
-        ExecuteMsg::DeletePost {
-            post_id,
-            external_id,
-            text,
-            tags,
-            last_edit_date,
-        } => execute_delete_post(deps, info, post_id, external_id, text, tags, last_edit_date),
+        ExecuteMsg::DeletePost { post_id } => execute_delete_post(deps, env, info, post_id),
     }
 }
 
@@ -124,27 +118,21 @@ fn execute_edit_post(
 }
 fn execute_delete_post(
     deps: DepsMut,
+    env: Env,
     info: MessageInfo,
     post_id: u64,
-    external_id: String,
-    text: Option<String>,
-    tags: Vec<String>,
-    last_edit_date: Option<String>,
 ) -> Result<Response, ContractError> {
-    if text.is_some() || !external_id.is_empty() || !tags.is_empty() {
-        return Err(ContractError::DeletedPost {});
-    }
     let post = POST.load(deps.storage, post_id)?;
     let deleter = info.sender.to_string();
     let validated_deleter = deps.api.addr_validate(&deleter)?;
     let deleted_post: Post = Post {
         post_id: post.post_id,
-        external_id,
-        text,
-        tags,
+        external_id: "".to_string(),
+        text: None,
+        tags: vec!["Deleted".to_string()],
         author: post.author,
         creation_date: post.creation_date,
-        last_edit_date,
+        last_edit_date: Some(env.block.time.to_string()),
         deleter: Some(validated_deleter.to_string()),
         editor: post.editor,
     };
@@ -333,16 +321,11 @@ mod tests {
         };
         let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
         //delete message
-        let msg = ExecuteMsg::DeletePost {
-            post_id: 16409,
-            external_id: "".to_string(),
-            text: None,
-            tags: vec![],
-            last_edit_date: Some(env.block.time.to_string()),
-        };
+        let msg = ExecuteMsg::DeletePost { post_id: 16409 };
         let _res = execute(deps.as_mut(), env, info, msg).unwrap();
     }
     #[test]
+    //need to redo this test
     fn test_execute_delete_post_invalid() {
         let mut deps = mock_dependencies();
         let env = mock_env();
@@ -360,13 +343,7 @@ mod tests {
             text: None,
         };
         let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
-        let msg = ExecuteMsg::DeletePost {
-            post_id: 16409,
-            external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(),
-            text: None,
-            tags: vec!["".to_string()],
-            last_edit_date: Some(env.block.time.to_string()),
-        };
+        let msg = ExecuteMsg::DeletePost { post_id: 16409 };
         let _err = execute(deps.as_mut(), env, info, msg).unwrap_err();
     }
     #[test]
