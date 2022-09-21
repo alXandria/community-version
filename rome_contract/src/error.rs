@@ -14,4 +14,7 @@ pub enum ContractError {
 
     #[error("Deleted post content must be empty.")]
     DeletedPost {},
+
+    #[error("Deleted post content must be empty.")]
+    NotEnoughFunds {},
 }

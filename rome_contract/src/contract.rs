@@ -2,7 +2,8 @@ use std::env;
 
 #[cfg(not(feature = "library"))]
 use cosmwasm_std::{
-    entry_point, to_binary, Binary, Deps, DepsMut, Env, MessageInfo, Order, Response, StdResult,
+    coins, entry_point, to_binary, Binary, Deps, DepsMut, Env, MessageInfo, Order, Response,
+    StdResult,
 };
 use cw2::set_contract_version;
 use random_number::random;
@@ -66,6 +67,10 @@ fn execute_create_post(
     text: String,
     tags: Vec<String>,
 ) -> Result<Response, ContractError> {
+    let fee = coins(1000000, "udesmos");
+    if info.funds != fee {
+        return Err(ContractError::NotEnoughFunds {});
+    }
     if text.len() > 499 {
         return Err(ContractError::TooMuchText {});
     }
@@ -381,7 +386,7 @@ mod tests {
     fn test_query_post() {
         let mut deps = mock_dependencies();
         let env = mock_env();
-        let info = mock_info(ADDR1, &[]);
+        let info = mock_info(ADDR1, &[coins(1000000, "udesmos")]);
         let msg = InstantiateMsg { admin: None };
         let _res = instantiate(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
         let msg = ExecuteMsg::CreatePost {
