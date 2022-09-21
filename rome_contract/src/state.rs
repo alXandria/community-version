@@ -4,21 +4,21 @@ use serde::{Deserialize, Serialize};
 use cosmwasm_std::Addr;
 use cw_storage_plus::{Item, Map};
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 pub struct Config {
     pub admin: Addr,
 }
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 pub struct Post {
     pub post_id: u64,
     pub external_id: String,
-    pub text: Option<String>,
+    pub text: String,
     pub tags: Vec<String>,
     pub author: String,
     pub creation_date: String,
     pub last_edit_date: Option<String>,
     pub deleter: Option<String>,
-    pub editor: Option<String>
+    pub editor: Option<String>,
 }
 
 pub const CONFIG: Item<Config> = Item::new("config");

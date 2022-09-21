@@ -10,7 +10,7 @@ pub enum ContractError {
     Unauthorized {},
 
     #[error("No Text Allowed")]
-    NoTextAllowed {},
+    TooMuchText {},
 
     #[error("Deleted post content must be empty.")]
     DeletedPost {},
