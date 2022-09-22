@@ -43,11 +43,10 @@ pub fn execute(
 ) -> Result<Response, ContractError> {
     match msg {
         ExecuteMsg::CreatePost {
-            post_id,
             external_id,
             text,
             tags,
-        } => execute_create_post(deps, env, info, post_id, external_id, text, tags),
+        } => execute_create_post(deps, env, info, external_id, text, tags),
         ExecuteMsg::EditPost {
             post_id,
             external_id,
@@ -62,7 +61,6 @@ fn execute_create_post(
     deps: DepsMut,
     env: Env,
     info: MessageInfo,
-    post_id: u64,
     external_id: String,
     text: String,
     tags: Vec<String>,
@@ -87,7 +85,7 @@ fn execute_create_post(
         deleter: None,
         editor: None,
     };
-    POST.save(deps.storage, post_id, &post)?;
+    POST.save(deps.storage, post.post_id, &post)?;
 
     Ok(Response::new())
 }
@@ -181,7 +179,6 @@ mod tests {
     use crate::msg::{AllPostsResponse, ExecuteMsg, InstantiateMsg, PostResponse, QueryMsg};
     use cosmwasm_std::testing::{mock_dependencies, mock_env, mock_info};
     use cosmwasm_std::{attr, coin, from_binary};
-    use random_number::random;
 
     use super::{execute, query};
 
@@ -229,7 +226,6 @@ mod tests {
         let info = mock_info(ADDR1, &[coin(100_000_000, "udesmos")]);
         //new execute message
         let msg = ExecuteMsg::CreatePost {
-            post_id: random!(),
             external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(),
             tags: vec![
                 "Blockchain".to_string(),
@@ -249,7 +245,6 @@ mod tests {
         let _res = instantiate(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
         //new execute message
         let msg = ExecuteMsg::CreatePost {
-            post_id: random!(),
             external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(),
             tags: vec![
                 "Blockchain".to_string(),
@@ -271,7 +266,6 @@ mod tests {
         let info = mock_info(ADDR1, &[coin(100_000_000, "udesmos")]);
         //create a post
         let msg = ExecuteMsg::CreatePost {
-            post_id: 16409,
             external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(),
             tags: vec![
                 "Blockchain".to_string(),
@@ -301,7 +295,6 @@ mod tests {
         let info = mock_info(ADDR1, &[coin(100_000_000, "udesmos")]);
         //edit a post and add text (fail)
         let msg = ExecuteMsg::CreatePost {
-            post_id: 16409,
             external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(),
             tags: vec![
                 "Blockchain".to_string(),
@@ -329,7 +322,6 @@ mod tests {
         let info = mock_info(ADDR1, &[coin(100_000_000, "udesmos")]);
         //create a post
         let msg = ExecuteMsg::CreatePost {
-            post_id: 16409,
             external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(),
             tags: vec![
                 "Blockchain".to_string(),
@@ -354,7 +346,6 @@ mod tests {
         let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
         let info = mock_info(ADDR1, &[coin(100_000_000, "udesmos")]);
         let msg = ExecuteMsg::CreatePost {
-            post_id: 16409,
             external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(),
             tags: vec![
                 "Blockchain".to_string(),
@@ -364,7 +355,7 @@ mod tests {
             text: "".to_string(),
         };
         let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
-        let msg = ExecuteMsg::DeletePost { post_id: 164099 };
+        let msg = ExecuteMsg::DeletePost { post_id: 67 };
         let _err = execute(deps.as_mut(), env, info, msg).unwrap_err();
     }
     #[test]
@@ -376,7 +367,6 @@ mod tests {
         let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
         let info = mock_info(ADDR1, &[coin(100_000_000, "udesmos")]);
         let msg = ExecuteMsg::CreatePost {
-            post_id: 1,
             external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(),
             tags: vec![
                 "Blockchain".to_string(),
@@ -387,7 +377,6 @@ mod tests {
         };
         let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
         let msg = ExecuteMsg::CreatePost {
-            post_id: 2,
             external_id: "https://www.google.com".to_string(),
             tags: vec!["Search".to_string(), "Google".to_string()],
             text: "".to_string(),
@@ -407,7 +396,6 @@ mod tests {
         let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
         let info = mock_info(ADDR1, &[coin(100_000_000, "udesmos")]);
         let msg = ExecuteMsg::CreatePost {
-            post_id: 1,
             external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(),
             tags: vec![
                 "Blockchain".to_string(),
