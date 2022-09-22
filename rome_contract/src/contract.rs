@@ -131,7 +131,7 @@ fn execute_delete_post(
     info: MessageInfo,
     post_id: u64,
 ) -> Result<Response, ContractError> {
-    let fee = coins(1000_000_000, "udesmos");
+    let fee = coins(1_000_000_000, "udesmos");
     if info.funds != fee {
         return Err(ContractError::NotEnoughFunds {});
     }
@@ -180,7 +180,7 @@ mod tests {
     use crate::contract::instantiate;
     use crate::msg::{AllPostsResponse, ExecuteMsg, InstantiateMsg, PostResponse, QueryMsg};
     use cosmwasm_std::testing::{mock_dependencies, mock_env, mock_info};
-    use cosmwasm_std::{attr, from_binary, coin};
+    use cosmwasm_std::{attr, coin, from_binary};
     use random_number::random;
 
     use super::{execute, query};
@@ -222,10 +222,11 @@ mod tests {
     fn test_execute_create_post_valid() {
         let mut deps = mock_dependencies();
         let env = mock_env();
-        let info = mock_info(ADDR1, &[coin(100_000_000, "udesmos")]);
+        let info = mock_info(ADDR1, &[]);
         //instatiate
         let msg = InstantiateMsg { admin: None };
-        let _res = instantiate(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
+        let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
+        let info = mock_info(ADDR1, &[coin(100_000_000, "udesmos")]);
         //new execute message
         let msg = ExecuteMsg::CreatePost {
             post_id: random!(),
@@ -266,7 +267,8 @@ mod tests {
         let env = mock_env();
         let info = mock_info(ADDR1, &[]);
         let msg = InstantiateMsg { admin: None };
-        let _res = instantiate(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
+        let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
+        let info = mock_info(ADDR1, &[coin(100_000_000, "udesmos")]);
         //create a post
         let msg = ExecuteMsg::CreatePost {
             post_id: 16409,
@@ -278,8 +280,9 @@ mod tests {
             ],
             text: "".to_string(),
         };
-        let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
+        let _res = execute(deps.as_mut(), env.clone(), info, msg).unwrap();
         //edit message
+        let info = mock_info(ADDR1, &[coin(200_000_000, "udesmos")]);
         let msg = ExecuteMsg::EditPost {
             post_id: 16409,
             external_id: "https://stake.tax/".to_string(),
@@ -294,7 +297,8 @@ mod tests {
         let env = mock_env();
         let info = mock_info(ADDR1, &[]);
         let msg = InstantiateMsg { admin: None };
-        let _res = instantiate(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
+        let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
+        let info = mock_info(ADDR1, &[coin(100_000_000, "udesmos")]);
         //edit a post and add text (fail)
         let msg = ExecuteMsg::CreatePost {
             post_id: 16409,
@@ -321,7 +325,8 @@ mod tests {
         let env = mock_env();
         let info = mock_info(ADDR1, &[]);
         let msg = InstantiateMsg { admin: None };
-        let _res = instantiate(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
+        let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
+        let info = mock_info(ADDR1, &[coin(100_000_000, "udesmos")]);
         //create a post
         let msg = ExecuteMsg::CreatePost {
             post_id: 16409,
@@ -333,8 +338,9 @@ mod tests {
             ],
             text: "".to_string(),
         };
-        let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
+        let _res = execute(deps.as_mut(), env.clone(), info, msg).unwrap();
         //delete message
+        let info = mock_info(ADDR1, &[coin(1_000_000_000, "udesmos")]);
         let msg = ExecuteMsg::DeletePost { post_id: 16409 };
         let _res = execute(deps.as_mut(), env, info, msg).unwrap();
     }
@@ -345,7 +351,8 @@ mod tests {
         let env = mock_env();
         let info = mock_info(ADDR1, &[]);
         let msg = InstantiateMsg { admin: None };
-        let _res = instantiate(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
+        let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
+        let info = mock_info(ADDR1, &[coin(100_000_000, "udesmos")]);
         let msg = ExecuteMsg::CreatePost {
             post_id: 16409,
             external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(),
@@ -366,7 +373,8 @@ mod tests {
         let env = mock_env();
         let info = mock_info(ADDR1, &[]);
         let msg = InstantiateMsg { admin: None };
-        let _res = instantiate(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
+        let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
+        let info = mock_info(ADDR1, &[coin(100_000_000, "udesmos")]);
         let msg = ExecuteMsg::CreatePost {
             post_id: 1,
             external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(),
@@ -396,7 +404,8 @@ mod tests {
         let env = mock_env();
         let info = mock_info(ADDR1, &[]);
         let msg = InstantiateMsg { admin: None };
-        let _res = instantiate(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
+        let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
+        let info = mock_info(ADDR1, &[coin(100_000_000, "udesmos")]);
         let msg = ExecuteMsg::CreatePost {
             post_id: 1,
             external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(),
