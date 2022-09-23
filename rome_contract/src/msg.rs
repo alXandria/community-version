@@ -12,6 +12,7 @@ pub struct InstantiateMsg {
 #[serde(rename_all = "snake_case")]
 pub enum ExecuteMsg {
     CreatePost {
+        post_id: u64,
         external_id: String,
         text: String,
         tags: Vec<String>,
