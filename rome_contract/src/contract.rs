@@ -88,8 +88,11 @@ fn execute_create_post(
     };
     POST.save(deps.storage, post.post_id, &post)?;
 
-    Ok(Response::new())
-}
+    Ok(Response::new()
+        .add_attribute("action", "Create Post")
+        .add_attribute("Post ID", post_id.to_string())
+        .add_attribute("Author", validated_author.to_string()))
+    }
 
 fn execute_edit_post(
     deps: DepsMut,
