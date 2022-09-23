@@ -29,8 +29,8 @@ pub fn instantiate(
     };
     CONFIG.save(deps.storage, &config)?;
     Ok(Response::new()
-        .add_attribute("action", "instantiate")
-        .add_attribute("admin", validated_admin.to_string()))
+        .add_attribute("Action", "Instantiate")
+        .add_attribute("Admin", validated_admin.to_string()))
 }
 
 #[cfg_attr(not(feature = "library"), entry_point)]
@@ -89,7 +89,7 @@ fn execute_create_post(
     POST.save(deps.storage, post.post_id, &post)?;
 
     Ok(Response::new()
-        .add_attribute("action", "Create Post")
+        .add_attribute("Action", "Create Post")
         .add_attribute("Post ID", post_id.to_string())
         .add_attribute("Author", validated_author.to_string()))
 }
