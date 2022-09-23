@@ -92,7 +92,7 @@ fn execute_create_post(
         .add_attribute("action", "Create Post")
         .add_attribute("Post ID", post_id.to_string())
         .add_attribute("Author", validated_author.to_string()))
-    }
+}
 
 fn execute_edit_post(
     deps: DepsMut,
@@ -125,7 +125,10 @@ fn execute_edit_post(
         editor: Some(validated_editor.to_string()),
     };
     POST.save(deps.storage, post_id, &new_post)?;
-    Ok(Response::new())
+    Ok(Response::new()
+        .add_attribute("Action", "Edit Post")
+        .add_attribute("Post ID", new_post.post_id.to_string())
+        .add_attribute("Editor", new_post.editor.unwrap()))
 }
 fn execute_delete_post(
     deps: DepsMut,
@@ -152,7 +155,10 @@ fn execute_delete_post(
         editor: post.editor,
     };
     POST.save(deps.storage, post_id, &deleted_post)?;
-    Ok(Response::new())
+    Ok(Response::new()
+        .add_attribute("Action", "Delete Post")
+        .add_attribute("Post ID", deleted_post.post_id.to_string())
+        .add_attribute("Delete", deleted_post.deleter.unwrap()))
 }
 
 #[cfg_attr(not(feature = "library"), entry_point)]
