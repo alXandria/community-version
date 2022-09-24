@@ -5,17 +5,93 @@
     {
       "type": "object",
       "required": [
-        "custom_msg"
+        "create_post"
       ],
       "properties": {
-        "custom_msg": {
+        "create_post": {
           "type": "object",
           "required": [
-            "val"
+            "external_id",
+            "post_id",
+            "tags",
+            "text"
           ],
           "properties": {
-            "val": {
+            "external_id": {
               "type": "string"
+            },
+            "post_id": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0.0
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "text": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "edit_post"
+      ],
+      "properties": {
+        "edit_post": {
+          "type": "object",
+          "required": [
+            "external_id",
+            "post_id",
+            "tags",
+            "text"
+          ],
+          "properties": {
+            "external_id": {
+              "type": "string"
+            },
+            "post_id": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0.0
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "text": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "delete_post"
+      ],
+      "properties": {
+        "delete_post": {
+          "type": "object",
+          "required": [
+            "post_id"
+          ],
+          "properties": {
+            "post_id": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0.0
             }
           }
         }

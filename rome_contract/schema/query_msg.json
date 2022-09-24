@@ -5,17 +5,31 @@
     {
       "type": "object",
       "required": [
-        "custom_msg"
+        "all_posts"
       ],
       "properties": {
-        "custom_msg": {
+        "all_posts": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "post"
+      ],
+      "properties": {
+        "post": {
           "type": "object",
           "required": [
-            "val"
+            "post_id"
           ],
           "properties": {
-            "val": {
-              "type": "string"
+            "post_id": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0.0
             }
           }
         }
