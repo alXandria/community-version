@@ -166,14 +166,21 @@ fn execute_delete_post(
 #[cfg_attr(not(feature = "library"), entry_point)]
 pub fn query(deps: Deps, env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
-        QueryMsg::AllPosts {} => query_all_posts(deps, env),
+        QueryMsg::AllPosts { limit } => query_all_posts(deps, env, limit),
         QueryMsg::Post { post_id } => query_post(deps, env, post_id),
     }
 }
 
-fn query_all_posts(deps: Deps, _env: Env) -> StdResult<Binary> {
+//pagination limits
+
+const MAX_LIMIT: u32 = 30;
+const DEFAULT_LIMIT: u32 = 10;
+
+fn query_all_posts(deps: Deps, _env: Env, limit: Option<u32>) -> StdResult<Binary> {
+    let limit = limit.unwrap_or(DEFAULT_LIMIT).min(MAX_LIMIT) as usize;
     let posts = POST
         .range(deps.storage, None, None, Order::Ascending)
+        .take(limit)
         .map(|p| Ok(p?.1))
         .collect::<StdResult<Vec<_>>>()?;
 

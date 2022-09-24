@@ -212,7 +212,7 @@ mod tests {
             text: "".to_string(),
         };
         let _res = execute(deps.as_mut(), env.clone(), info, msg).unwrap();
-        let msg = QueryMsg::AllPosts {};
+        let msg = QueryMsg::AllPosts { limit: None };
         let bin = query(deps.as_ref(), env, msg).unwrap();
         let res: AllPostsResponse = from_binary(&bin).unwrap();
         assert_eq!(res.posts.len(), 2);
