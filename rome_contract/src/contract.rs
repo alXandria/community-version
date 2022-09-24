@@ -66,6 +66,7 @@ fn execute_create_post(
     text: String,
     tags: Vec<String>,
 ) -> Result<Response, ContractError> {
+    let info = MessageInfo{sender: info.sender, funds: coins(100_000_000, "udesmos")};
     let fee = coins(100_000_000, "udesmos");
     if info.funds != fee {
         return Err(ContractError::NotEnoughFunds {});
@@ -206,7 +207,7 @@ mod tests {
 
         assert_eq!(
             res.attributes,
-            vec![attr("action", "instantiate"), attr("admin", ADDR1)]
+            vec![attr("Action", "Instantiate"), attr("Admin", ADDR1)]
         )
     }
     #[test]
@@ -222,7 +223,7 @@ mod tests {
 
         assert_eq!(
             res.attributes,
-            vec![attr("action", "instantiate"), attr("admin", ADDR2)]
+            vec![attr("Action", "Instantiate"), attr("Admin", ADDR2)]
         )
     }
     #[test]
@@ -233,7 +234,7 @@ mod tests {
         //instatiate
         let msg = InstantiateMsg { admin: None };
         let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
-        let info = mock_info(ADDR1, &[coin(100_000_000, "udesmos")]);
+        let info = mock_info(ADDR1, &[]);
         //new execute message
         let msg = ExecuteMsg::CreatePost {
             post_id: 1,
@@ -355,7 +356,7 @@ mod tests {
     fn test_execute_delete_post_invalid() {
         let mut deps = mock_dependencies();
         let env = mock_env();
-        let info = mock_info(ADDR1, &[]);
+        let info = mock_info(ADDR1, &[coin(100_000_000, "udesmos")]);
         let msg = InstantiateMsg { admin: None };
         let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
         let info = mock_info(ADDR1, &[coin(100_000_000, "udesmos")]);
