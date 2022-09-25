@@ -67,7 +67,10 @@ fn execute_create_post(
     text: String,
     tags: Vec<String>,
 ) -> Result<Response, ContractError> {
-    let info = MessageInfo{sender: info.sender, funds: coins(100_000_000, "udesmos")};
+    let info = MessageInfo {
+        sender: info.sender,
+        funds: coins(100_000_000, "udesmos"),
+    };
     let fee = coins(100_000_000, "udesmos");
     if info.funds != fee {
         return Err(ContractError::NotEnoughFunds {});
