@@ -3,12 +3,14 @@ use std::env;
 #[cfg(not(feature = "library"))]
 use cosmwasm_std::{
     coins, entry_point, to_binary, Binary, Deps, DepsMut, Env, MessageInfo, Order, Response,
-    StdResult,
+    StdError, StdResult,
 };
 use cw2::set_contract_version;
 
 use crate::error::ContractError;
-use crate::msg::{AllPostsResponse, ExecuteMsg, InstantiateMsg, PostResponse, QueryMsg};
+use crate::msg::{
+    AllPostsResponse, ExecuteMsg, InstantiateMsg, MigrateMsg, PostResponse, QueryMsg,
+};
 use crate::state::{Config, Post, CONFIG, POST};
 
 //info for migration
@@ -32,6 +34,25 @@ pub fn instantiate(
     Ok(Response::new()
         .add_attribute("Action", "Instantiate")
         .add_attribute("Admin", validated_admin.to_string()))
+}
+
+#[cfg_attr(not(feature = "library"), entry_point)]
+pub fn migrate(deps: DepsMut, _env: Env, _msg: MigrateMsg) -> Result<Response, ContractError> {
+    let ver = cw2::get_contract_version(deps.storage)?;
+    // ensure we are migrating from an allowed contract
+    if ver.contract != CONTRACT_NAME {
+        return Err(StdError::generic_err("Can only upgrade from same type").into());
+    }
+    if ver.version >= (*CONTRACT_VERSION).to_string() {
+        return Err(StdError::generic_err("Cannot upgrade from a newer version").into());
+    }
+    // set the new version
+    cw2::set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
+
+    Ok(Response::default()
+        .add_attribute("action", "migration")
+        .add_attribute("version", CONTRACT_VERSION)
+        .add_attribute("contract", CONTRACT_NAME))
 }
 
 #[cfg_attr(not(feature = "library"), entry_point)]
