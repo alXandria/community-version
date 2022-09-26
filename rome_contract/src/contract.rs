@@ -5,7 +5,7 @@ use cosmwasm_std::{
     coins, entry_point, to_binary, Binary, Deps, DepsMut, Env, MessageInfo, Order, Response,
     StdError, StdResult,
 };
-use cw2::{set_contract_version, get_contract_version};
+use cw2::{get_contract_version, set_contract_version};
 
 use crate::error::ContractError;
 use crate::msg::{

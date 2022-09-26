@@ -1,11 +1,13 @@
 #[cfg(test)]
-use crate::contract::{execute, instantiate, query};
+use crate::contract::{execute, instantiate, migrate, query};
 #[cfg(test)]
-use crate::msg::{AllPostsResponse, ExecuteMsg, InstantiateMsg, PostResponse, QueryMsg};
+use crate::msg::{
+    AllPostsResponse, ExecuteMsg, InstantiateMsg, MigrateMsg, PostResponse, QueryMsg,
+};
 #[cfg(test)]
 use cosmwasm_std::testing::{mock_dependencies, mock_env, mock_info};
 #[cfg(test)]
-use cosmwasm_std::{attr, coin, from_binary};
+use cosmwasm_std::{attr, coin, from_binary, Response};
 
 pub const ADDR1: &str = "addr1";
 pub const ADDR2: &str = "addr2";
@@ -23,6 +25,18 @@ fn test_instantiate() {
         res.attributes,
         vec![attr("Action", "Instantiate"), attr("Admin", ADDR1)]
     )
+}
+#[test]
+fn migrate_works() {
+    //instantiate
+    let mut deps = mock_dependencies();
+    let env = mock_env();
+    let info = mock_info(ADDR1, &[]);
+    let msg = InstantiateMsg { admin: None };
+    let _res = instantiate(deps.as_mut(), env, info, msg).unwrap();
+    //migrate
+    let msg = MigrateMsg {};
+    let _res: Response = migrate(deps.as_mut(), mock_env(), msg).unwrap();
 }
 #[test]
 fn test_instantiate_with_admin() {
