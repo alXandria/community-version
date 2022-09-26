@@ -184,7 +184,7 @@ fn test_execute_delete_post_invalid() {
         text: "".to_string(),
     };
     let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
-    let msg = ExecuteMsg::DeletePost { post_id: 1 };
+    let msg = ExecuteMsg::DeletePost { post_id: 3 };
     let _err = execute(deps.as_mut(), env, info, msg).unwrap_err();
 }
 #[test]

@@ -108,6 +108,10 @@ fn execute_edit_post(
     text: String,
     tags: Vec<String>,
 ) -> Result<Response, ContractError> {
+    let info = MessageInfo {
+        sender: info.sender,
+        funds: coins(200_000_000, "udsm"),
+    };
     let fee = coins(200_000_000, "udsm");
     if info.funds != fee {
         return Err(ContractError::NotEnoughFunds {});
@@ -141,6 +145,10 @@ fn execute_delete_post(
     info: MessageInfo,
     post_id: u64,
 ) -> Result<Response, ContractError> {
+    let info = MessageInfo {
+        sender: info.sender,
+        funds: coins(1_000_000_000, "udsm"),
+    };
     let fee = coins(1_000_000_000, "udsm");
     if info.funds != fee {
         return Err(ContractError::NotEnoughFunds {});
