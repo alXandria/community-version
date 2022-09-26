@@ -90,7 +90,7 @@ fn test_execute_edit_post_valid() {
     let info = mock_info(ADDR1, &[]);
     let msg = InstantiateMsg { admin: None };
     let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
-    let info = mock_info(ADDR1, &[coin(100_000_000, "udsm")]);
+    let info = mock_info(ADDR1, &[coin(100_000_000, "udaric")]);
     //create a post
     let msg = ExecuteMsg::CreatePost {
         post_id: 1,
@@ -104,7 +104,7 @@ fn test_execute_edit_post_valid() {
     };
     let _res = execute(deps.as_mut(), env.clone(), info, msg).unwrap();
     //edit message
-    let info = mock_info(ADDR1, &[coin(200_000_000, "udsm")]);
+    let info = mock_info(ADDR1, &[coin(200_000_000, "udaric")]);
     let msg = ExecuteMsg::EditPost {
         post_id: 1,
         external_id: "https://stake.tax/".to_string(),
@@ -120,7 +120,7 @@ fn test_execute_edit_post_invalid() {
     let info = mock_info(ADDR1, &[]);
     let msg = InstantiateMsg { admin: None };
     let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
-    let info = mock_info(ADDR1, &[coin(100_000_000, "udsm")]);
+    let info = mock_info(ADDR1, &[coin(100_000_000, "udaric")]);
     let msg = ExecuteMsg::CreatePost {
         post_id: 1,
         external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(),
@@ -147,7 +147,7 @@ fn test_execute_delete_post_valid() {
     let info = mock_info(ADDR1, &[]);
     let msg = InstantiateMsg { admin: None };
     let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
-    let info = mock_info(ADDR1, &[coin(100_000_000, "udsm")]);
+    let info = mock_info(ADDR1, &[coin(100_000_000, "udaric")]);
     //create a post
     let msg = ExecuteMsg::CreatePost {
         post_id: 1,
@@ -161,7 +161,7 @@ fn test_execute_delete_post_valid() {
     };
     let _res = execute(deps.as_mut(), env.clone(), info, msg).unwrap();
     //delete message
-    let info = mock_info(ADDR1, &[coin(1_000_000_000, "udsm")]);
+    let info = mock_info(ADDR1, &[coin(1_000_000_000, "udaric")]);
     let msg = ExecuteMsg::DeletePost { post_id: 1 };
     let _res = execute(deps.as_mut(), env, info, msg).unwrap();
 }
@@ -169,10 +169,10 @@ fn test_execute_delete_post_valid() {
 fn test_execute_delete_post_invalid() {
     let mut deps = mock_dependencies();
     let env = mock_env();
-    let info = mock_info(ADDR1, &[coin(100_000_000, "udsm")]);
+    let info = mock_info(ADDR1, &[coin(100_000_000, "udaric")]);
     let msg = InstantiateMsg { admin: None };
     let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
-    let info = mock_info(ADDR1, &[coin(100_000_000, "udsm")]);
+    let info = mock_info(ADDR1, &[coin(100_000_000, "udaric")]);
     let msg = ExecuteMsg::CreatePost {
         post_id: 1,
         external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(),
@@ -194,7 +194,7 @@ fn test_query_all_posts() {
     let info = mock_info(ADDR1, &[]);
     let msg = InstantiateMsg { admin: None };
     let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
-    let info = mock_info(ADDR1, &[coin(100_000_000, "udsm")]);
+    let info = mock_info(ADDR1, &[coin(100_000_000, "udaric")]);
     let msg = ExecuteMsg::CreatePost {
         post_id: 1,
         external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(),
@@ -225,7 +225,7 @@ fn test_query_post() {
     let info = mock_info(ADDR1, &[]);
     let msg = InstantiateMsg { admin: None };
     let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
-    let info = mock_info(ADDR1, &[coin(100_000_000, "udsm")]);
+    let info = mock_info(ADDR1, &[coin(100_000_000, "udaric")]);
     let msg = ExecuteMsg::CreatePost {
         post_id: 1,
         external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(),

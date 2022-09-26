@@ -69,9 +69,9 @@ fn execute_create_post(
 ) -> Result<Response, ContractError> {
     let info = MessageInfo {
         sender: info.sender,
-        funds: coins(100_000_000, "udsm"),
+        funds: coins(100_000_000, "udaric"),
     };
-    let fee = coins(100_000_000, "udsm");
+    let fee = coins(100_000_000, "udaric");
     if info.funds != fee {
         return Err(ContractError::NotEnoughFunds {});
     }
@@ -110,9 +110,9 @@ fn execute_edit_post(
 ) -> Result<Response, ContractError> {
     let info = MessageInfo {
         sender: info.sender,
-        funds: coins(200_000_000, "udsm"),
+        funds: coins(200_000_000, "udaric"),
     };
-    let fee = coins(200_000_000, "udsm");
+    let fee = coins(200_000_000, "udaric");
     if info.funds != fee {
         return Err(ContractError::NotEnoughFunds {});
     }
@@ -147,9 +147,9 @@ fn execute_delete_post(
 ) -> Result<Response, ContractError> {
     let info = MessageInfo {
         sender: info.sender,
-        funds: coins(1_000_000_000, "udsm"),
+        funds: coins(1_000_000_000, "udaric"),
     };
-    let fee = coins(1_000_000_000, "udsm");
+    let fee = coins(1_000_000_000, "udaric");
     if info.funds != fee {
         return Err(ContractError::NotEnoughFunds {});
     }
