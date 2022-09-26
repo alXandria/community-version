@@ -33,3 +33,10 @@ https://morpheus.desmos.network/transactions/E86E97DC701B341E4BAAF005BEAAD5FB781
 successful command: desmos query wasm contract-state smart desmos1l6mexg4802n9703vryf37zgca0d777y4y6cymvjpq5y6w74ugy8qguqz8s '{"post":{"post_id": 1}}'
 
 output: post":{"post_id": 1}}' data: post: author: desmos1etw2v4std305a6tsyvawdrgancv00j65yn2hgg creation_date: "1664212492.539425833" deleter: null editor: null external_id: https://www.google.com last_edit_date: null post_id: 1 tags: - google - post - attempt text: This is my first post
+
+# Migrate
+
+successful command:
+desmos tx wasm migrate desmos1l6mexg4802n9703vryf37zgca0d777y4y6cymvjpq5y6w74ugy8qguqz8s 15 '{"migrate_msg":{}}' --from alxandria_test --fees 5000udaric --gas 2000000 -y
+
+https://morpheus.desmos.network/transactions/D964BADF078AD9669823356ADD1895E96DDCA3B1D7B9BE21E52BC9E93EF1412C
