@@ -2,7 +2,7 @@ use std::env;
 
 #[cfg(not(feature = "library"))]
 use cosmwasm_std::{
-    entry_point, to_binary, Binary, Coin, Deps, DepsMut, Env, MessageInfo, Order, Response,
+    coin, entry_point, to_binary, Binary, Coin, Deps, DepsMut, Env, MessageInfo, Order, Response,
     StdError, StdResult,
 };
 use cw2::{get_contract_version, set_contract_version};
@@ -83,7 +83,7 @@ fn execute_create_post(
     text: String,
     tags: Vec<String>,
 ) -> Result<Response, ContractError> {
-    assert_sent_exact_coin(&info.funds, Some(Coin::new(100_000_000, "udaric")))?;
+    assert_sent_exact_coin(&info.funds, Some(coin(100_000_000, "udaric")))?;
     if text.len() > 499 {
         return Err(ContractError::TooMuchText {});
     }

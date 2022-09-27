@@ -13,8 +13,5 @@ pub enum ContractError {
     TooMuchText {},
 
     #[error("Deleted post content must be empty.")]
-    DeletedPost {},
-
-    #[error("Deleted post content must be empty.")]
     NotEnoughFunds { needed: String, received: String },
 }
