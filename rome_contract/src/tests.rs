@@ -3,7 +3,8 @@ use crate::contract::{execute, instantiate, migrate, query};
 #[cfg(test)]
 use crate::msg::{
     AllPostsResponse, ExecuteMsg, InstantiateMsg, MigrateMsg, PostResponse, QueryMsg,
-};#[cfg(test)]
+};
+#[cfg(test)]
 use cosmwasm_std::testing::{mock_dependencies, mock_env, mock_info};
 #[cfg(test)]
 use cosmwasm_std::{attr, coin, from_binary, Response};
