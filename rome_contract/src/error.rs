@@ -12,6 +12,6 @@ pub enum ContractError {
     #[error("No Text Allowed")]
     TooMuchText {},
 
-    #[error("Deleted post content must be empty.")]
+    #[error("Insufficient funds. Needed: {needed} Sent: {received}")]
     NotEnoughFunds { needed: String, received: String },
 }
