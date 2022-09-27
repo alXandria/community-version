@@ -45,3 +45,23 @@ successful command:
 desmos tx wasm migrate desmos1l6mexg4802n9703vryf37zgca0d777y4y6cymvjpq5y6w74ugy8qguqz8s 15 '{"migrate_msg":{}}' --from alxandria_test --fees 5000udaric --gas 2000000 -y
 
 https://morpheus.desmos.network/transactions/D964BADF078AD9669823356ADD1895E96DDCA3B1D7B9BE21E52BC9E93EF1412C
+
+# Fee Gating Actions
+
+* This works properly, but the error message was incorrectly set. Fixed in codebase.
+
+Store:
+https://morpheus.desmos.network/transactions/2D7B3E766B753F4DC705CF78F40764861923406E29C9B920891D6628E4E81C6D
+
+Code ID: 
+17
+
+Migrate:
+https://morpheus.desmos.network/transactions/E7422797FB4154F54EC176669DB18F6A80E0E1F8CE570E2EE7A15DF39E51DF81
+
+Intentional Fail Post (Fee Gate):
+
+Command:
+desmos tx wasm execute desmos1l6mexg4802n9703vryf37zgca0d777y4y6cymvjpq5y6w74ugy8qguqz8s '{"create_post": {"post_id": 2,"external_id": "https://www.github.com","text": "This post should fail","tags": ["failure", "fees", "attempt"]}}' --from alxandria_test --fees 5000udaric --gas 200000 -y
+
+https://morpheus.desmos.network/transactions/21919959367B871442F892E5BF3C5DD9BBC9A2BAD3CC594B86DA864A587F0C93
