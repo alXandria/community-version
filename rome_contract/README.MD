@@ -34,6 +34,11 @@ successful command: desmos query wasm contract-state smart desmos1l6mexg4802n970
 
 output: post":{"post_id": 1}}' data: post: author: desmos1etw2v4std305a6tsyvawdrgancv00j65yn2hgg creation_date: "1664212492.539425833" deleter: null editor: null external_id: https://www.google.com last_edit_date: null post_id: 1 tags: - google - post - attempt text: This is my first post
 
+# Query All Posts
+
+successful command:
+desmos query wasm contract-state smart desmos1l6mexg4802n9703vryf37zgca0d777y4y6cymvjpq5y6w74ugy8qguqz8s '{"all_posts":{}}'
+
 # Migrate
 
 successful command:
