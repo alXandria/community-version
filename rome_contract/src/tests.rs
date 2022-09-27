@@ -3,8 +3,7 @@ use crate::contract::{execute, instantiate, migrate, query};
 #[cfg(test)]
 use crate::msg::{
     AllPostsResponse, ExecuteMsg, InstantiateMsg, MigrateMsg, PostResponse, QueryMsg,
-};
-#[cfg(test)]
+};#[cfg(test)]
 use cosmwasm_std::testing::{mock_dependencies, mock_env, mock_info};
 #[cfg(test)]
 use cosmwasm_std::{attr, coin, from_binary, Response};
@@ -63,7 +62,7 @@ fn test_execute_create_post_valid() {
     //instatiate
     let msg = InstantiateMsg { admin: None };
     let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
-    let info = mock_info(ADDR1, &[]);
+    let info = mock_info(ADDR1, &[coin(100_000_000, "udaric")]);
     //new execute message
     let msg = ExecuteMsg::CreatePost {
         post_id: 1,

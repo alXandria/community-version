@@ -2,8 +2,8 @@ use std::env;
 
 #[cfg(not(feature = "library"))]
 use cosmwasm_std::{
-    coins, entry_point, to_binary, Binary, Deps, DepsMut, Env, MessageInfo, Order, Response,
-    StdError, StdResult,
+    entry_point, to_binary, Binary, Deps, DepsMut, Env, MessageInfo, Order, Response,
+    StdError, StdResult, Coin
 };
 use cw2::{get_contract_version, set_contract_version};
 
@@ -12,6 +12,7 @@ use crate::msg::{
     AllPostsResponse, ExecuteMsg, InstantiateMsg, MigrateMsg, PostResponse, QueryMsg,
 };
 use crate::state::{Config, Post, CONFIG, POST};
+use crate::coin_helpers::assert_sent_exact_coin;
 
 //info for migration
 const CONTRACT_NAME: &str = "crates.io:alxandria";
@@ -82,14 +83,10 @@ fn execute_create_post(
     text: String,
     tags: Vec<String>,
 ) -> Result<Response, ContractError> {
-    let info = MessageInfo {
-        sender: info.sender,
-        funds: coins(100_000_000, "udaric"),
-    };
-    let fee = coins(100_000_000, "udaric");
-    if info.funds != fee {
-        return Err(ContractError::NotEnoughFunds {});
-    }
+    assert_sent_exact_coin(
+        &info.funds,
+        Some(Coin::new(100_000_000, "udaric")),
+    )?;
     if text.len() > 499 {
         return Err(ContractError::TooMuchText {});
     }
@@ -123,14 +120,10 @@ fn execute_edit_post(
     text: String,
     tags: Vec<String>,
 ) -> Result<Response, ContractError> {
-    let info = MessageInfo {
-        sender: info.sender,
-        funds: coins(200_000_000, "udaric"),
-    };
-    let fee = coins(200_000_000, "udaric");
-    if info.funds != fee {
-        return Err(ContractError::NotEnoughFunds {});
-    }
+    assert_sent_exact_coin(
+        &info.funds,
+        Some(Coin::new(200_000_000, "udaric")),
+    )?;
     if text.len() > 499 {
         return Err(ContractError::TooMuchText {});
     }
@@ -160,14 +153,10 @@ fn execute_delete_post(
     info: MessageInfo,
     post_id: u64,
 ) -> Result<Response, ContractError> {
-    let info = MessageInfo {
-        sender: info.sender,
-        funds: coins(1_000_000_000, "udaric"),
-    };
-    let fee = coins(1_000_000_000, "udaric");
-    if info.funds != fee {
-        return Err(ContractError::NotEnoughFunds {});
-    }
+    assert_sent_exact_coin(
+        &info.funds,
+        Some(Coin::new(1_000_000_000, "udaric")),
+    )?;
     let post = POST.load(deps.storage, post_id)?;
     let deleter = info.sender.to_string();
     let validated_deleter = deps.api.addr_validate(&deleter)?;
