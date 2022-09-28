@@ -23,7 +23,7 @@ fn test_instantiate() {
 
     assert_eq!(
         res.attributes,
-        vec![attr("Action", "Instantiate"), attr("Admin", ADDR1)]
+        vec![attr("action", "instantiate"), attr("admin", ADDR1)]
     )
 }
 #[test]
@@ -52,7 +52,7 @@ fn test_instantiate_with_admin() {
 
     assert_eq!(
         res.attributes,
-        vec![attr("Action", "Instantiate"), attr("Admin", ADDR2)]
+        vec![attr("action", "instantiate"), attr("admin", ADDR2)]
     )
 }
 #[test]
