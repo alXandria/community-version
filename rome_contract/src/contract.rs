@@ -37,19 +37,6 @@ pub fn instantiate(
         .add_attribute("Admin", validated_admin.to_string()))
 }
 
-#[entry_point]
-pub fn migrate(deps: DepsMut, _env: Env, _msg: MigrateMsg) -> Result<Response, ContractError> {
-    let ver = get_contract_version(deps.storage)?;
-    if ver.contract != CONTRACT_NAME {
-        return Err(StdError::generic_err("Can only upgrade from same type").into());
-    }
-    set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
-    Ok(Response::default()
-        .add_attribute("action", "migration")
-        .add_attribute("version", CONTRACT_VERSION)
-        .add_attribute("contract", CONTRACT_NAME))
-}
-
 #[cfg_attr(not(feature = "library"), entry_point)]
 pub fn execute(
     deps: DepsMut,
@@ -103,9 +90,9 @@ fn execute_create_post(
     POST.save(deps.storage, post.post_id, &post)?;
 
     Ok(Response::new()
-        .add_attribute("Action", "Create Post")
-        .add_attribute("Post ID", post_id.to_string())
-        .add_attribute("Author", validated_author.to_string()))
+        .add_attribute("action", "create_post")
+        .add_attribute("post_id", post_id.to_string())
+        .add_attribute("author", validated_author.to_string()))
 }
 
 fn execute_edit_post(
@@ -137,9 +124,9 @@ fn execute_edit_post(
     };
     POST.save(deps.storage, post_id, &new_post)?;
     Ok(Response::new()
-        .add_attribute("Action", "Edit Post")
-        .add_attribute("Post ID", new_post.post_id.to_string())
-        .add_attribute("Editor", new_post.editor.unwrap()))
+        .add_attribute("action", "edit_post")
+        .add_attribute("post_id", new_post.post_id.to_string())
+        .add_attribute("editor", new_post.editor.unwrap()))
 }
 fn execute_delete_post(
     deps: DepsMut,
@@ -164,9 +151,9 @@ fn execute_delete_post(
     };
     POST.save(deps.storage, post_id, &deleted_post)?;
     Ok(Response::new()
-        .add_attribute("Action", "Delete Post")
-        .add_attribute("Post ID", deleted_post.post_id.to_string())
-        .add_attribute("Delete", deleted_post.deleter.unwrap()))
+        .add_attribute("action", "delete_post")
+        .add_attribute("post_id", deleted_post.post_id.to_string())
+        .add_attribute("delete", deleted_post.deleter.unwrap()))
 }
 
 #[cfg_attr(not(feature = "library"), entry_point)]
@@ -196,4 +183,17 @@ fn query_all_posts(deps: Deps, _env: Env, limit: Option<u32>) -> StdResult<Binar
 fn query_post(deps: Deps, _env: Env, post_id: u64) -> StdResult<Binary> {
     let post = POST.may_load(deps.storage, post_id)?;
     to_binary(&PostResponse { post })
+}
+
+#[entry_point]
+pub fn migrate(deps: DepsMut, _env: Env, _msg: MigrateMsg) -> Result<Response, ContractError> {
+    let ver = get_contract_version(deps.storage)?;
+    if ver.contract != CONTRACT_NAME {
+        return Err(StdError::generic_err("Can only upgrade from same type").into());
+    }
+    set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
+    Ok(Response::default()
+        .add_attribute("action", "migration")
+        .add_attribute("version", CONTRACT_VERSION)
+        .add_attribute("contract", CONTRACT_NAME))
 }
