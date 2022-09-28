@@ -1,11 +1,9 @@
-use std::env;
-
-#[cfg(not(feature = "library"))]
 use cosmwasm_std::{
     coin, entry_point, to_binary, Binary, Coin, Deps, DepsMut, Env, MessageInfo, Order, Response,
     StdError, StdResult,
 };
 use cw2::{get_contract_version, set_contract_version};
+use std::env;
 
 use crate::coin_helpers::assert_sent_exact_coin;
 use crate::error::ContractError;
@@ -18,7 +16,7 @@ use crate::state::{Config, Post, CONFIG, POST};
 const CONTRACT_NAME: &str = "crates.io:alxandria";
 const CONTRACT_VERSION: &str = env!("CARGO_PKG_VERSION");
 
-#[cfg_attr(not(feature = "library"), entry_point)]
+#[entry_point]
 pub fn instantiate(
     deps: DepsMut,
     _env: Env,
@@ -37,7 +35,7 @@ pub fn instantiate(
         .add_attribute("Admin", validated_admin.to_string()))
 }
 
-#[cfg_attr(not(feature = "library"), entry_point)]
+#[entry_point]
 pub fn execute(
     deps: DepsMut,
     env: Env,
@@ -156,7 +154,7 @@ fn execute_delete_post(
         .add_attribute("delete", deleted_post.deleter.unwrap()))
 }
 
-#[cfg_attr(not(feature = "library"), entry_point)]
+#[entry_point]
 pub fn query(deps: Deps, env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
         QueryMsg::AllPosts { limit } => query_all_posts(deps, env, limit),
