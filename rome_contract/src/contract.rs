@@ -31,8 +31,8 @@ pub fn instantiate(
     };
     CONFIG.save(deps.storage, &config)?;
     Ok(Response::new()
-        .add_attribute("Action", "Instantiate")
-        .add_attribute("Admin", validated_admin.to_string()))
+        .add_attribute("action", "instantiate")
+        .add_attribute("admin", validated_admin.to_string()))
 }
 
 #[entry_point]
