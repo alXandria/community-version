@@ -1,9 +1,9 @@
 use cosmwasm_std::{
     coin, entry_point, to_binary, Binary, Coin, Deps, DepsMut, Env, MessageInfo, Order, Response,
-    StdError, StdResult,
+    StdError, StdResult, BankMsg
 };
 use cw2::{get_contract_version, set_contract_version};
-use std::env;
+use std::{env, vec};
 
 use crate::coin_helpers::assert_sent_exact_coin;
 use crate::error::ContractError;
@@ -15,6 +15,7 @@ use crate::state::{Config, Post, CONFIG, POST};
 //info for migration
 const CONTRACT_NAME: &str = "crates.io:alxandria";
 const CONTRACT_VERSION: &str = env!("CARGO_PKG_VERSION");
+const ADDRESS: &str = "desmos19j0fvqvmvavh8nrhym85epwq7lgkjfl6p5fyha";
 
 #[entry_point]
 pub fn instantiate(
@@ -86,11 +87,13 @@ fn execute_create_post(
         editor: None,
     };
     POST.save(deps.storage, post.post_id, &post)?;
+    BankMsg::Send { to_address: (ADDRESS.to_string()), amount: vec![coin(99_995_000, "udaric")] };
 
     Ok(Response::new()
         .add_attribute("action", "create_post")
         .add_attribute("post_id", post_id.to_string())
         .add_attribute("author", validated_author.to_string()))
+    
 }
 
 fn execute_edit_post(
