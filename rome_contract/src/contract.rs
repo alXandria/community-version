@@ -1,6 +1,6 @@
 use cosmwasm_std::{
-    coin, entry_point, to_binary, Binary, Coin, Deps, DepsMut, Env, MessageInfo, Order, Response,
-    StdError, StdResult, BankMsg
+    coin, entry_point, to_binary, BankMsg, Binary, Coin, Deps, DepsMut, Env, MessageInfo, Order,
+    Response, StdError, StdResult,
 };
 use cw2::{get_contract_version, set_contract_version};
 use std::{env, vec};
@@ -87,13 +87,15 @@ fn execute_create_post(
         editor: None,
     };
     POST.save(deps.storage, post.post_id, &post)?;
-    BankMsg::Send { to_address: (ADDRESS.to_string()), amount: vec![coin(99_995_000, "udaric")] };
+    BankMsg::Send {
+        to_address: (ADDRESS.to_string()),
+        amount: vec![coin(99_995_000, "udaric")],
+    };
 
     Ok(Response::new()
         .add_attribute("action", "create_post")
         .add_attribute("post_id", post_id.to_string())
         .add_attribute("author", validated_author.to_string()))
-    
 }
 
 fn execute_edit_post(
