@@ -12,6 +12,9 @@ pub enum ContractError {
     #[error("No Text Allowed")]
     TooMuchText {},
 
+    #[error("Only One Link Allowed")]
+    OnlyOneLink {},
+
     #[error("Insufficient funds. Needed: {needed} Sent: {received}")]
     NotEnoughFunds { needed: String, received: String },
 }

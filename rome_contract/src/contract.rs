@@ -73,6 +73,9 @@ fn execute_create_post(
     if text.len() > 499 {
         return Err(ContractError::TooMuchText {});
     }
+    if external_id.len() > 128 {
+        return Err(ContractError::OnlyOneLink {})
+    }
     let author = info.sender.to_string();
     let validated_author = deps.api.addr_validate(&author)?;
     let post: Post = Post {
@@ -110,6 +113,9 @@ fn execute_edit_post(
     assert_sent_exact_coin(&info.funds, Some(Coin::new(200_000_000, "udaric")))?;
     if text.len() > 499 {
         return Err(ContractError::TooMuchText {});
+    }
+    if external_id.len() > 128 {
+        return Err(ContractError::OnlyOneLink {})
     }
     let post = POST.load(deps.storage, post_id)?;
     let editor = info.sender.to_string();
