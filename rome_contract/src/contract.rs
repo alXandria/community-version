@@ -15,7 +15,7 @@ use crate::state::{Config, Post, CONFIG, POST};
 //info for migration
 const CONTRACT_NAME: &str = "crates.io:alxandria";
 const CONTRACT_VERSION: &str = env!("CARGO_PKG_VERSION");
-const ADDRESS: &str = "desmos19j0fvqvmvavh8nrhym85epwq7lgkjfl6p5fyha";
+const ADDRESS: &str = "desmos1a7vpcddckf9qwezmva8gpzphmzhhdr5y2pllvr";
 
 #[entry_point]
 pub fn instantiate(
@@ -126,6 +126,10 @@ fn execute_edit_post(
         editor: Some(validated_editor.to_string()),
     };
     POST.save(deps.storage, post_id, &new_post)?;
+    BankMsg::Send {
+        to_address: (ADDRESS.to_string()),
+        amount: vec![coin(199_995_000, "udaric")],
+    };
     Ok(Response::new()
         .add_attribute("action", "edit_post")
         .add_attribute("post_id", new_post.post_id.to_string())
@@ -153,6 +157,10 @@ fn execute_delete_post(
         editor: post.editor,
     };
     POST.save(deps.storage, post_id, &deleted_post)?;
+    BankMsg::Send {
+        to_address: (ADDRESS.to_string()),
+        amount: vec![coin(999_995_000, "udaric")],
+    };
     Ok(Response::new()
         .add_attribute("action", "delete_post")
         .add_attribute("post_id", deleted_post.post_id.to_string())
