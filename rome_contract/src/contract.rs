@@ -74,7 +74,7 @@ fn execute_create_post(
         return Err(ContractError::TooMuchText {});
     }
     if external_id.len() > 128 {
-        return Err(ContractError::OnlyOneLink {})
+        return Err(ContractError::OnlyOneLink {});
     }
     let author = info.sender.to_string();
     let validated_author = deps.api.addr_validate(&author)?;
@@ -115,7 +115,7 @@ fn execute_edit_post(
         return Err(ContractError::TooMuchText {});
     }
     if external_id.len() > 128 {
-        return Err(ContractError::OnlyOneLink {})
+        return Err(ContractError::OnlyOneLink {});
     }
     let post = POST.load(deps.storage, post_id)?;
     let editor = info.sender.to_string();

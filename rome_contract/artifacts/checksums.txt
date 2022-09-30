@@ -1,1 +1,1 @@
-6a1be30228be9b13ef918b8f40800fd65450aad462720c320dc0db4e63c35c04  alxandria.wasm
+22e4e1b0ac6ebbce2f28754a2bcb1968afc26e0ef750fb17888af73c1ffb35a4  alxandria.wasm
