@@ -90,12 +90,12 @@ fn execute_create_post(
         editor: None,
     };
     POST.save(deps.storage, post.post_id, &post)?;
-    BankMsg::Send {
+    let message = BankMsg::Send {
         to_address: (ADDRESS.to_string()),
-        amount: vec![coin(99_995_000, "udaric")],
+        amount: vec![coin(100_000_000, "udaric")],
     };
-
     Ok(Response::new()
+        .add_message(message)
         .add_attribute("action", "create_post")
         .add_attribute("post_id", post_id.to_string())
         .add_attribute("author", validated_author.to_string()))
@@ -132,11 +132,12 @@ fn execute_edit_post(
         editor: Some(validated_editor.to_string()),
     };
     POST.save(deps.storage, post_id, &new_post)?;
-    BankMsg::Send {
+    let message = BankMsg::Send {
         to_address: (ADDRESS.to_string()),
-        amount: vec![coin(199_995_000, "udaric")],
+        amount: vec![coin(200_000_000, "udaric")],
     };
     Ok(Response::new()
+        .add_message(message)
         .add_attribute("action", "edit_post")
         .add_attribute("post_id", new_post.post_id.to_string())
         .add_attribute("editor", new_post.editor.unwrap()))
@@ -163,11 +164,12 @@ fn execute_delete_post(
         editor: post.editor,
     };
     POST.save(deps.storage, post_id, &deleted_post)?;
-    BankMsg::Send {
+    let message = BankMsg::Send {
         to_address: (ADDRESS.to_string()),
-        amount: vec![coin(999_995_000, "udaric")],
+        amount: vec![coin(1_000_000_000, "udaric")],
     };
     Ok(Response::new()
+        .add_message(message)
         .add_attribute("action", "delete_post")
         .add_attribute("post_id", deleted_post.post_id.to_string())
         .add_attribute("delete", deleted_post.deleter.unwrap()))
