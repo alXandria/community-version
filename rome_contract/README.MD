@@ -65,3 +65,37 @@ Command:
 desmos tx wasm execute desmos1l6mexg4802n9703vryf37zgca0d777y4y6cymvjpq5y6w74ugy8qguqz8s '{"create_post": {"post_id": 2,"external_id": "https://www.github.com","text": "This post should fail","tags": ["failure", "fees", "attempt"]}}' --from alxandria_test --fees 5000udaric --gas 200000 -y
 
 https://morpheus.desmos.network/transactions/21919959367B871442F892E5BF3C5DD9BBC9A2BAD3CC594B86DA864A587F0C93
+
+# Proper Error Message Test
+
+Store:
+https://morpheus.desmos.network/transactions/F2F51964614FF626321A3366D94D268A2A105002251EE2EF13A28076D60ED80B
+
+Code ID:
+18
+
+Migrate:
+https://morpheus.desmos.network/transactions/97586398FEF9BB030B21FC7C1EAA2F1BEBEC23140211ACB81B49A0BDE6550790
+
+Tx Fail With Proper Error Msg (Fee Gate):
+https://morpheus.desmos.network/transactions/6EC1538B7002DA6C419C523247DB379EEB895EA97818A3E8EB0D6E4A9B0CAAB8
+
+# BankMsg Test!
+
+Store:
+https://morpheus.desmos.network/transactions/7B55C8B811202AD77130931C31D591F23CB2F2EAB43D4AD8AEF2D51BB8438935
+
+Code ID:
+19
+
+Migrate:
+https://morpheus.desmos.network/transactions/707011D99D59F928570736B8E1A404616521F9EF3468A1DCFCD59E146E1E995E
+
+Tx With Funds:
+desmos tx wasm execute desmos1l6mexg4802n9703vryf37zgca0d777y4y6cymvjpq5y6w74ugy8qguqz8s '{"create_post": {"post_id": 3,"external_id": "https://www.github.com","text": "This post should pass!","tags": ["pass", "funds", "attempt"]}}' --amount 100000000udaric --from alxandria_test --fees 5000udaric --gas 200000 -y
+
+Success!!!!
+https://morpheus.desmos.network/transactions/40584667D6C1C6282069A20670AAA2E21028131B62DFC83175D18E61C893403D
+
+All Coins Forwarded to desmos1a7vpcddckf9qwezmva8gpzphmzhhdr5y2pllvr:
+https://morpheus.desmos.network/accounts/desmos1a7vpcddckf9qwezmva8gpzphmzhhdr5y2pllvr
