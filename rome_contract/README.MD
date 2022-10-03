@@ -1,4 +1,4 @@
-# This contract is a decentralized encyclopedia. It is live on testnet and functioning! Proof below.
+# This contract is a decentralized encyclopedia. It is live on testnet and functioning! Proof below (Scroll to bottom for New Contract).
 
 # successful store alxandria
 
@@ -99,3 +99,25 @@ https://morpheus.desmos.network/transactions/40584667D6C1C6282069A20670AAA2E2102
 
 All Coins Forwarded to desmos1a7vpcddckf9qwezmva8gpzphmzhhdr5y2pllvr:
 https://morpheus.desmos.network/accounts/desmos1a7vpcddckf9qwezmva8gpzphmzhhdr5y2pllvr
+
+# NEW CONTRACT (UPDATED)
+
+Instantiate:
+desmos tx wasm instantiate 35 '{"admin":"desmos1etw2v4std305a6tsyvawdrgancv00j65yn2hgg"}' --label alxandria-test --admin desmos1etw2v4std305a6tsyvawdrgancv00j65yn2hgg --from alxandria_test --fees 5000udaric --gas 2000000 -y
+
+Success:
+https://morpheus.desmos.network/transactions/11A55718DD8F3794176CA35FC52F57C85C6A9E710ADB1D677A49CB70AAD9F3CD
+
+Contract Address: desmos1lmt2ed3tpxxghz968wyhdluczv2ljt90nctxy6ctyavm0wxnzahqgyaxqy
+
+# Create Post:
+
+Command:
+desmos tx wasm execute desmos1lmt2ed3tpxxghz968wyhdluczv2ljt90nctxy6ctyavm0wxnzahqgyaxqy '{"create_post": {"post_id": 1,"post_title":"Github","external_id": "https://www.github.com","text": "This post should pass!","tags": ["pass", "funds", "attempt"]}}' --amount 100000000udaric --from alxandria_test --fees 5000udaric --gas 200000 -y
+
+Success:
+https://morpheus.desmos.network/transactions/3133D0AC4B6E92FF6150D63FBA89470683ABC9C3C7C5314CD6DB8EEC9AE956AE
+
+# Query All Posts:
+
+desmos query wasm contract-state smart desmos1lmt2ed3tpxxghz968wyhdluczv2ljt90nctxy6ctyavm0wxnzahqgyaxqy '{"all_posts":{}}'
