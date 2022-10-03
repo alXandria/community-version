@@ -29,3 +29,4 @@ pub struct Post {
 pub const CONFIG: Item<Config> = Item::new("config");
 //create a map of post. Addr is creator. u64 is post_id
 pub const POST: Map<u64, Post> = Map::new("post");
+pub const LAST_POST_ID: Item<u64> = Item::new("last_post_id");
