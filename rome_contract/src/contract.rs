@@ -46,10 +46,20 @@ pub fn execute(
     match msg {
         ExecuteMsg::CreatePost {
             post_id,
+            post_title,
             external_id,
             text,
             tags,
-        } => execute_create_post(deps, env, info, post_id, external_id, text, tags),
+        } => execute_create_post(
+            deps,
+            env,
+            info,
+            post_id,
+            post_title,
+            external_id,
+            text,
+            tags,
+        ),
         ExecuteMsg::EditPost {
             post_id,
             external_id,
@@ -60,11 +70,14 @@ pub fn execute(
     }
 }
 
+//clippy defaults to max value of 7
+#[allow(clippy::too_many_arguments)]
 fn execute_create_post(
     deps: DepsMut,
     env: Env,
     info: MessageInfo,
     post_id: u64,
+    post_title: String,
     external_id: String,
     text: String,
     tags: Vec<String>,
@@ -80,6 +93,7 @@ fn execute_create_post(
     let validated_author = deps.api.addr_validate(&author)?;
     let post: Post = Post {
         post_id,
+        post_title,
         external_id,
         text,
         tags,
@@ -122,6 +136,7 @@ fn execute_edit_post(
     let validated_editor = deps.api.addr_validate(&editor)?;
     let new_post: Post = Post {
         post_id: post.post_id,
+        post_title: post.post_title,
         external_id,
         text,
         tags,
@@ -154,6 +169,7 @@ fn execute_delete_post(
     let validated_deleter = deps.api.addr_validate(&deleter)?;
     let deleted_post: Post = Post {
         post_id: post.post_id,
+        post_title: post.post_title,
         external_id: "".to_string(),
         text: "This post has been deleted.".to_string(),
         tags: vec!["Deleted".to_string()],

@@ -67,6 +67,7 @@ fn test_execute_create_post_valid() {
     //new execute message
     let msg = ExecuteMsg::CreatePost {
         post_id: 1,
+        post_title: "Mintscan Prop 320".to_string(),
         external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(),
         tags: vec![
             "Blockchain".to_string(),
@@ -87,6 +88,7 @@ fn test_execute_create_post_invalid() {
     //new execute message
     let msg = ExecuteMsg::CreatePost {
             post_id: 1,
+            post_title: "Mintscan Prop 320".to_string(),
             external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(),
             tags: vec![
                 "Blockchain".to_string(),
@@ -109,6 +111,7 @@ fn test_execute_edit_post_valid() {
     //create a post
     let msg = ExecuteMsg::CreatePost {
         post_id: 1,
+        post_title: "Mintscan Prop 320".to_string(),
         external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(),
         tags: vec![
             "Blockchain".to_string(),
@@ -138,6 +141,7 @@ fn test_execute_edit_post_invalid() {
     let info = mock_info(ADDR1, &[coin(100_000_000, "udaric")]);
     let msg = ExecuteMsg::CreatePost {
         post_id: 1,
+        post_title: "Mintscan Prop 320".to_string(),
         external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(),
         tags: vec![
             "Blockchain".to_string(),
@@ -166,6 +170,7 @@ fn test_execute_delete_post_valid() {
     //create a post
     let msg = ExecuteMsg::CreatePost {
         post_id: 1,
+        post_title: "Mintscan Prop 320".to_string(),
         external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(),
         tags: vec![
             "Blockchain".to_string(),
@@ -190,6 +195,7 @@ fn test_execute_delete_post_invalid() {
     let info = mock_info(ADDR1, &[coin(100_000_000, "udaric")]);
     let msg = ExecuteMsg::CreatePost {
         post_id: 1,
+        post_title: "Mintscan Prop 320".to_string(),
         external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(),
         tags: vec![
             "Blockchain".to_string(),
@@ -212,6 +218,7 @@ fn test_query_all_posts() {
     let info = mock_info(ADDR1, &[coin(100_000_000, "udaric")]);
     let msg = ExecuteMsg::CreatePost {
         post_id: 1,
+        post_title: "Mintscan Prop 320".to_string(),
         external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(),
         tags: vec![
             "Blockchain".to_string(),
@@ -223,6 +230,7 @@ fn test_query_all_posts() {
     let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
     let msg = ExecuteMsg::CreatePost {
         post_id: 2,
+        post_title: "Google.com".to_string(),
         external_id: "https://www.google.com".to_string(),
         tags: vec!["Search".to_string(), "Google".to_string()],
         text: "".to_string(),
@@ -243,6 +251,7 @@ fn test_query_post() {
     let info = mock_info(ADDR1, &[coin(100_000_000, "udaric")]);
     let msg = ExecuteMsg::CreatePost {
         post_id: 1,
+        post_title: "Mintscan Prop 320".to_string(),
         external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(),
         tags: vec![
             "Blockchain".to_string(),

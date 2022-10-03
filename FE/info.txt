@@ -1,0 +1,6 @@
+1) A form to write post
+2) upload to ipfs button
+3) return ipfs CID
+4) store on blockchain button (post_id, external_id (ipfs_CID), text (summary), tags)
+5) Page to view articles (query all posts (readme)) -> search bar for titles and 
+clicking on post takes you to ipfs link or renders a page on the website.

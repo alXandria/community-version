@@ -13,6 +13,7 @@ pub struct InstantiateMsg {
 pub enum ExecuteMsg {
     CreatePost {
         post_id: u64,
+        post_title: String,
         external_id: String,
         text: String,
         tags: Vec<String>,

@@ -10,7 +10,10 @@ pub struct Config {
 }
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 pub struct Post {
+    //tracks specific posts through unique identifier
     pub post_id: u64,
+    //title for FE searches
+    pub post_title: String,
     //ipfs link
     pub external_id: String,
     //store summary of article / edits
