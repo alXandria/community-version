@@ -16,17 +16,20 @@ use crate::state::{Config, Post, CONFIG, POST};
 const CONTRACT_NAME: &str = "crates.io:alxandria";
 const CONTRACT_VERSION: &str = env!("CARGO_PKG_VERSION");
 const ADDRESS: &str = "desmos1a7vpcddckf9qwezmva8gpzphmzhhdr5y2pllvr";
+const ADMIN: &str = "desmos1etw2v4std305a6tsyvawdrgancv00j65yn2hgg";
 
 #[entry_point]
 pub fn instantiate(
     deps: DepsMut,
     _env: Env,
     info: MessageInfo,
-    msg: InstantiateMsg,
+    _msg: InstantiateMsg,
 ) -> Result<Response, ContractError> {
+    if info.sender != ADMIN {
+        return Err(ContractError::Unauthorized {  });
+    }
     set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
-    let admin = msg.admin.unwrap_or_else(|| info.sender.to_string());
-    let validated_admin = deps.api.addr_validate(&admin)?;
+    let validated_admin = deps.api.addr_validate(ADMIN)?;
     let config = Config {
         admin: validated_admin.clone(),
     };
@@ -221,10 +224,13 @@ fn query_post(deps: Deps, _env: Env, post_id: u64) -> StdResult<Binary> {
 }
 
 #[entry_point]
-pub fn migrate(deps: DepsMut, _env: Env, _msg: MigrateMsg) -> Result<Response, ContractError> {
+pub fn migrate(deps: DepsMut, _env: Env, info: MessageInfo, _msg: MigrateMsg) -> Result<Response, ContractError> {
     let ver = get_contract_version(deps.storage)?;
     if ver.contract != CONTRACT_NAME {
         return Err(StdError::generic_err("Can only upgrade from same type").into());
+    }
+    if info.sender != ADMIN {
+        return Err(ContractError::Unauthorized {  });
     }
     set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
     Ok(Response::default()

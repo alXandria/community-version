@@ -9,7 +9,7 @@ use cosmwasm_std::testing::{mock_dependencies, mock_env, mock_info};
 #[cfg(test)]
 use cosmwasm_std::{attr, coin, from_binary, Response};
 
-pub const ADDR1: &str = "addr1";
+pub const ADDR1: &str = "desmos1etw2v4std305a6tsyvawdrgancv00j65yn2hgg";
 pub const ADDR2: &str = "addr2";
 
 #[test]
@@ -18,7 +18,7 @@ fn test_instantiate() {
     let env = mock_env();
     let info = mock_info(ADDR1, &[]);
 
-    let msg = InstantiateMsg { admin: None };
+    let msg = InstantiateMsg { admin: ADDR1.to_string() };
     let res = instantiate(deps.as_mut(), env, info, msg).unwrap();
 
     assert_eq!(
@@ -26,42 +26,44 @@ fn test_instantiate() {
         vec![attr("action", "instantiate"), attr("admin", ADDR1)]
     )
 }
+
+#[test]
+fn test_instantiate_fails() {
+    let mut deps = mock_dependencies();
+    let env = mock_env();
+    let info = mock_info(ADDR2, &[]);
+
+    let msg = InstantiateMsg {
+        admin: ADDR1.to_string(),
+    };
+    let _err = instantiate(deps.as_mut(), env, info, msg).unwrap_err();
+}
 #[test]
 fn migrate_works() {
     //instantiate
     let mut deps = mock_dependencies();
     let env = mock_env();
     let info = mock_info(ADDR1, &[]);
-    let msg = InstantiateMsg { admin: None };
+    let msg = InstantiateMsg { admin: ADDR1.to_string() };
     let _res = instantiate(deps.as_mut(), env, info, msg).unwrap();
     //migrate
     let msg = MigrateMsg {};
-    let _res: Response = migrate(deps.as_mut(), mock_env(), msg).unwrap();
+    let info = mock_info(ADDR1, &[]);
+    let _res: Response = migrate(deps.as_mut(), mock_env(), info, msg).unwrap();
 }
 
 #[test]
-fn test_instantiate_with_admin() {
-    let mut deps = mock_dependencies();
-    let env = mock_env();
-    let info = mock_info(ADDR1, &[]);
-
-    let msg = InstantiateMsg {
-        admin: Some(ADDR2.to_string()),
-    };
-    let res = instantiate(deps.as_mut(), env, info, msg).unwrap();
-
-    assert_eq!(
-        res.attributes,
-        vec![attr("action", "instantiate"), attr("admin", ADDR2)]
-    )
+fn migrate_fails() {
+    unimplemented!()
 }
+
 #[test]
 fn test_execute_create_post_valid() {
     let mut deps = mock_dependencies();
     let env = mock_env();
     let info = mock_info(ADDR1, &[]);
     //instatiate
-    let msg = InstantiateMsg { admin: None };
+    let msg = InstantiateMsg { admin: ADDR1.to_string() };
     let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
     let info = mock_info(ADDR1, &[coin(100_000_000, "udaric")]);
     //new execute message
@@ -83,7 +85,7 @@ fn test_execute_create_post_invalid() {
     let mut deps = mock_dependencies();
     let env = mock_env();
     let info = mock_info(ADDR1, &[]);
-    let msg = InstantiateMsg { admin: None };
+    let msg = InstantiateMsg { admin: ADDR1.to_string() };
     let _res = instantiate(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
     //new execute message
     let msg = ExecuteMsg::CreatePost {
@@ -105,7 +107,7 @@ fn test_execute_edit_post_valid() {
     let mut deps = mock_dependencies();
     let env = mock_env();
     let info = mock_info(ADDR1, &[]);
-    let msg = InstantiateMsg { admin: None };
+    let msg = InstantiateMsg { admin: ADDR1.to_string() };
     let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
     let info = mock_info(ADDR1, &[coin(100_000_000, "udaric")]);
     //create a post
@@ -136,7 +138,7 @@ fn test_execute_edit_post_invalid() {
     let mut deps = mock_dependencies();
     let env = mock_env();
     let info = mock_info(ADDR1, &[]);
-    let msg = InstantiateMsg { admin: None };
+    let msg = InstantiateMsg { admin: ADDR1.to_string() };
     let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
     let info = mock_info(ADDR1, &[coin(100_000_000, "udaric")]);
     let msg = ExecuteMsg::CreatePost {
@@ -164,7 +166,7 @@ fn test_execute_delete_post_valid() {
     let mut deps = mock_dependencies();
     let env = mock_env();
     let info = mock_info(ADDR1, &[]);
-    let msg = InstantiateMsg { admin: None };
+    let msg = InstantiateMsg { admin: ADDR1.to_string() };
     let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
     let info = mock_info(ADDR1, &[coin(100_000_000, "udaric")]);
     //create a post
@@ -190,7 +192,7 @@ fn test_execute_delete_post_invalid() {
     let mut deps = mock_dependencies();
     let env = mock_env();
     let info = mock_info(ADDR1, &[coin(100_000_000, "udaric")]);
-    let msg = InstantiateMsg { admin: None };
+    let msg = InstantiateMsg { admin: ADDR1.to_string() };
     let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
     let info = mock_info(ADDR1, &[coin(100_000_000, "udaric")]);
     let msg = ExecuteMsg::CreatePost {
@@ -213,7 +215,7 @@ fn test_query_all_posts() {
     let mut deps = mock_dependencies();
     let env = mock_env();
     let info = mock_info(ADDR1, &[]);
-    let msg = InstantiateMsg { admin: None };
+    let msg = InstantiateMsg { admin: ADDR1.to_string() };
     let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
     let info = mock_info(ADDR1, &[coin(100_000_000, "udaric")]);
     let msg = ExecuteMsg::CreatePost {
@@ -246,7 +248,7 @@ fn test_query_post() {
     let mut deps = mock_dependencies();
     let env = mock_env();
     let info = mock_info(ADDR1, &[]);
-    let msg = InstantiateMsg { admin: None };
+    let msg = InstantiateMsg { admin: ADDR1.to_string() };
     let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
     let info = mock_info(ADDR1, &[coin(100_000_000, "udaric")]);
     let msg = ExecuteMsg::CreatePost {
