@@ -12,6 +12,7 @@ pub struct InstantiateMsg {
 #[serde(rename_all = "snake_case")]
 pub enum ExecuteMsg {
     CreatePost {
+        //will remove post_id for random
         post_id: u64,
         post_title: String,
         external_id: String,
