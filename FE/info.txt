@@ -1,6 +1,13 @@
 1) A form to write post
 2) upload to ipfs button
 3) return ipfs CID
-4) store on blockchain button (post_id, external_id (ipfs_CID), text (summary), tags)
+4) store on blockchain button (external_id (ipfs_CID), text (summary), tags)
 5) Page to view articles (query all posts (readme)) -> search bar for titles and 
 clicking on post takes you to ipfs link or renders a page on the website.
+
+
+Create Post:
+desmos tx wasm execute desmos1lmt2ed3tpxxghz968wyhdluczv2ljt90nctxy6ctyavm0wxnzahqgyaxqy '{"create_post": {"post_id": 2,"post_title":"Github","external_id": "https://www.github.com","text": "Test for FE team!","tags": ["test", "example", "fun"]}}' --amount 100000000udaric --from alxandria_test --fees 5000udaric --gas 200000 -y
+
+Query All Posts:
+desmos query wasm contract-state smart desmos1lmt2ed3tpxxghz968wyhdluczv2ljt90nctxy6ctyavm0wxnzahqgyaxqy '{"all_posts":{}}'
