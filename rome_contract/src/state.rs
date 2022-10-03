@@ -11,7 +11,9 @@ pub struct Config {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 pub struct Post {
     pub post_id: u64,
+    //ipfs link
     pub external_id: String,
+    //store summary of article / edits
     pub text: String,
     pub tags: Vec<String>,
     pub author: String,
