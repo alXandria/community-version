@@ -10,7 +10,7 @@ use crate::error::ContractError;
 use crate::msg::{
     AllPostsResponse, ExecuteMsg, InstantiateMsg, MigrateMsg, PostResponse, QueryMsg,
 };
-use crate::state::{Config, Post, CONFIG, POST, LAST_POST_ID};
+use crate::state::{Config, Post, CONFIG, LAST_POST_ID, POST};
 
 //info for migration
 const CONTRACT_NAME: &str = "crates.io:alxandria";
@@ -52,15 +52,7 @@ pub fn execute(
             external_id,
             text,
             tags,
-        } => execute_create_post(
-            deps,
-            env,
-            info,
-            post_title,
-            external_id,
-            text,
-            tags,
-        ),
+        } => execute_create_post(deps, env, info, post_title, external_id, text, tags),
         ExecuteMsg::EditPost {
             post_id,
             external_id,
@@ -120,7 +112,7 @@ fn execute_create_post(
                 .add_attribute("action", "create_post")
                 .add_attribute("post_id", post.post_id.to_string())
                 .add_attribute("author", validated_author.to_string()))
-        },
+        }
         None => {
             let last_post_id = 0;
             let incremented_id = last_post_id + 1;
@@ -149,7 +141,7 @@ fn execute_create_post(
                 .add_attribute("action", "create_post")
                 .add_attribute("post_id", post.post_id.to_string())
                 .add_attribute("author", validated_author.to_string()))
-        },
+        }
     }
 }
 
@@ -262,12 +254,15 @@ fn query_post(deps: Deps, _env: Env, post_id: u64) -> StdResult<Binary> {
 pub fn migrate(
     deps: DepsMut,
     _env: Env,
-    _info: MessageInfo,
+    info: MessageInfo,
     _msg: MigrateMsg,
 ) -> Result<Response, ContractError> {
     let ver = get_contract_version(deps.storage)?;
     if ver.contract != CONTRACT_NAME {
         return Err(StdError::generic_err("Can only upgrade from same type").into());
+    }
+    if info.sender != ADMIN {
+        return Err(ContractError::Unauthorized {});
     }
     set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
     Ok(Response::default()
