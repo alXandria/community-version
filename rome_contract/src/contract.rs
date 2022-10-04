@@ -70,7 +70,6 @@ pub fn execute(
         ExecuteMsg::DeletePost { post_id } => execute_delete_post(deps, env, info, post_id),
     }
 }
-
 //clippy defaults to max value of 7
 #[allow(clippy::too_many_arguments)]
 fn execute_create_post(
@@ -83,12 +82,15 @@ fn execute_create_post(
     tags: Vec<String>,
 ) -> Result<Response, ContractError> {
     assert_sent_exact_coin(&info.funds, Some(coin(100_000_000, "udaric")))?;
+    //const
     if text.len() > 499 {
         return Err(ContractError::TooMuchText {});
     }
     if external_id.len() > 128 {
         return Err(ContractError::OnlyOneLink {});
     }
+    // POST.keys(store, min, max, order)
+    //load descending, last instead of last_post_id
     let last_post_id = LAST_POST_ID.may_load(deps.storage)?;
     match last_post_id {
         Some(last_post_id) => {
@@ -260,15 +262,12 @@ fn query_post(deps: Deps, _env: Env, post_id: u64) -> StdResult<Binary> {
 pub fn migrate(
     deps: DepsMut,
     _env: Env,
-    info: MessageInfo,
+    _info: MessageInfo,
     _msg: MigrateMsg,
 ) -> Result<Response, ContractError> {
     let ver = get_contract_version(deps.storage)?;
     if ver.contract != CONTRACT_NAME {
         return Err(StdError::generic_err("Can only upgrade from same type").into());
-    }
-    if info.sender != ADMIN {
-        return Err(ContractError::Unauthorized {});
     }
     set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
     Ok(Response::default()
