@@ -254,15 +254,11 @@ fn query_post(deps: Deps, _env: Env, post_id: u64) -> StdResult<Binary> {
 pub fn migrate(
     deps: DepsMut,
     _env: Env,
-    info: MessageInfo,
     _msg: MigrateMsg,
 ) -> Result<Response, ContractError> {
     let ver = get_contract_version(deps.storage)?;
     if ver.contract != CONTRACT_NAME {
         return Err(StdError::generic_err("Can only upgrade from same type").into());
-    }
-    if info.sender != ADMIN {
-        return Err(ContractError::Unauthorized {});
     }
     set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
     Ok(Response::default()

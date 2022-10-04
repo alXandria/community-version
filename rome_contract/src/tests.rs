@@ -52,24 +52,7 @@ fn migrate_works() {
     let _res = instantiate(deps.as_mut(), env, info, msg).unwrap();
     //migrate
     let msg = MigrateMsg {};
-    let info = mock_info(ADDR1, &[]);
-    let _res: Response = migrate(deps.as_mut(), mock_env(), info, msg).unwrap();
-}
-
-#[test]
-fn migrate_fails() {
-    //instantiate
-    let mut deps = mock_dependencies();
-    let env = mock_env();
-    let info = mock_info(ADDR1, &[]);
-    let msg = InstantiateMsg {
-        admin: ADDR1.to_string(),
-    };
-    let _res = instantiate(deps.as_mut(), env, info, msg).unwrap();
-    //migrate
-    let msg = MigrateMsg {};
-    let info = mock_info(ADDR2, &[]);
-    let _err = migrate(deps.as_mut(), mock_env(), info, msg).unwrap_err();
+    let _res: Response = migrate(deps.as_mut(), mock_env(), msg).unwrap();
 }
 
 #[test]
