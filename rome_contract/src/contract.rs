@@ -100,6 +100,7 @@ fn execute_create_post(
                 last_edit_date: None,
                 deleter: None,
                 editor: None,
+                deletion_date: None,
             };
             LAST_POST_ID.save(deps.storage, &incremented_id)?;
             POST.save(deps.storage, post.post_id, &post)?;
@@ -129,6 +130,7 @@ fn execute_create_post(
                 last_edit_date: None,
                 deleter: None,
                 editor: None,
+                deletion_date: None,
             };
             LAST_POST_ID.save(deps.storage, &incremented_id)?;
             POST.save(deps.storage, post.post_id, &post)?;
@@ -175,6 +177,7 @@ fn execute_edit_post(
         last_edit_date: Some(env.block.time.to_string()),
         deleter: None,
         editor: Some(validated_editor.to_string()),
+        deletion_date: None,
     };
     POST.save(deps.storage, post_id, &new_post)?;
     let message = BankMsg::Send {
@@ -205,9 +208,10 @@ fn execute_delete_post(
         tags: vec!["Deleted".to_string()],
         author: post.author,
         creation_date: post.creation_date,
-        last_edit_date: Some(env.block.time.to_string()),
+        last_edit_date: post.last_edit_date,
         deleter: Some(validated_deleter.to_string()),
         editor: post.editor,
+        deletion_date: Some(env.block.time.to_string()),
     };
     POST.save(deps.storage, post_id, &deleted_post)?;
     let message = BankMsg::Send {
