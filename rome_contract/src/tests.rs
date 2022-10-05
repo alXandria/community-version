@@ -242,10 +242,13 @@ fn test_query_all_posts() {
         text: "".to_string(),
     };
     let _res = execute(deps.as_mut(), env.clone(), info, msg).unwrap();
-    let msg = QueryMsg::AllPosts { limit: None };
+    let msg = QueryMsg::AllPosts {
+        limit: None,
+        start_after: Some(1),
+    };
     let bin = query(deps.as_ref(), env, msg).unwrap();
     let res: AllPostsResponse = from_binary(&bin).unwrap();
-    assert_eq!(res.posts.len(), 2);
+    assert_eq!(res.posts.len(), 1);
 }
 #[test]
 fn test_query_post() {

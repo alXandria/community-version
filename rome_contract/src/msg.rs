@@ -40,8 +40,13 @@ pub struct PostResponse {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum QueryMsg {
-    AllPosts { limit: Option<u32> },
-    Post { post_id: u64 },
+    AllPosts {
+        limit: Option<u32>,
+        start_after: Option<u64>,
+    },
+    Post {
+        post_id: u64,
+    },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]

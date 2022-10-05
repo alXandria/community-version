@@ -3,6 +3,7 @@ use cosmwasm_std::{
     Response, StdError, StdResult,
 };
 use cw2::{get_contract_version, set_contract_version};
+use cw_storage_plus::Bound;
 use std::{env, vec};
 
 use crate::coin_helpers::assert_sent_exact_coin;
@@ -229,20 +230,26 @@ fn execute_delete_post(
 #[entry_point]
 pub fn query(deps: Deps, env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
-        QueryMsg::AllPosts { limit } => query_all_posts(deps, env, limit),
+        QueryMsg::AllPosts { limit, start_after } => query_all_posts(deps, env, limit, start_after),
         QueryMsg::Post { post_id } => query_post(deps, env, post_id),
     }
 }
 
-//pagination limits
+//pagination
 
 const MAX_LIMIT: u32 = 30;
 const DEFAULT_LIMIT: u32 = 10;
 
-fn query_all_posts(deps: Deps, _env: Env, limit: Option<u32>) -> StdResult<Binary> {
+fn query_all_posts(
+    deps: Deps,
+    _env: Env,
+    limit: Option<u32>,
+    start_after: Option<u64>,
+) -> StdResult<Binary> {
     let limit = limit.unwrap_or(DEFAULT_LIMIT).min(MAX_LIMIT) as usize;
+    let start = start_after.map(Bound::exclusive);
     let posts = POST
-        .range(deps.storage, None, None, Order::Ascending)
+        .range(deps.storage, start, None, Order::Ascending)
         .take(limit)
         .map(|p| Ok(p?.1))
         .collect::<StdResult<Vec<_>>>()?;
