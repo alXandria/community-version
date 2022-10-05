@@ -12,11 +12,12 @@ use crate::msg::{
 };
 use crate::state::{Config, Post, CONFIG, LAST_POST_ID, POST};
 
-//info for migration
 const CONTRACT_NAME: &str = "crates.io:alxandria";
 const CONTRACT_VERSION: &str = env!("CARGO_PKG_VERSION");
 const ADDRESS: &str = "desmos1a7vpcddckf9qwezmva8gpzphmzhhdr5y2pllvr";
 const ADMIN: &str = "desmos1etw2v4std305a6tsyvawdrgancv00j65yn2hgg";
+const MAX_ID_LENGTH: usize = 128;
+const MAX_TEXT_LENGTH: usize = 499;
 
 #[entry_point]
 pub fn instantiate(
@@ -75,10 +76,10 @@ fn execute_create_post(
 ) -> Result<Response, ContractError> {
     assert_sent_exact_coin(&info.funds, Some(coin(100_000_000, "udaric")))?;
     //const
-    if text.len() > 499 {
+    if text.len() > MAX_TEXT_LENGTH {
         return Err(ContractError::TooMuchText {});
     }
-    if external_id.len() > 128 {
+    if external_id.len() > MAX_ID_LENGTH {
         return Err(ContractError::OnlyOneLink {});
     }
     // POST.keys(store, min, max, order)
@@ -157,10 +158,10 @@ fn execute_edit_post(
     tags: Vec<String>,
 ) -> Result<Response, ContractError> {
     assert_sent_exact_coin(&info.funds, Some(Coin::new(200_000_000, "udaric")))?;
-    if text.len() > 499 {
+    if text.len() > MAX_TEXT_LENGTH {
         return Err(ContractError::TooMuchText {});
     }
-    if external_id.len() > 128 {
+    if external_id.len() > MAX_ID_LENGTH {
         return Err(ContractError::OnlyOneLink {});
     }
     let post = POST.load(deps.storage, post_id)?;
