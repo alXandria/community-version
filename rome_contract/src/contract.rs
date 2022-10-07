@@ -184,10 +184,15 @@ fn execute_edit_post(
     POST.save(deps.storage, post_id, &new_post)?;
     let message = BankMsg::Send {
         to_address: (ADDRESS.to_string()),
-        amount: vec![coin(200_000_000, "udaric")],
+        amount: vec![coin(175_000_000, "udaric")],
+    };
+    let share = BankMsg::Send {
+        to_address: new_post.author,
+        amount: vec![coin(25_000_000, "udaric")],
     };
     Ok(Response::new()
         .add_message(message)
+        .add_message(share)
         .add_attribute("action", "edit_post")
         .add_attribute("post_id", new_post.post_id.to_string())
         .add_attribute("editor", new_post.editor.unwrap()))
