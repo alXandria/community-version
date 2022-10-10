@@ -83,8 +83,6 @@ fn execute_create_post(
     if external_id.len() > MAX_ID_LENGTH {
         return Err(ContractError::OnlyOneLink {});
     }
-    // POST.keys(store, min, max, order)
-    //load descending, last instead of last_post_id
     let last_post_id = LAST_POST_ID.may_load(deps.storage)?;
     match last_post_id {
         Some(last_post_id) => {

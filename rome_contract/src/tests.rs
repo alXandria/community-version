@@ -158,6 +158,7 @@ fn test_execute_edit_post_invalid() {
     let msg = ExecuteMsg::EditPost {
             post_id: 1,
             external_id: "https://stake.tax/".to_string(),
+            //too much text
             text: "This will fail vdfjkvjdfnksvkndsvjsndjkvnkjfnvnsdjkvnsdfnvjkdfnsvnjdksnvkldsnvjkdfnvjkfdnvkdnfjvkndjsknvjksdnknjfknvjkdsfnjvknskdnvjkndsjkvsjkdnvjksdfnvjksdfnvjkdfsnjvksvndfjkvnjsdkfnvjksdfnvkjlsdfvjnldsfknvjkdsvnjdksjkvcjkdnkm dkfs vkdnjkvndfkjsvjkfdnvjksdfnjkvkdfnvdnskvnsdfvjkdsnvjkdfnvjkdnvjksdnvjkdsvnjkdfnsdvfdknvjksdnvjfkdsnvjkdfsnvjksdnvjkfdsnvjkdsvlnsjknvjkdsnvjksdfnvkndsfjkvnjdskvnksdflvnjdknvjksdnvjkdfsnvjkdsnvjksdnvkdsnvfjkdnvjkdnvjkfndsvkdsfnjvksdnvsdfjklnvjdkslnvjdksnvjdfknvsdfjklnvdjksfnvjkdlsfnvkd".to_string(),
             tags: vec!["Tax".to_string(), "Website".to_string()],
         };
@@ -244,10 +245,12 @@ fn test_query_all_posts() {
     let _res = execute(deps.as_mut(), env.clone(), info, msg).unwrap();
     let msg = QueryMsg::AllPosts {
         limit: None,
+        //pagination
         start_after: Some(1),
     };
     let bin = query(deps.as_ref(), env, msg).unwrap();
     let res: AllPostsResponse = from_binary(&bin).unwrap();
+    //checks pagination
     assert_eq!(res.posts.len(), 1);
 }
 #[test]
