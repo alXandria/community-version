@@ -76,7 +76,6 @@ fn execute_create_post(
     tags: Vec<String>,
 ) -> Result<Response, ContractError> {
     assert_sent_exact_coin(&info.funds, Some(coin(100_000_000, "udaric")))?;
-    //const
     if text.len() > MAX_TEXT_LENGTH {
         return Err(ContractError::TooMuchText {});
     }
@@ -239,7 +238,6 @@ pub fn query(deps: Deps, env: Env, msg: QueryMsg) -> StdResult<Binary> {
 }
 
 //pagination
-
 const MAX_LIMIT: u32 = 30;
 const DEFAULT_LIMIT: u32 = 10;
 
