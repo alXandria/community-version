@@ -36,6 +36,7 @@ pub fn instantiate(
         admin: validated_admin.clone(),
     };
     CONFIG.save(deps.storage, &config)?;
+    LAST_POST_ID.save(deps.storage, &0)?;
     Ok(Response::new()
         .add_attribute("action", "instantiate")
         .add_attribute("admin", validated_admin.to_string()))
@@ -82,68 +83,34 @@ fn execute_create_post(
     if external_id.len() > MAX_ID_LENGTH {
         return Err(ContractError::OnlyOneLink {});
     }
-    let last_post_id = LAST_POST_ID.may_load(deps.storage)?;
-    match last_post_id {
-        Some(last_post_id) => {
-            let incremented_id = last_post_id + 1;
-            let author = info.sender.to_string();
-            let validated_author = deps.api.addr_validate(&author)?;
-            let post: Post = Post {
-                post_id: incremented_id,
-                post_title,
-                external_id,
-                text,
-                tags,
-                author: validated_author.to_string(),
-                creation_date: env.block.time.to_string(),
-                last_edit_date: None,
-                deleter: None,
-                editor: None,
-                deletion_date: None,
-            };
-            LAST_POST_ID.save(deps.storage, &incremented_id)?;
-            POST.save(deps.storage, post.post_id, &post)?;
-            let message = BankMsg::Send {
-                to_address: (ADDRESS.to_string()),
-                amount: vec![coin(100_000_000, "udaric")],
-            };
-            Ok(Response::new()
-                .add_message(message)
-                .add_attribute("action", "create_post")
-                .add_attribute("post_id", post.post_id.to_string())
-                .add_attribute("author", validated_author.to_string()))
-        }
-        None => {
-            let last_post_id = 0;
-            let incremented_id = last_post_id + 1;
-            let author = info.sender.to_string();
-            let validated_author = deps.api.addr_validate(&author)?;
-            let post: Post = Post {
-                post_id: incremented_id,
-                post_title,
-                external_id,
-                text,
-                tags,
-                author: validated_author.to_string(),
-                creation_date: env.block.time.to_string(),
-                last_edit_date: None,
-                deleter: None,
-                editor: None,
-                deletion_date: None,
-            };
-            LAST_POST_ID.save(deps.storage, &incremented_id)?;
-            POST.save(deps.storage, post.post_id, &post)?;
-            let message = BankMsg::Send {
-                to_address: (ADDRESS.to_string()),
-                amount: vec![coin(100_000_000, "udaric")],
-            };
-            Ok(Response::new()
-                .add_message(message)
-                .add_attribute("action", "create_post")
-                .add_attribute("post_id", post.post_id.to_string())
-                .add_attribute("author", validated_author.to_string()))
-        }
-    }
+    let last_post_id = LAST_POST_ID.load(deps.storage)?;
+    let incremented_id = last_post_id + 1;
+    let author = info.sender.to_string();
+    let validated_author = deps.api.addr_validate(&author)?;
+    let post: Post = Post {
+        post_id: incremented_id,
+        post_title,
+        external_id,
+        text,
+        tags,
+        author: validated_author.to_string(),
+        creation_date: env.block.time.to_string(),
+        last_edit_date: None,
+        deleter: None,
+        editor: None,
+        deletion_date: None,
+    };
+    LAST_POST_ID.save(deps.storage, &incremented_id)?;
+    POST.save(deps.storage, post.post_id, &post)?;
+    let message = BankMsg::Send {
+        to_address: (ADDRESS.to_string()),
+        amount: vec![coin(100_000_000, "udaric")],
+    };
+    Ok(Response::new()
+        .add_message(message)
+        .add_attribute("action", "create_post")
+        .add_attribute("post_id", post.post_id.to_string())
+        .add_attribute("author", validated_author.to_string()))
 }
 
 fn execute_edit_post(
