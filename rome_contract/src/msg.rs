@@ -26,6 +26,7 @@ pub enum ExecuteMsg {
     DeletePost {
         post_id: u64,
     },
+    Withdraw {},
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]

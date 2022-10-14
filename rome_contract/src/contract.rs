@@ -63,6 +63,7 @@ pub fn execute(
             tags,
         } => execute_edit_post(deps, env, info, post_id, external_id, text, tags),
         ExecuteMsg::DeletePost { post_id } => execute_delete_post(deps, env, info, post_id),
+        ExecuteMsg::Withdraw {} => execute_withdraw(deps, env, info),
     }
 }
 //clippy defaults to max value of 7
@@ -102,12 +103,7 @@ fn execute_create_post(
     };
     LAST_POST_ID.save(deps.storage, &incremented_id)?;
     POST.save(deps.storage, post.post_id, &post)?;
-    let message = BankMsg::Send {
-        to_address: (ADDRESS.to_string()),
-        amount: vec![coin(100_000_000, "udaric")],
-    };
     Ok(Response::new()
-        .add_message(message)
         .add_attribute("action", "create_post")
         .add_attribute("post_id", post.post_id.to_string())
         .add_attribute("author", validated_author.to_string()))
@@ -146,16 +142,11 @@ fn execute_edit_post(
         deletion_date: None,
     };
     POST.save(deps.storage, post_id, &new_post)?;
-    let message = BankMsg::Send {
-        to_address: (ADDRESS.to_string()),
-        amount: vec![coin(175_000_000, "udaric")],
-    };
     let share = BankMsg::Send {
         to_address: new_post.author,
         amount: vec![coin(25_000_000, "udaric")],
     };
     Ok(Response::new()
-        .add_message(message)
         .add_message(share)
         .add_attribute("action", "edit_post")
         .add_attribute("post_id", new_post.post_id.to_string())
@@ -185,15 +176,27 @@ fn execute_delete_post(
         deletion_date: Some(env.block.time.to_string()),
     };
     POST.save(deps.storage, post_id, &deleted_post)?;
-    let message = BankMsg::Send {
-        to_address: (ADDRESS.to_string()),
-        amount: vec![coin(1_000_000_000, "udaric")],
-    };
     Ok(Response::new()
-        .add_message(message)
         .add_attribute("action", "delete_post")
         .add_attribute("post_id", deleted_post.post_id.to_string())
         .add_attribute("delete", deleted_post.deleter.unwrap()))
+}
+
+fn execute_withdraw(
+    deps: DepsMut,
+    env: Env,
+    info: MessageInfo,
+) -> Result<Response, ContractError> {
+    if info.sender != ADMIN {
+        return Err(ContractError::Unauthorized {});
+    }
+    let balance = deps.querier.query_all_balances(&env.contract.address)?;
+    let bank_msg = BankMsg::Send { to_address: ADDRESS.to_string(), amount: balance };
+
+    let resp = Response::new()
+        .add_message(bank_msg)
+        .add_attribute("action", "withdraw");
+    Ok(resp)
 }
 
 #[entry_point]
