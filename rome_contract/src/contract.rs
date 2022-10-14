@@ -182,16 +182,15 @@ fn execute_delete_post(
         .add_attribute("delete", deleted_post.deleter.unwrap()))
 }
 
-fn execute_withdraw(
-    deps: DepsMut,
-    env: Env,
-    info: MessageInfo,
-) -> Result<Response, ContractError> {
+fn execute_withdraw(deps: DepsMut, env: Env, info: MessageInfo) -> Result<Response, ContractError> {
     if info.sender != ADMIN {
         return Err(ContractError::Unauthorized {});
     }
     let balance = deps.querier.query_all_balances(&env.contract.address)?;
-    let bank_msg = BankMsg::Send { to_address: ADDRESS.to_string(), amount: balance };
+    let bank_msg = BankMsg::Send {
+        to_address: ADDRESS.to_string(),
+        amount: balance,
+    };
 
     let resp = Response::new()
         .add_message(bank_msg)

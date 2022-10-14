@@ -236,8 +236,34 @@ fn test_withdraw_valid() {
         text: "".to_string(),
     };
     let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
+    let msg = ExecuteMsg::Withdraw {};
+    let _res = execute(deps.as_mut(), env, info, msg).unwrap();
 }
-
+#[test]
+fn test_withdraw_invalid() {
+    let mut deps = mock_dependencies();
+    let env = mock_env();
+    let info = mock_info(ADDR1, &[]);
+    let msg = InstantiateMsg {
+        admin: ADDR1.to_string(),
+    };
+    let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
+    let info = mock_info(ADDR1, &[coin(100_000_000, "udaric")]);
+    let msg = ExecuteMsg::CreatePost {
+        post_title: "Mintscan Prop 320".to_string(),
+        external_id: "https://www.mintscan.io/osmosis/proposals/320".to_string(),
+        tags: vec![
+            "Blockchain".to_string(),
+            "Governance".to_string(),
+            "Rejected".to_string(),
+        ],
+        text: "".to_string(),
+    };
+    let _res = execute(deps.as_mut(), env.clone(), info, msg).unwrap();
+    let info = mock_info(ADDR2, &[]);
+    let msg = ExecuteMsg::Withdraw {};
+    let _res = execute(deps.as_mut(), env, info, msg).unwrap_err();
+}
 #[test]
 fn test_query_all_posts() {
     let mut deps = mock_dependencies();
