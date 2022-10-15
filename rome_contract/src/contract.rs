@@ -15,8 +15,8 @@ use crate::state::{Config, Post, CONFIG, LAST_POST_ID, POST};
 
 const CONTRACT_NAME: &str = "crates.io:alxandria";
 const CONTRACT_VERSION: &str = env!("CARGO_PKG_VERSION");
-const ADDRESS: &str = "desmos1a7vpcddckf9qwezmva8gpzphmzhhdr5y2pllvr";
-const ADMIN: &str = "desmos1etw2v4std305a6tsyvawdrgancv00j65yn2hgg";
+const ADDRESS: &str = "juno1ggtuwvungvx5t3awqpcqvxxvgt7gvwdkanuwtm";
+const ADMIN: &str = "juno1w5aespcyddns7y696q9wlch4ehflk2wglu9vv4";
 const MAX_ID_LENGTH: usize = 128;
 const MAX_TEXT_LENGTH: usize = 499;
 
@@ -77,7 +77,7 @@ fn execute_create_post(
     text: String,
     tags: Vec<String>,
 ) -> Result<Response, ContractError> {
-    assert_sent_exact_coin(&info.funds, Some(coin(100_000_000, "udaric")))?;
+    assert_sent_exact_coin(&info.funds, Some(coin(1_000_000, "ujunox")))?;
     if text.len() > MAX_TEXT_LENGTH {
         return Err(ContractError::TooMuchText {});
     }
@@ -118,7 +118,7 @@ fn execute_edit_post(
     text: String,
     tags: Vec<String>,
 ) -> Result<Response, ContractError> {
-    assert_sent_exact_coin(&info.funds, Some(Coin::new(200_000_000, "udaric")))?;
+    assert_sent_exact_coin(&info.funds, Some(Coin::new(2_000_000, "ujunox")))?;
     if text.len() > MAX_TEXT_LENGTH {
         return Err(ContractError::TooMuchText {});
     }
@@ -144,7 +144,7 @@ fn execute_edit_post(
     POST.save(deps.storage, post_id, &new_post)?;
     let share = BankMsg::Send {
         to_address: new_post.author,
-        amount: vec![coin(25_000_000, "udaric")],
+        amount: vec![coin(25_000_000, "ujunox")],
     };
     Ok(Response::new()
         .add_message(share)
@@ -158,7 +158,7 @@ fn execute_delete_post(
     info: MessageInfo,
     post_id: u64,
 ) -> Result<Response, ContractError> {
-    assert_sent_exact_coin(&info.funds, Some(Coin::new(1_000_000_000, "udaric")))?;
+    assert_sent_exact_coin(&info.funds, Some(Coin::new(10_000_000, "ujunox")))?;
     let post = POST.load(deps.storage, post_id)?;
     let deleter = info.sender.to_string();
     let validated_deleter = deps.api.addr_validate(&deleter)?;
