@@ -1,6 +1,6 @@
 # This contract is a decentralized encyclopedia. It is live on testnet and functioning! However, we will not deploy on Mainnet Desmos. Avoid that team like the plague.
 
-# Full Contract Test With Updated Contract (Oct 10)
+# Full Contract Test With Updated Contract (Oct 15)
 *Store With Instantiation Limitation:*
 desmos tx wasm store alxandria.wasm --from alxandria_test --fees 5000udaric --gas 2000000 --instantiate-only-address desmos1etw2v4std305a6tsyvawdrgancv00j65yn2hgg -y
 
