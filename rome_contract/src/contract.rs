@@ -4,8 +4,8 @@ use cosmwasm_std::{
 };
 use cw2::{get_contract_version, set_contract_version};
 use cw_storage_plus::Bound;
-use std::{env, vec};
 use is_false::is_false;
+use std::{env, vec};
 
 use crate::coin_helpers::assert_sent_exact_coin;
 use crate::error::ContractError;
@@ -21,6 +21,7 @@ const ADMIN: &str = "juno1w5aespcyddns7y696q9wlch4ehflk2wglu9vv4";
 const MAX_ID_LENGTH: usize = 128;
 const MAX_TEXT_LENGTH: usize = 499;
 const IPFS: &str = "https://alxandria.infura-ipfs.io/ipfs/";
+const JUNO: &str = "ujunox";
 
 #[entry_point]
 pub fn instantiate(
@@ -79,7 +80,7 @@ fn execute_create_post(
     text: String,
     tags: Vec<String>,
 ) -> Result<Response, ContractError> {
-    assert_sent_exact_coin(&info.funds, Some(coin(1_000_000, "ujunox")))?;
+    assert_sent_exact_coin(&info.funds, Some(coin(1_000_000, JUNO)))?;
     if text.len() > MAX_TEXT_LENGTH {
         return Err(ContractError::TooMuchText {});
     }
@@ -87,7 +88,7 @@ fn execute_create_post(
         return Err(ContractError::OnlyOneLink {});
     }
     if is_false(external_id.starts_with(IPFS)) {
-        return Err(ContractError::MustUseAlxandriaGateway {  });
+        return Err(ContractError::MustUseAlxandriaGateway {});
     }
     let last_post_id = LAST_POST_ID.load(deps.storage)?;
     let incremented_id = last_post_id + 1;
@@ -123,7 +124,7 @@ fn execute_edit_post(
     text: String,
     tags: Vec<String>,
 ) -> Result<Response, ContractError> {
-    assert_sent_exact_coin(&info.funds, Some(Coin::new(2_000_000, "ujunox")))?;
+    assert_sent_exact_coin(&info.funds, Some(Coin::new(2_000_000, JUNO)))?;
     if text.len() > MAX_TEXT_LENGTH {
         return Err(ContractError::TooMuchText {});
     }
@@ -131,7 +132,7 @@ fn execute_edit_post(
         return Err(ContractError::OnlyOneLink {});
     }
     if is_false(external_id.starts_with(IPFS)) {
-        return Err(ContractError::MustUseAlxandriaGateway {  });
+        return Err(ContractError::MustUseAlxandriaGateway {});
     }
     let post = POST.load(deps.storage, post_id)?;
     let editor = info.sender.to_string();
@@ -152,7 +153,7 @@ fn execute_edit_post(
     POST.save(deps.storage, post_id, &new_post)?;
     let share = BankMsg::Send {
         to_address: new_post.author,
-        amount: vec![coin(25_000_000, "ujunox")],
+        amount: vec![coin(25_000_000, JUNO)],
     };
     Ok(Response::new()
         .add_message(share)
@@ -166,7 +167,7 @@ fn execute_delete_post(
     info: MessageInfo,
     post_id: u64,
 ) -> Result<Response, ContractError> {
-    assert_sent_exact_coin(&info.funds, Some(Coin::new(10_000_000, "ujunox")))?;
+    assert_sent_exact_coin(&info.funds, Some(Coin::new(10_000_000, JUNO)))?;
     let post = POST.load(deps.storage, post_id)?;
     let deleter = info.sender.to_string();
     let validated_deleter = deps.api.addr_validate(&deleter)?;
