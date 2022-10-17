@@ -17,4 +17,7 @@ pub enum ContractError {
 
     #[error("Insufficient funds. Needed: {needed} Sent: {received}")]
     NotEnoughFunds { needed: String, received: String },
+
+    #[error("The IPFS link must be with alxandria's dedicated gateway: https://alxandria.infura-ipfs.io/ipfs/")]
+    MustUseAlxandriaGateway {},
 }

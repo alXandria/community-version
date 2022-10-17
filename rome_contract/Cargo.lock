@@ -12,6 +12,7 @@ dependencies = [
  "cw-multi-test",
  "cw-storage-plus",
  "cw2",
+ "is_false",
  "schemars",
  "serde",
  "thiserror",
@@ -438,6 +439,21 @@ checksum = "6c49c37c09c17a53d937dfbb742eb3a961d65a994e6bcdcf37e7399d0cc8ab5e"
 dependencies = [
  "digest 0.10.3",
 ]
+
+[[package]]
+name = "is_false"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "de46272a035554654b5b21f2ca800e6c476162ffa9b019e8bfc68db708fa1e5d"
+dependencies = [
+ "is_true",
+]
+
+[[package]]
+name = "is_true"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a83abbf5983dcee29d4524d617e2025c7c8c90e88cfff77d6827738c8fe3b66a"
 
 [[package]]
 name = "itertools"

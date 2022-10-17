@@ -5,6 +5,7 @@ use cosmwasm_std::{
 use cw2::{get_contract_version, set_contract_version};
 use cw_storage_plus::Bound;
 use std::{env, vec};
+use is_false::is_false;
 
 use crate::coin_helpers::assert_sent_exact_coin;
 use crate::error::ContractError;
@@ -19,6 +20,7 @@ const ADDRESS: &str = "juno1ggtuwvungvx5t3awqpcqvxxvgt7gvwdkanuwtm";
 const ADMIN: &str = "juno1w5aespcyddns7y696q9wlch4ehflk2wglu9vv4";
 const MAX_ID_LENGTH: usize = 128;
 const MAX_TEXT_LENGTH: usize = 499;
+const IPFS: &str = "https://alxandria.infura-ipfs.io/ipfs/";
 
 #[entry_point]
 pub fn instantiate(
@@ -84,6 +86,9 @@ fn execute_create_post(
     if external_id.len() > MAX_ID_LENGTH {
         return Err(ContractError::OnlyOneLink {});
     }
+    if is_false(external_id.starts_with(IPFS)) {
+        return Err(ContractError::MustUseAlxandriaGateway {  });
+    }
     let last_post_id = LAST_POST_ID.load(deps.storage)?;
     let incremented_id = last_post_id + 1;
     let author = info.sender.to_string();
@@ -124,6 +129,9 @@ fn execute_edit_post(
     }
     if external_id.len() > MAX_ID_LENGTH {
         return Err(ContractError::OnlyOneLink {});
+    }
+    if is_false(external_id.starts_with(IPFS)) {
+        return Err(ContractError::MustUseAlxandriaGateway {  });
     }
     let post = POST.load(deps.storage, post_id)?;
     let editor = info.sender.to_string();
