@@ -7,8 +7,6 @@ pub fn assert_sent_exact_coin(sent: &[Coin], required: Option<Coin>) -> Result<(
         if required_amount > 0 {
             let mut received_amounts = vec![];
             let sent_sufficient_funds = sent.iter().any(|coin| {
-                // check if a given sent coin matches denom
-                // and has sufficient amount
                 received_amounts.push(coin.amount.u128().to_string() + " " + &coin.denom);
                 coin.denom == required_coin.denom && coin.amount.u128() == required_amount
             });
