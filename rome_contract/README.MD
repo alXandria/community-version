@@ -1,5 +1,31 @@
 # This contract is a decentralized encyclopedia. It is live on testnet and functioning! However, we will not deploy on Mainnet Desmos. Avoid that team like the plague.
 
+# Juno Testnet
+
+*Store With Instantiation Limitation:*
+junod tx wasm store alxandria.wasm --from testnet --fees 500ujunox --gas 2000000 --instantiate-only-address juno1w5aespcyddns7y696q9wlch4ehflk2wglu9vv4 -y
+
+https://explorer.testnet.sourceprotocol.io/juno/tx/2B392DB9C7268E12E56FED5B9B6CBDCA6A325DBED8E08F3E8225ED375A30641A
+
+*Code ID*
+1256
+
+*Instantiation*
+junod tx wasm instantiate 1256 '{"admin":"juno1w5aespcyddns7y696q9wlch4ehflk2wglu9vv4"}' --label alxandria-test --admin juno1w5aespcyddns7y696q9wlch4ehflk2wglu9vv4 --from testnet --fees 500ujunox --gas 2000000 -y
+
+https://explorer.testnet.sourceprotocol.io/juno/tx/15F590278E70E72211CA41E5D32692782069B1D20C69F6BA548D0C066D51A3BC
+
+*Contract Address*
+juno1apd88gqrqms48n3nvkcnxsttt86w02syk4n4t9we0sadqwh9x46sevje08
+
+*Create Post:*
+junod tx wasm execute juno1apd88gqrqms48n3nvkcnxsttt86w02syk4n4t9we0sadqwh9x46sevje08 '{"create_post":{"post_title":"Post 1","external_id": "https://alxandria.infura-ipfs.io/ipfs/QmQSXMeJRyodyVESWVXT8gd7kQhjrV7sguLnsrXSd6YzvT","text": "This post should pass!","tags": ["pass", "funds", "attempt"]}}' --amount 1000000ujunox --from testnet --fees 500ujunox --gas 200000 -y
+
+https://explorer.testnet.sourceprotocol.io/juno/tx/7F681F74FBD8E1E3487715980A0305A1527A95A10835D8CF86C93D9486D9A58F
+
+*Test Edit & Fee Split:*
+junod tx wasm execute juno1apd88gqrqms48n3nvkcnxsttt86w02syk4n4t9we0sadqwh9x46sevje08 '{"edit_post":{"post_id":1,"external_id": "https://alxandria.infura-ipfs.io/ipfs/QmQSXMeJRyodyVESWVXT8gd7kQhjrV7sguLnsrXSd6YzvT","text": "This edit should pass!","tags": ["pass", "double funds", "edited post"]}}' --amount 2000000ujunox --from testnet --fees 500ujunox --gas 200000 -y
+
 # Full Contract Test With Updated Contract (Oct 15)
 *Store With Instantiation Limitation:*
 desmos tx wasm store alxandria.wasm --from alxandria_test --fees 5000udaric --gas 2000000 --instantiate-only-address desmos1etw2v4std305a6tsyvawdrgancv00j65yn2hgg -y

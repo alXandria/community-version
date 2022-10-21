@@ -153,7 +153,7 @@ fn execute_edit_post(
     POST.save(deps.storage, post_id, &new_post)?;
     let share = BankMsg::Send {
         to_address: new_post.author,
-        amount: vec![coin(25_000_000, JUNO)],
+        amount: vec![coin(500_000, JUNO)],
     };
     Ok(Response::new()
         .add_message(share)
