@@ -247,6 +247,11 @@ pub fn migrate(deps: DepsMut, _env: Env, _msg: MigrateMsg) -> Result<Response, C
     if ver.contract != CONTRACT_NAME {
         return Err(StdError::generic_err("Can only upgrade from same type").into());
     }
+    //canonical way from official docs
+    #[allow(clippy::cmp_owned)]
+    if ver.version > (*CONTRACT_VERSION).to_string() {
+        return Err(StdError::generic_err("Must upgrade from a lower version").into());
+    }
     set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
     Ok(Response::default()
         .add_attribute("action", "migration")
