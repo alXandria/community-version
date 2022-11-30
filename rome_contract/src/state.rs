@@ -22,9 +22,7 @@ pub struct Post {
     pub author: String,
     pub creation_date: String,
     pub last_edit_date: Option<String>,
-    pub deleter: Option<String>,
     pub editor: Option<String>,
-    pub deletion_date: Option<String>,
 }
 
 pub const CONFIG: Item<Config> = Item::new("config");

@@ -103,9 +103,7 @@ fn execute_create_post(
         author: validated_author.to_string(),
         creation_date: env.block.time.to_string(),
         last_edit_date: None,
-        deleter: None,
         editor: None,
-        deletion_date: None,
     };
     LAST_POST_ID.save(deps.storage, &incremented_id)?;
     POST.save(deps.storage, post.post_id, &post)?;
@@ -146,9 +144,7 @@ fn execute_edit_post(
         author: post.author,
         creation_date: post.creation_date,
         last_edit_date: Some(env.block.time.to_string()),
-        deleter: None,
         editor: Some(validated_editor.to_string()),
-        deletion_date: None,
     };
     POST.save(deps.storage, post_id, &new_post)?;
     let share = BankMsg::Send {
@@ -163,32 +159,15 @@ fn execute_edit_post(
 }
 fn execute_delete_post(
     deps: DepsMut,
-    env: Env,
+    _env: Env,
     info: MessageInfo,
     post_id: u64,
 ) -> Result<Response, ContractError> {
     assert_sent_exact_coin(&info.funds, Some(Coin::new(10_000_000, JUNO)))?;
-    let post = POST.load(deps.storage, post_id)?;
-    let deleter = info.sender.to_string();
-    let validated_deleter = deps.api.addr_validate(&deleter)?;
-    let deleted_post: Post = Post {
-        post_id: post.post_id,
-        post_title: post.post_title,
-        external_id: "".to_string(),
-        text: "This post has been deleted.".to_string(),
-        tags: vec!["Deleted".to_string()],
-        author: post.author,
-        creation_date: post.creation_date,
-        last_edit_date: post.last_edit_date,
-        deleter: Some(validated_deleter.to_string()),
-        editor: post.editor,
-        deletion_date: Some(env.block.time.to_string()),
-    };
-    POST.save(deps.storage, post_id, &deleted_post)?;
+    POST.remove(deps.storage, post_id);
     Ok(Response::new()
         .add_attribute("action", "delete_post")
-        .add_attribute("post_id", deleted_post.post_id.to_string())
-        .add_attribute("delete", deleted_post.deleter.unwrap()))
+        .add_attribute("post_id", post_id.to_string()))
 }
 
 fn execute_withdraw(deps: DepsMut, env: Env, info: MessageInfo) -> Result<Response, ContractError> {
