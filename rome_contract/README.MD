@@ -1,5 +1,9 @@
 # This contract is a decentralized encyclopedia. It is live on Juno testnet and functioning! 
 
+# New Contract
+juno1thdtalue0s0zkc2k7edph475uud0y8dpyjmvdad2vdqpelk65jdsu2m4vv
+
+
 # Test November 30
 
 junod tx wasm store alxandria.wasm --from testnet --fees 500ujunox --gas 2000000 --instantiate-only-address juno1w5aespcyddns7y696q9wlch4ehflk2wglu9vv4 -y
@@ -18,7 +22,7 @@ https://explorer.testnet.sourceprotocol.io/juno/tx/25C8AA6D23BBF0B56A1BB19C14291
 juno1278hqgjtkcvfghucweyr8gr836efweyy33fcslzy45kgrnyazfcqwxfwxf
 
 *Create Post:*
-junod tx wasm execute juno1278hqgjtkcvfghucweyr8gr836efweyy33fcslzy45kgrnyazfcqwxfwxf '{"create_post":{"post_title":"Post 1","external_id": "https://alxandria.infura-ipfs.io/ipfs/QmQSXMeJRyodyVESWVXT8gd7kQhjrV7sguLnsrXSd6YzvT","text": "This post should pass!","tags": ["pass", "funds", "attempt"]}}' --amount 1000000ujunox --from testnet --fees 500ujunox --gas 200000 -y
+junod tx wasm execute juno1thdtalue0s0zkc2k7edph475uud0y8dpyjmvdad2vdqpelk65jdsu2m4vv '{"create_post":{"post_title":"Post 2","external_id":"https://alxandria.infura-ipfs.io/ipfs/QmQSXMeJRyodyVESWVXT8gd7kQhjrV7sguLnsrXSd6YzvT","text":"This post should pass!","tags":["pass", "funds","attempt"]}}' --amount 1000000ujunox --from testnet --fees 500ujunox --gas 200000 -y
 
 https://explorer.testnet.sourceprotocol.io/juno/tx/658C317EF0CD953AA7A76D4E70FB43889387AC05760E666064CD12C96B2A8EEC
 
@@ -43,3 +47,12 @@ junod tx wasm execute juno1278hqgjtkcvfghucweyr8gr836efweyy33fcslzy45kgrnyazfcqw
 
 https://explorer.testnet.sourceprotocol.io/juno/tx/77A3E34C24CFE7D61436258A4D932011F7F705F5495B77E1492E83569949642B
 
+*Migrate*
+Code ID: 2919
+
+junod tx wasm migrate juno1278hqgjtkcvfghucweyr8gr836efweyy33fcslzy45kgrnyazfcqwxfwxf 2919 '{"migrate_msg":{}}' --from testnet --fees 500ujunox --gas 2000000 -y
+
+https://explorer.testnet.sourceprotocol.io/juno/tx/0A9EE3BAA2179A65E3853426F120D5089CF4C8251C8E53C13504F342F09327D7
+
+*Query Article Count*
+junod query wasm contract-state smart juno1thdtalue0s0zkc2k7edph475uud0y8dpyjmvdad2vdqpelk65jdsu2m4vv '{"article_count":{}}'
