@@ -53,6 +53,18 @@
         }
       },
       "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "article_count"
+      ],
+      "properties": {
+        "article_count": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
     }
   ]
 }

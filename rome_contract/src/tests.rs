@@ -2,7 +2,8 @@
 use crate::contract::{execute, instantiate, migrate, query};
 #[cfg(test)]
 use crate::msg::{
-    AllPostsResponse, ExecuteMsg, InstantiateMsg, MigrateMsg, PostResponse, QueryMsg,
+    AllPostsResponse, ArticleCountResponse, ExecuteMsg, InstantiateMsg, MigrateMsg, PostResponse,
+    QueryMsg,
 };
 #[cfg(test)]
 use cosmwasm_std::testing::{mock_dependencies, mock_env, mock_info};
@@ -361,4 +362,32 @@ fn test_query_post() {
     let bin = query(deps.as_ref(), env, msg).unwrap();
     let res: PostResponse = from_binary(&bin).unwrap();
     assert!(res.post.is_none());
+}
+#[test]
+fn test_query_article_count() {
+    let mut deps = mock_dependencies();
+    let env = mock_env();
+    let info = mock_info(ADDR1, &[]);
+    let msg = InstantiateMsg {
+        admin: ADDR1.to_string(),
+    };
+    let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
+    let info = mock_info(ADDR1, &[coin(1_000_000, "ujunox")]);
+    let msg = ExecuteMsg::CreatePost {
+        post_title: "Mintscan Prop 320".to_string(),
+        external_id:
+            "https://alxandria.infura-ipfs.io/ipfs/QmQSXMeJRyodyVESWVXT8gd7kQhjrV7sguLnsrXSd6YzvT"
+                .to_string(),
+        tags: vec![
+            "Blockchain".to_string(),
+            "Governance".to_string(),
+            "Rejected".to_string(),
+        ],
+        text: "".to_string(),
+    };
+    let _res = execute(deps.as_mut(), env.clone(), info, msg).unwrap();
+    //query article count
+    let msg = QueryMsg::ArticleCount {};
+    let bin = query(deps.as_ref(), env, msg).unwrap();
+    let _res: ArticleCountResponse = from_binary(&bin).unwrap();
 }
