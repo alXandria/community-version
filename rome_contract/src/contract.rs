@@ -16,6 +16,7 @@ use crate::state::{Config, Post, CONFIG, LAST_POST_ID, POST};
 
 const CONTRACT_NAME: &str = env!("CARGO_PKG_NAME");
 const CONTRACT_VERSION: &str = env!("CARGO_PKG_VERSION");
+//Withdraw address
 const ADDRESS: &str = "juno1ggtuwvungvx5t3awqpcqvxxvgt7gvwdkanuwtm";
 const ADMIN: &str = "juno1w5aespcyddns7y696q9wlch4ehflk2wglu9vv4";
 const MAX_ID_LENGTH: usize = 128;

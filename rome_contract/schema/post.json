@@ -18,18 +18,6 @@
     "creation_date": {
       "type": "string"
     },
-    "deleter": {
-      "type": [
-        "string",
-        "null"
-      ]
-    },
-    "deletion_date": {
-      "type": [
-        "string",
-        "null"
-      ]
-    },
     "editor": {
       "type": [
         "string",
