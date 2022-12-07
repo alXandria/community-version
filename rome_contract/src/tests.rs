@@ -1,13 +1,9 @@
-#[cfg(test)]
 use crate::contract::{execute, instantiate, migrate, query};
-#[cfg(test)]
 use crate::msg::{
     AllPostsResponse, ArticleCountResponse, ExecuteMsg, InstantiateMsg, MigrateMsg, PostResponse,
     QueryMsg,
 };
-#[cfg(test)]
 use cosmwasm_std::testing::{mock_dependencies, mock_env, mock_info};
-#[cfg(test)]
 use cosmwasm_std::{attr, coin, from_binary, Response};
 
 pub const ADDR1: &str = "juno1w5aespcyddns7y696q9wlch4ehflk2wglu9vv4";
