@@ -20,4 +20,7 @@ pub enum ContractError {
 
     #[error("The IPFS link must be with alxandria's dedicated gateway: https://alxandria.infura-ipfs.io/ipfs/")]
     MustUseAlxandriaGateway {},
+
+    #[error("The profile name {taken_profile_name} is already taken. Please choose another")]
+    ProfileNameTaken { taken_profile_name: String },
 }

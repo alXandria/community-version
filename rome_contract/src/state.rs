@@ -9,6 +9,12 @@ pub struct Config {
     pub admin: Addr,
 }
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+pub struct ProfileName {
+    pub profile_name: String,
+    pub account_address: Addr,
+}
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 pub struct Post {
     //tracks specific posts through unique identifier
     pub post_id: u64,
@@ -30,3 +36,5 @@ pub const CONFIG: Item<Config> = Item::new("config");
 pub const POST: Map<u64, Post> = Map::new("post");
 pub const LAST_POST_ID: Item<u64> = Item::new("last_post_id");
 pub const ARTICLE_COUNT: Item<u64> = Item::new("number_of_articles");
+pub const PROFILE_NAME: Map<String, ProfileName> = Map::new("profile_name");
+pub const REVERSE_LOOKUP: Map<String, String> = Map::new("reverse_profile_name");

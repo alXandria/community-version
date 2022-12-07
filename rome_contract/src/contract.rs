@@ -13,7 +13,10 @@ use crate::msg::{
     AllPostsResponse, ArticleCountResponse, ExecuteMsg, InstantiateMsg, MigrateMsg, PostResponse,
     QueryMsg,
 };
-use crate::state::{Config, Post, ARTICLE_COUNT, CONFIG, LAST_POST_ID, POST};
+use crate::state::{
+    Config, Post, ProfileName, ARTICLE_COUNT, CONFIG, LAST_POST_ID, POST, PROFILE_NAME,
+    REVERSE_LOOKUP,
+};
 
 const CONTRACT_NAME: &str = env!("CARGO_PKG_NAME");
 const CONTRACT_VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -56,6 +59,9 @@ pub fn execute(
     msg: ExecuteMsg,
 ) -> Result<Response, ContractError> {
     match msg {
+        ExecuteMsg::RegisterProfileName { profile_name } => {
+            execute_register_profile_name(deps, env, info, profile_name)
+        }
         ExecuteMsg::CreatePost {
             post_title,
             external_id,
@@ -70,6 +76,41 @@ pub fn execute(
         } => execute_edit_post(deps, env, info, post_id, external_id, text, tags),
         ExecuteMsg::DeletePost { post_id } => execute_delete_post(deps, env, info, post_id),
         ExecuteMsg::Withdraw {} => execute_withdraw(deps, env, info),
+    }
+}
+fn execute_register_profile_name(
+    deps: DepsMut,
+    _env: Env,
+    info: MessageInfo,
+    profile_name: String,
+) -> Result<Response, ContractError> {
+    let formatted_profile_name = profile_name.trim().to_lowercase().replace(" ", "");
+    //1) Check to see if there is the desired profile name is registered
+    let check = REVERSE_LOOKUP.may_load(deps.storage, formatted_profile_name.clone())?;
+    match check {
+        Some(_check) => Err(ContractError::ProfileNameTaken {
+            taken_profile_name: formatted_profile_name,
+        }),
+        //2) If profile name isn't registered, save it to account
+        None => {
+            let new_profile_name: ProfileName = ProfileName {
+                profile_name: formatted_profile_name,
+                account_address: info.sender,
+            };
+            PROFILE_NAME.save(
+                deps.storage,
+                new_profile_name.profile_name.clone(),
+                &new_profile_name,
+            )?;
+            REVERSE_LOOKUP.save(
+                deps.storage,
+                new_profile_name.profile_name.clone(),
+                &new_profile_name.account_address.to_string(),
+            )?;
+            Ok(Response::new()
+                .add_attribute("action", "create profile name")
+                .add_attribute("new profile name", new_profile_name.profile_name))
+        }
     }
 }
 //clippy defaults to max value of 7
@@ -97,26 +138,49 @@ fn execute_create_post(
     let updated_counter = counter + 1;
     let last_post_id = LAST_POST_ID.load(deps.storage)?;
     let incremented_id = last_post_id + 1;
-    let author = info.sender.to_string();
-    let validated_author = deps.api.addr_validate(&author)?;
-    let post: Post = Post {
-        post_id: incremented_id,
-        post_title,
-        external_id,
-        text,
-        tags,
-        author: validated_author.to_string(),
-        creation_date: env.block.time.to_string(),
-        last_edit_date: None,
-        editor: None,
-    };
-    LAST_POST_ID.save(deps.storage, &incremented_id)?;
-    POST.save(deps.storage, post.post_id, &post)?;
-    ARTICLE_COUNT.save(deps.storage, &updated_counter)?;
-    Ok(Response::new()
-        .add_attribute("action", "create_post")
-        .add_attribute("post_id", post.post_id.to_string())
-        .add_attribute("author", validated_author.to_string()))
+    let load = PROFILE_NAME.may_load(deps.storage, info.sender.to_string())?;
+    match load {
+        Some(load) => {
+            let post: Post = Post {
+                post_id: incremented_id,
+                post_title,
+                external_id,
+                text,
+                tags,
+                author: load.profile_name.clone(),
+                creation_date: env.block.time.to_string(),
+                last_edit_date: None,
+                editor: None,
+            };
+            LAST_POST_ID.save(deps.storage, &incremented_id)?;
+            POST.save(deps.storage, post.post_id, &post)?;
+            ARTICLE_COUNT.save(deps.storage, &updated_counter)?;
+            Ok(Response::new()
+                .add_attribute("action", "create_post")
+                .add_attribute("post_id", post.post_id.to_string())
+                .add_attribute("author", load.profile_name))
+        }
+        None => {
+            let post: Post = Post {
+                post_id: incremented_id,
+                post_title,
+                external_id,
+                text,
+                tags,
+                author: info.sender.to_string(),
+                creation_date: env.block.time.to_string(),
+                last_edit_date: None,
+                editor: None,
+            };
+            LAST_POST_ID.save(deps.storage, &incremented_id)?;
+            POST.save(deps.storage, post.post_id, &post)?;
+            ARTICLE_COUNT.save(deps.storage, &updated_counter)?;
+            Ok(Response::new()
+                .add_attribute("action", "create_post")
+                .add_attribute("post_id", post.post_id.to_string())
+                .add_attribute("author", info.sender.to_string()))
+        }
+    }
 }
 
 fn execute_edit_post(
