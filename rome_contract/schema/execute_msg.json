@@ -5,6 +5,26 @@
     {
       "type": "object",
       "required": [
+        "register_profile_name"
+      ],
+      "properties": {
+        "register_profile_name": {
+          "type": "object",
+          "required": [
+            "profile_name"
+          ],
+          "properties": {
+            "profile_name": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
         "create_post"
       ],
       "properties": {

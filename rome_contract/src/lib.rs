@@ -7,4 +7,3 @@ pub use crate::error::ContractError;
 pub mod coin_helpers;
 #[cfg(test)]
 mod tests;
-
