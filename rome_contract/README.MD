@@ -1,38 +1,40 @@
 # This contract is a decentralized encyclopedia. It is live on Juno testnet and functioning! 
 
-# Test for profile branch 
+# Test for profile branch Dec 8
 
 *Store*
 junod tx wasm store alxandria.wasm --from testnet --fees 500ujunox --gas 2000000 --instantiate-only-address juno1w5aespcyddns7y696q9wlch4ehflk2wglu9vv4 -y
 
 *Code ID*
-3158
+3159
 
 *Instantiation*
-junod tx wasm instantiate 3158 '{"admin":"juno1w5aespcyddns7y696q9wlch4ehflk2wglu9vv4"}' --label alxandria-test --admin juno1w5aespcyddns7y696q9wlch4ehflk2wglu9vv4 --from testnet --fees 500ujunox --gas 2000000 -y
-
-https://testnet.juno.explorers.guru/transaction/834A5B0E5A32D9DB97775F41E49CBCC7F2C9E53E47328020A75D8F49C7AE86E1
+junod tx wasm instantiate 3159 '{"admin":"juno1w5aespcyddns7y696q9wlch4ehflk2wglu9vv4"}' --label alxandria-test --admin juno1w5aespcyddns7y696q9wlch4ehflk2wglu9vv4 --from testnet --fees 500ujunox --gas 2000000 -y
 
 *Contract Address*
-juno1fy3hlq3htcz26qfq68v30t43k4aum353ved23649y4et92m96zps8lq9x9
+juno1w9jw3j2rdm5f9t9mvqsg88z7nkd7j95ezxctkeundp66dxvwp5xq3pqa56
 
 *Register Profile and check formatting (lowercase + remove space)*
-junod tx wasm execute juno1fy3hlq3htcz26qfq68v30t43k4aum353ved23649y4et92m96zps8lq9x9 '{"register_profile_name":{"profile_name":"Vitali k"}}' --from testnet --fees 500ujunox --gas 200000 -y
+junod tx wasm execute juno1w9jw3j2rdm5f9t9mvqsg88z7nkd7j95ezxctkeundp66dxvwp5xq3pqa56 '{"register_profile_name":{"profile_name":"Vitali k"}}' --from testnet --fees 500ujunox --gas 200000 -y
 
-https://testnet.juno.explorers.guru/transaction/EEF6134114D06C686B685675BA0731DE11A454D976AF3DF24A5D49D3BE17D671
+https://testnet.juno.explorers.guru/transaction/8E2511A655AB80F220421BCB017FA873BF1D07EEDF5D228B22F812F17856BEF3
 
 *Create Post With Profile Name*
-junod tx wasm execute juno1fy3hlq3htcz26qfq68v30t43k4aum353ved23649y4et92m96zps8lq9x9 '{"create_post":{"post_title":"Post 1","external_id":"https://alxandria.infura-ipfs.io/ipfs/QmQSXMeJRyodyVESWVXT8gd7kQhjrV7sguLnsrXSd6YzvT","text":"This post should pass!","tags":["pass", "funds","attempt"]}}' --amount 1000000ujunox --from testnet --fees 500ujunox --gas 200000 -y
+junod tx wasm execute juno1w9jw3j2rdm5f9t9mvqsg88z7nkd7j95ezxctkeundp66dxvwp5xq3pqa56 '{"create_post":{"post_title":"Post 1","external_id":"https://alxandria.infura-ipfs.io/ipfs/QmQSXMeJRyodyVESWVXT8gd7kQhjrV7sguLnsrXSd6YzvT","text":"This post should pass!","tags":["pass", "funds","attempt"]}}' --amount 1000000ujunox --from testnet --fees 500ujunox --gas 200000 -y
 
-https://testnet.juno.explorers.guru/transaction/87917D245BBF826E1EF917181FE7E8DA30A34C101FC92058A89887FECB497EE9
+https://testnet.juno.explorers.guru/transaction/6393C7F45D4F37A2543AA096435164C416643D9B29B6D724773FC67D882B7E35
 
 *Query All Posts*
-junod query wasm contract-state smart juno1fy3hlq3htcz26qfq68v30t43k4aum353ved23649y4et92m96zps8lq9x9 '{"all_posts":{}}'
+junod query wasm contract-state smart juno1w9jw3j2rdm5f9t9mvqsg88z7nkd7j95ezxctkeundp66dxvwp5xq3pqa56 '{"all_posts":{}}'
+
+*Create Post Without Profile Name*
+junod tx wasm execute juno1w9jw3j2rdm5f9t9mvqsg88z7nkd7j95ezxctkeundp66dxvwp5xq3pqa56 '{"create_post":{"post_title":"Post 2","external_id":"https://alxandria.infura-ipfs.io/ipfs/QmQSXMeJRyodyVESWVXT8gd7kQhjrV7sguLnsrXSd6YzvT","text":"This post should pass!","tags":["no", "profile","name"]}}' --amount 1000000ujunox --from ADDRESS --fees 500ujunox --gas 200000 -y
+
+https://testnet.juno.explorers.guru/transaction/D026CEB0F01C3A1B69F9D06CACEC5734A2673A5D07841B2DE5959752E5E403A0
 
 
 # Live Contract
 juno1thdtalue0s0zkc2k7edph475uud0y8dpyjmvdad2vdqpelk65jdsu2m4vv
-
 
 # Test November 30
 
