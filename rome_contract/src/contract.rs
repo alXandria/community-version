@@ -95,7 +95,7 @@ fn execute_register_profile_name(
         None => {
             let new_profile_name: ProfileName = ProfileName {
                 profile_name: formatted_profile_name,
-                account_address: info.sender,
+                account_address: info.sender.clone(),
             };
             PROFILE_NAME.save(
                 deps.storage,
@@ -105,7 +105,7 @@ fn execute_register_profile_name(
             REVERSE_LOOKUP.save(
                 deps.storage,
                 new_profile_name.profile_name.clone(),
-                &new_profile_name.account_address.to_string(),
+                &info.sender,
             )?;
             Ok(Response::new()
                 .add_attribute("action", "create profile name")

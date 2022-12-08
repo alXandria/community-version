@@ -37,4 +37,4 @@ pub const POST: Map<u64, Post> = Map::new("post");
 pub const LAST_POST_ID: Item<u64> = Item::new("last_post_id");
 pub const ARTICLE_COUNT: Item<u64> = Item::new("number_of_articles");
 pub const PROFILE_NAME: Map<String, ProfileName> = Map::new("profile_name");
-pub const REVERSE_LOOKUP: Map<String, String> = Map::new("reverse_profile_name");
+pub const REVERSE_LOOKUP: Map<String, Addr> = Map::new("reverse_profile_name");
