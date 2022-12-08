@@ -32,6 +32,10 @@ junod tx wasm execute juno1w9jw3j2rdm5f9t9mvqsg88z7nkd7j95ezxctkeundp66dxvwp5xq3
 
 https://testnet.juno.explorers.guru/transaction/D026CEB0F01C3A1B69F9D06CACEC5734A2673A5D07841B2DE5959752E5E403A0
 
+*Register Profile without validation requirement*
+junod tx wasm execute juno1w9jw3j2rdm5f9t9mvqsg88z7nkd7j95ezxctkeundp66dxvwp5xq3pqa56 '{"register_profile_name":{"profile_name":"satoshi"}}' --from ADDRESS --fees 500ujunox --gas 200000 -y
+
+https://testnet.juno.explorers.guru/transaction/0FC642D289B3565E0851325DBEF0A5FEF8083C960F47F38D1D1BB55503D4E0BC
 
 # Live Contract
 juno1thdtalue0s0zkc2k7edph475uud0y8dpyjmvdad2vdqpelk65jdsu2m4vv
