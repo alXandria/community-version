@@ -1,8 +1,44 @@
 # This contract is a decentralized encyclopedia. It is live on Juno testnet and functioning! 
 
-# New Contract
-juno1thdtalue0s0zkc2k7edph475uud0y8dpyjmvdad2vdqpelk65jdsu2m4vv
+# Test for profile branch Dec 8
 
+*Store*
+junod tx wasm store alxandria.wasm --from testnet --fees 500ujunox --gas 2000000 --instantiate-only-address juno1w5aespcyddns7y696q9wlch4ehflk2wglu9vv4 -y
+
+*Code ID*
+3159
+
+*Instantiation*
+junod tx wasm instantiate 3159 '{"admin":"juno1w5aespcyddns7y696q9wlch4ehflk2wglu9vv4"}' --label alxandria-test --admin juno1w5aespcyddns7y696q9wlch4ehflk2wglu9vv4 --from testnet --fees 500ujunox --gas 2000000 -y
+
+*Contract Address*
+juno1w9jw3j2rdm5f9t9mvqsg88z7nkd7j95ezxctkeundp66dxvwp5xq3pqa56
+
+*Register Profile and check formatting (lowercase + remove space)*
+junod tx wasm execute juno1w9jw3j2rdm5f9t9mvqsg88z7nkd7j95ezxctkeundp66dxvwp5xq3pqa56 '{"register_profile_name":{"profile_name":"Vitali k"}}' --from testnet --fees 500ujunox --gas 200000 -y
+
+https://testnet.juno.explorers.guru/transaction/8E2511A655AB80F220421BCB017FA873BF1D07EEDF5D228B22F812F17856BEF3
+
+*Create Post With Profile Name*
+junod tx wasm execute juno1w9jw3j2rdm5f9t9mvqsg88z7nkd7j95ezxctkeundp66dxvwp5xq3pqa56 '{"create_post":{"post_title":"Post 1","external_id":"https://alxandria.infura-ipfs.io/ipfs/QmQSXMeJRyodyVESWVXT8gd7kQhjrV7sguLnsrXSd6YzvT","text":"This post should pass!","tags":["pass", "funds","attempt"]}}' --amount 1000000ujunox --from testnet --fees 500ujunox --gas 200000 -y
+
+https://testnet.juno.explorers.guru/transaction/6393C7F45D4F37A2543AA096435164C416643D9B29B6D724773FC67D882B7E35
+
+*Query All Posts*
+junod query wasm contract-state smart juno1w9jw3j2rdm5f9t9mvqsg88z7nkd7j95ezxctkeundp66dxvwp5xq3pqa56 '{"all_posts":{}}'
+
+*Create Post Without Profile Name*
+junod tx wasm execute juno1w9jw3j2rdm5f9t9mvqsg88z7nkd7j95ezxctkeundp66dxvwp5xq3pqa56 '{"create_post":{"post_title":"Post 2","external_id":"https://alxandria.infura-ipfs.io/ipfs/QmQSXMeJRyodyVESWVXT8gd7kQhjrV7sguLnsrXSd6YzvT","text":"This post should pass!","tags":["no", "profile","name"]}}' --amount 1000000ujunox --from ADDRESS --fees 500ujunox --gas 200000 -y
+
+https://testnet.juno.explorers.guru/transaction/D026CEB0F01C3A1B69F9D06CACEC5734A2673A5D07841B2DE5959752E5E403A0
+
+*Register Profile without validation requirement*
+junod tx wasm execute juno1w9jw3j2rdm5f9t9mvqsg88z7nkd7j95ezxctkeundp66dxvwp5xq3pqa56 '{"register_profile_name":{"profile_name":"satoshi"}}' --from ADDRESS --fees 500ujunox --gas 200000 -y
+
+https://testnet.juno.explorers.guru/transaction/0FC642D289B3565E0851325DBEF0A5FEF8083C960F47F38D1D1BB55503D4E0BC
+
+# Live Contract
+juno1thdtalue0s0zkc2k7edph475uud0y8dpyjmvdad2vdqpelk65jdsu2m4vv
 
 # Test November 30
 
