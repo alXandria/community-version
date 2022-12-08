@@ -1,6 +1,36 @@
 # This contract is a decentralized encyclopedia. It is live on Juno testnet and functioning! 
 
-# New Contract
+# Test for profile branch 
+
+*Store*
+junod tx wasm store alxandria.wasm --from testnet --fees 500ujunox --gas 2000000 --instantiate-only-address juno1w5aespcyddns7y696q9wlch4ehflk2wglu9vv4 -y
+
+*Code ID*
+3158
+
+*Instantiation*
+junod tx wasm instantiate 3158 '{"admin":"juno1w5aespcyddns7y696q9wlch4ehflk2wglu9vv4"}' --label alxandria-test --admin juno1w5aespcyddns7y696q9wlch4ehflk2wglu9vv4 --from testnet --fees 500ujunox --gas 2000000 -y
+
+https://testnet.juno.explorers.guru/transaction/834A5B0E5A32D9DB97775F41E49CBCC7F2C9E53E47328020A75D8F49C7AE86E1
+
+*Contract Address*
+juno1fy3hlq3htcz26qfq68v30t43k4aum353ved23649y4et92m96zps8lq9x9
+
+*Register Profile and check formatting (lowercase + remove space)*
+junod tx wasm execute juno1fy3hlq3htcz26qfq68v30t43k4aum353ved23649y4et92m96zps8lq9x9 '{"register_profile_name":{"profile_name":"Vitali k"}}' --from testnet --fees 500ujunox --gas 200000 -y
+
+https://testnet.juno.explorers.guru/transaction/EEF6134114D06C686B685675BA0731DE11A454D976AF3DF24A5D49D3BE17D671
+
+*Create Post With Profile Name*
+junod tx wasm execute juno1fy3hlq3htcz26qfq68v30t43k4aum353ved23649y4et92m96zps8lq9x9 '{"create_post":{"post_title":"Post 1","external_id":"https://alxandria.infura-ipfs.io/ipfs/QmQSXMeJRyodyVESWVXT8gd7kQhjrV7sguLnsrXSd6YzvT","text":"This post should pass!","tags":["pass", "funds","attempt"]}}' --amount 1000000ujunox --from testnet --fees 500ujunox --gas 200000 -y
+
+https://testnet.juno.explorers.guru/transaction/87917D245BBF826E1EF917181FE7E8DA30A34C101FC92058A89887FECB497EE9
+
+*Query All Posts*
+junod query wasm contract-state smart juno1fy3hlq3htcz26qfq68v30t43k4aum353ved23649y4et92m96zps8lq9x9 '{"all_posts":{}}'
+
+
+# Live Contract
 juno1thdtalue0s0zkc2k7edph475uud0y8dpyjmvdad2vdqpelk65jdsu2m4vv
 
 

@@ -1,3 +1,5 @@
+//Can remove profile name struct and just use map, like reverse lookup!
+
 use cosmwasm_std::{
     coin, entry_point, to_binary, BankMsg, Binary, Coin, Deps, DepsMut, Env, MessageInfo, Order,
     Response, StdError, StdResult,
@@ -14,8 +16,7 @@ use crate::msg::{
     QueryMsg,
 };
 use crate::state::{
-    Config, Post, ProfileName, ARTICLE_COUNT, CONFIG, LAST_POST_ID, POST, PROFILE_NAME,
-    REVERSE_LOOKUP,
+    Config, Post, ARTICLE_COUNT, CONFIG, LAST_POST_ID, POST, PROFILE_NAME, REVERSE_LOOKUP,
 };
 
 const CONTRACT_NAME: &str = env!("CARGO_PKG_NAME");
@@ -93,23 +94,11 @@ fn execute_register_profile_name(
         }),
         //2) If profile name isn't registered, save it to account
         None => {
-            let new_profile_name: ProfileName = ProfileName {
-                profile_name: formatted_profile_name,
-                account_address: info.sender.clone(),
-            };
-            PROFILE_NAME.save(
-                deps.storage,
-                new_profile_name.profile_name.clone(),
-                &new_profile_name,
-            )?;
-            REVERSE_LOOKUP.save(
-                deps.storage,
-                new_profile_name.profile_name.clone(),
-                &info.sender,
-            )?;
+            PROFILE_NAME.save(deps.storage, info.sender.clone(), &formatted_profile_name)?;
+            REVERSE_LOOKUP.save(deps.storage, formatted_profile_name.clone(), &info.sender)?;
             Ok(Response::new()
                 .add_attribute("action", "create profile name")
-                .add_attribute("new profile name", new_profile_name.profile_name))
+                .add_attribute("new profile name", formatted_profile_name))
         }
     }
 }
@@ -138,7 +127,7 @@ fn execute_create_post(
     let updated_counter = counter + 1;
     let last_post_id = LAST_POST_ID.load(deps.storage)?;
     let incremented_id = last_post_id + 1;
-    let load = PROFILE_NAME.may_load(deps.storage, info.sender.to_string())?;
+    let load = PROFILE_NAME.may_load(deps.storage, info.sender.clone())?;
     match load {
         Some(load) => {
             let post: Post = Post {
@@ -147,7 +136,7 @@ fn execute_create_post(
                 external_id,
                 text,
                 tags,
-                author: load.profile_name.clone(),
+                author: load.clone(),
                 creation_date: env.block.time.to_string(),
                 last_edit_date: None,
                 editor: None,
@@ -158,7 +147,7 @@ fn execute_create_post(
             Ok(Response::new()
                 .add_attribute("action", "create_post")
                 .add_attribute("post_id", post.post_id.to_string())
-                .add_attribute("author", load.profile_name))
+                .add_attribute("author", load))
         }
         None => {
             let post: Post = Post {
