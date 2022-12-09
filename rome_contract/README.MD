@@ -38,12 +38,33 @@ junod tx wasm execute juno1w9jw3j2rdm5f9t9mvqsg88z7nkd7j95ezxctkeundp66dxvwp5xq3
 https://testnet.juno.explorers.guru/transaction/0FC642D289B3565E0851325DBEF0A5FEF8083C960F47F38D1D1BB55503D4E0BC
 
 *Migrate*
-Code ID: 2919
+Code ID: 3249
 
-junod tx wasm migrate juno1278hqgjtkcvfghucweyr8gr836efweyy33fcslzy45kgrnyazfcqwxfwxf 2919 '{"migrate_msg":{}}' --from testnet --fees 500ujunox --gas 2000000 -y
+junod tx wasm migrate juno1w9jw3j2rdm5f9t9mvqsg88z7nkd7j95ezxctkeundp66dxvwp5xq3pqa56 3249 '{"migrate_msg":{}}' --from testnet --fees 500ujunox --gas 2000000 -y
+
+https://testnet.juno.explorers.guru/transaction/2CCD4247C543C5C841F02890137140CE483A2E75E10E1665956B19E16DD3207F
 
 *Test Edit & Fee Split:*
 junod tx wasm execute juno1w9jw3j2rdm5f9t9mvqsg88z7nkd7j95ezxctkeundp66dxvwp5xq3pqa56 '{"edit_post":{"post_id":1,"external_id":"https://alxandria.infura-ipfs.io/ipfs/QmQSXMeJRyodyVESWVXT8gd7kQhjrV7sguLnsrXSd6YzvT","text":"This edit should pass!","tags":["pass","double funds","edited post"]}}' --amount 2000000ujunox --from ADDRESS --fees 500ujunox --gas 200000 -y
+
+https://testnet.juno.explorers.guru/transaction/9566A0FFF41B285ABDCF9A0FC1A5ABFE2814FFDA2A0927BFF9F7CE80BB059F5C
+
+*Test Delete:*
+junod tx wasm execute juno1w9jw3j2rdm5f9t9mvqsg88z7nkd7j95ezxctkeundp66dxvwp5xq3pqa56 '{"delete_post":{"post_id":1}}' --amount 10000000ujunox --from testnet --fees 500ujunox --gas 200000 -y
+
+https://testnet.juno.explorers.guru/transaction/3BCE254F2D6F1FABD85AD636802720F865548D382C1FF495F175261AA2C0578F
+
+*Withdraw*
+junod tx wasm execute juno1w9jw3j2rdm5f9t9mvqsg88z7nkd7j95ezxctkeundp66dxvwp5xq3pqa56 '{"withdraw":{}}' --from testnet --fees 500ujunox --gas 200000 -y
+
+https://testnet.juno.explorers.guru/transaction/3B97F83B33F4DAC084C90D95549678A41B347647054C54EEB132B2771AC3DB4C
+
+*Query Article Count*
+junod query wasm contract-state smart juno1w9jw3j2rdm5f9t9mvqsg88z7nkd7j95ezxctkeundp66dxvwp5xq3pqa56 '{"article_count":{}}'
+
+*Query One Post*
+junod query wasm contract-state smart juno1w9jw3j2rdm5f9t9mvqsg88z7nkd7j95ezxctkeundp66dxvwp5xq3pqa56 '{"post":{"post_id": 2}}'
+
 
 # Live Contract
 juno1thdtalue0s0zkc2k7edph475uud0y8dpyjmvdad2vdqpelk65jdsu2m4vv
