@@ -206,15 +206,30 @@ fn execute_edit_post(
         editor: Some(validated_editor.to_string()),
     };
     POST.save(deps.storage, post_id, &new_post)?;
-    let share = BankMsg::Send {
-        to_address: new_post.author,
-        amount: vec![coin(500_000, JUNO)],
-    };
-    Ok(Response::new()
-        .add_message(share)
-        .add_attribute("action", "edit_post")
-        .add_attribute("post_id", new_post.post_id.to_string())
-        .add_attribute("editor", new_post.editor.unwrap()))
+    let share_address = REVERSE_LOOKUP.may_load(deps.storage, new_post.author.clone())?;
+    match share_address {
+        Some(share_address) => {
+            let share = BankMsg::Send {
+                to_address: share_address.to_string(),
+                amount: vec![coin(500_000, JUNO)],
+            };
+            Ok(Response::new()
+                .add_message(share)
+                .add_attribute("action", "edit_post")
+                .add_attribute("post_id", new_post.post_id.to_string())
+                .add_attribute("editor", new_post.editor.unwrap()))
+        }
+        None => {
+            let share = BankMsg::Send {
+                to_address: new_post.author,
+                amount: vec![coin(500_000, JUNO)],
+            };
+            Ok(Response::new()
+                .add_message(share)
+                .add_attribute("action", "edit_post")
+                .add_attribute("post_id", new_post.post_id.to_string())
+                .add_attribute("editor", new_post.editor.unwrap()))        }
+    }
 }
 fn execute_delete_post(
     deps: DepsMut,
