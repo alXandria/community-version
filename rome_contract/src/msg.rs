@@ -37,10 +37,12 @@ pub struct AllPostsResponse {
     pub posts: Vec<Post>,
 }
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+#[serde(rename_all = "snake_case")]
 pub struct PostResponse {
     pub post: Option<Post>,
 }
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+#[serde(rename_all = "snake_case")]
 pub struct ArticleCountResponse {
     pub article_count: u64,
 }
