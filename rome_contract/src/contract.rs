@@ -228,7 +228,8 @@ fn execute_edit_post(
                 .add_message(share)
                 .add_attribute("action", "edit_post")
                 .add_attribute("post_id", new_post.post_id.to_string())
-                .add_attribute("editor", new_post.editor.unwrap()))        }
+                .add_attribute("editor", new_post.editor.unwrap()))
+        }
     }
 }
 fn execute_delete_post(

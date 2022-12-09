@@ -37,6 +37,14 @@ junod tx wasm execute juno1w9jw3j2rdm5f9t9mvqsg88z7nkd7j95ezxctkeundp66dxvwp5xq3
 
 https://testnet.juno.explorers.guru/transaction/0FC642D289B3565E0851325DBEF0A5FEF8083C960F47F38D1D1BB55503D4E0BC
 
+*Migrate*
+Code ID: 2919
+
+junod tx wasm migrate juno1278hqgjtkcvfghucweyr8gr836efweyy33fcslzy45kgrnyazfcqwxfwxf 2919 '{"migrate_msg":{}}' --from testnet --fees 500ujunox --gas 2000000 -y
+
+*Test Edit & Fee Split:*
+junod tx wasm execute juno1w9jw3j2rdm5f9t9mvqsg88z7nkd7j95ezxctkeundp66dxvwp5xq3pqa56 '{"edit_post":{"post_id":1,"external_id":"https://alxandria.infura-ipfs.io/ipfs/QmQSXMeJRyodyVESWVXT8gd7kQhjrV7sguLnsrXSd6YzvT","text":"This edit should pass!","tags":["pass","double funds","edited post"]}}' --amount 2000000ujunox --from ADDRESS --fees 500ujunox --gas 200000 -y
+
 # Live Contract
 juno1thdtalue0s0zkc2k7edph475uud0y8dpyjmvdad2vdqpelk65jdsu2m4vv
 
