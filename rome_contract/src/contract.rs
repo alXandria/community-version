@@ -1,4 +1,4 @@
-//Can remove profile name struct and just use map, like reverse lookup!
+//profile name query
 
 use cosmwasm_std::{
     coin, entry_point, to_binary, BankMsg, Binary, Coin, Deps, DepsMut, Env, MessageInfo, Order,
@@ -13,7 +13,7 @@ use crate::coin_helpers::assert_sent_exact_coin;
 use crate::error::ContractError;
 use crate::msg::{
     AllPostsResponse, ArticleCountResponse, ExecuteMsg, InstantiateMsg, MigrateMsg, PostResponse,
-    QueryMsg,
+    ProfileNameResponse, QueryMsg,
 };
 use crate::state::{
     Config, Post, ARTICLE_COUNT, CONFIG, LAST_POST_ID, POST, PROFILE_NAME, REVERSE_LOOKUP,
@@ -270,6 +270,7 @@ pub fn query(deps: Deps, env: Env, msg: QueryMsg) -> StdResult<Binary> {
         QueryMsg::AllPosts { limit, start_after } => query_all_posts(deps, env, limit, start_after),
         QueryMsg::Post { post_id } => query_post(deps, env, post_id),
         QueryMsg::ArticleCount {} => query_article_count(deps, env),
+        QueryMsg::ProfileName { address } => query_profile_name(deps, env, address),
     }
 }
 
@@ -301,6 +302,11 @@ fn query_post(deps: Deps, _env: Env, post_id: u64) -> StdResult<Binary> {
 fn query_article_count(deps: Deps, _env: Env) -> StdResult<Binary> {
     let article_count = ARTICLE_COUNT.load(deps.storage)?;
     to_binary(&ArticleCountResponse { article_count })
+}
+fn query_profile_name(deps: Deps, _env: Env, address: String) -> StdResult<Binary> {
+    let validated_address = deps.api.addr_validate(&address)?;
+    let profile_name = PROFILE_NAME.may_load(deps.storage, validated_address)?;
+    to_binary(&ProfileNameResponse { profile_name })
 }
 
 #[entry_point]

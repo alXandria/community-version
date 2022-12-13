@@ -1,7 +1,7 @@
 use crate::contract::{execute, instantiate, migrate, query};
 use crate::msg::{
     AllPostsResponse, ArticleCountResponse, ExecuteMsg, InstantiateMsg, MigrateMsg, PostResponse,
-    QueryMsg,
+    ProfileNameResponse, QueryMsg,
 };
 use cosmwasm_std::testing::{mock_dependencies, mock_env, mock_info};
 use cosmwasm_std::{attr, coin, from_binary, Response};
@@ -386,4 +386,29 @@ fn test_query_article_count() {
     let msg = QueryMsg::ArticleCount {};
     let bin = query(deps.as_ref(), env, msg).unwrap();
     let _res: ArticleCountResponse = from_binary(&bin).unwrap();
+}
+#[test]
+fn test_register_profile_name() {
+    let mut deps = mock_dependencies();
+    let env = mock_env();
+    let info = mock_info(ADDR1, &[]);
+    //instantiate
+    let msg = InstantiateMsg {
+        admin: ADDR1.to_string(),
+    };
+    let _res = instantiate(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
+    //register profile
+    let msg = ExecuteMsg::RegisterProfileName {
+        profile_name: "v i T".to_string(),
+    };
+    let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
+    //query profile name
+    let msg = QueryMsg::ProfileName {
+        address: info.sender.to_string(),
+    };
+    let bin = query(deps.as_ref(), env, msg).unwrap();
+    let res: ProfileNameResponse = from_binary(&bin).unwrap();
+    println!("{:?}", res);
+    //switch to is_none to intentionally fail and check output to verify editable is true
+    assert!(res.profile_name.is_some())
 }
