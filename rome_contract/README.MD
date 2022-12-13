@@ -1,5 +1,21 @@
 # This contract is a decentralized encyclopedia. It is live on Juno testnet and functioning! 
 
+# test migrate for profile query
+
+*Store*
+junod tx wasm store alxandria.wasm --from testnet --fees 500ujunox --gas 2000000 --instantiate-only-address juno1w5aespcyddns7y696q9wlch4ehflk2wglu9vv4 -y
+
+*Code ID*
+3373
+
+*Migrate*
+junod tx wasm migrate juno1w9jw3j2rdm5f9t9mvqsg88z7nkd7j95ezxctkeundp66dxvwp5xq3pqa56 3373 '{"migrate_msg":{}}' --from testnet --fees 500ujunox --gas 2000000 -y
+
+https://testnet.juno.explorers.guru/transaction/851CC734AF6AAE4B4EB3A0890D14ABA2F3B94F45B63C8B5EE23DC54C3617015F
+
+*Query Profile Name*
+junod query wasm contract-state smart juno1w9jw3j2rdm5f9t9mvqsg88z7nkd7j95ezxctkeundp66dxvwp5xq3pqa56 '{"profile_name":{"address":"juno1w5aespcyddns7y696q9wlch4ehflk2wglu9vv4"}}'
+
 # Test for profile branch Dec 8
 
 *Store*
