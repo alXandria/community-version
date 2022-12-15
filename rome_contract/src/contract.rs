@@ -76,6 +76,7 @@ pub fn execute(
             tags,
         } => execute_edit_post(deps, env, info, post_id, external_id, text, tags),
         ExecuteMsg::DeletePost { post_id } => execute_delete_post(deps, env, info, post_id),
+        ExecuteMsg::LikePost { post_id } => execute_like_post(deps, env, info, post_id),
         ExecuteMsg::Withdraw {} => execute_withdraw(deps, env, info),
     }
 }
@@ -85,6 +86,7 @@ fn execute_register_profile_name(
     info: MessageInfo,
     profile_name: String,
 ) -> Result<Response, ContractError> {
+    #[allow(clippy::single_char_pattern)]
     let formatted_profile_name = profile_name.trim().to_lowercase().replace(" ", "");
     //1) Check to see if there is the desired profile name is registered
     let check = REVERSE_LOOKUP.may_load(deps.storage, formatted_profile_name.clone())?;
@@ -140,6 +142,7 @@ fn execute_create_post(
                 creation_date: env.block.time.to_string(),
                 last_edit_date: None,
                 editor: None,
+                likes: 0,
             };
             LAST_POST_ID.save(deps.storage, &incremented_id)?;
             POST.save(deps.storage, post.post_id, &post)?;
@@ -160,6 +163,7 @@ fn execute_create_post(
                 creation_date: env.block.time.to_string(),
                 last_edit_date: None,
                 editor: None,
+                likes: 0,
             };
             LAST_POST_ID.save(deps.storage, &incremented_id)?;
             POST.save(deps.storage, post.post_id, &post)?;
@@ -204,6 +208,7 @@ fn execute_edit_post(
         creation_date: post.creation_date,
         last_edit_date: Some(env.block.time.to_string()),
         editor: Some(validated_editor.to_string()),
+        likes: post.likes,
     };
     POST.save(deps.storage, post_id, &new_post)?;
     let share_address = REVERSE_LOOKUP.may_load(deps.storage, new_post.author.clone())?;
@@ -247,7 +252,30 @@ fn execute_delete_post(
         .add_attribute("action", "delete_post")
         .add_attribute("post_id", post_id.to_string()))
 }
-
+fn execute_like_post(
+    deps: DepsMut,
+    _env: Env,
+    _info: MessageInfo,
+    post_id: u64,
+) -> Result<Response, ContractError> {
+    let post = POST.load(deps.storage, post_id)?;
+    let liked_post: Post = Post {
+        post_id: post.post_id,
+        post_title: post.post_title,
+        external_id: post.external_id,
+        text: post.text,
+        tags: post.tags,
+        author: post.author,
+        creation_date: post.creation_date,
+        last_edit_date: post.last_edit_date,
+        editor: post.editor,
+        likes: post.likes + 1,
+    };
+    POST.save(deps.storage, post_id, &liked_post)?;
+    Ok(Response::new()
+    .add_attribute("action", "like post")
+    .add_attribute("post_id", post_id.to_string()))
+}
 fn execute_withdraw(deps: DepsMut, env: Env, info: MessageInfo) -> Result<Response, ContractError> {
     if info.sender != ADMIN {
         return Err(ContractError::Unauthorized {});

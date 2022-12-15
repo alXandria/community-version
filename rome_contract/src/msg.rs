@@ -29,6 +29,9 @@ pub enum ExecuteMsg {
     DeletePost {
         post_id: u64,
     },
+    LikePost {
+        post_id: u64,
+    },
     Withdraw {},
 }
 

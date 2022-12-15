@@ -23,6 +23,7 @@ pub struct Post {
     pub creation_date: String,
     pub last_edit_date: Option<String>,
     pub editor: Option<String>,
+    pub likes: u64,
 }
 
 pub const CONFIG: Item<Config> = Item::new("config");

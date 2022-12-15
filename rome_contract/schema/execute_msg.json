@@ -119,6 +119,28 @@
     {
       "type": "object",
       "required": [
+        "like_post"
+      ],
+      "properties": {
+        "like_post": {
+          "type": "object",
+          "required": [
+            "post_id"
+          ],
+          "properties": {
+            "post_id": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0.0
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
         "withdraw"
       ],
       "properties": {

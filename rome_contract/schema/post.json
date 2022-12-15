@@ -6,6 +6,7 @@
     "author",
     "creation_date",
     "external_id",
+    "likes",
     "post_id",
     "post_title",
     "tags",
@@ -32,6 +33,11 @@
         "string",
         "null"
       ]
+    },
+    "likes": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0.0
     },
     "post_id": {
       "type": "integer",

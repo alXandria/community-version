@@ -412,3 +412,37 @@ fn test_register_profile_name() {
     //switch to is_none to intentionally fail and check output to verify editable is true
     assert!(res.profile_name.is_some())
 }
+#[test]
+fn test_like_post() {
+    let mut deps = mock_dependencies();
+    let env = mock_env();
+    let info = mock_info(ADDR1, &[]);
+    let msg = InstantiateMsg {
+        admin: ADDR1.to_string(),
+    };
+    let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
+    let info = mock_info(ADDR1, &[coin(1_000_000, "ujunox")]);
+    let msg = ExecuteMsg::CreatePost {
+        post_title: "Mintscan Prop 320".to_string(),
+        external_id:
+            "https://alxandria.infura-ipfs.io/ipfs/QmQSXMeJRyodyVESWVXT8gd7kQhjrV7sguLnsrXSd6YzvT"
+                .to_string(),
+        tags: vec![
+            "Blockchain".to_string(),
+            "Governance".to_string(),
+            "Rejected".to_string(),
+        ],
+        text: "".to_string(),
+    };
+    let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
+    //like post
+    let msg = ExecuteMsg::LikePost { post_id: 1 };
+    let _res = execute(deps.as_mut(), env.clone(), info, msg).unwrap();
+    //query post
+    let msg = QueryMsg::Post { post_id: 1 };
+    let bin = query(deps.as_ref(), env, msg).unwrap();
+    let res: PostResponse = from_binary(&bin).unwrap();
+    println!("{:?}", res);
+    //switch to is_none to intentionally fail and check output to verify like = 1
+    assert!(res.post.is_some());
+}
