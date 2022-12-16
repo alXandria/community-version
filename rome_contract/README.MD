@@ -1,5 +1,44 @@
 # This contract is a decentralized encyclopedia. It is live on Juno testnet and functioning! 
 
+# December 16 Full Test
+
+*Store*
+junod tx wasm store alxandria.wasm --from testnet --fees 500ujunox --gas 2000000 --instantiate-only-address juno1w5aespcyddns7y696q9wlch4ehflk2wglu9vv4 -y
+
+*Code ID*
+3485
+
+*Instantiation*
+junod tx wasm instantiate 3485 '{"admin":"juno1w5aespcyddns7y696q9wlch4ehflk2wglu9vv4"}' --label alxandria-test --admin juno1w5aespcyddns7y696q9wlch4ehflk2wglu9vv4 --from testnet --fees 500ujunox --gas 2000000 -y
+
+https://testnet.juno.explorers.guru/transaction/E52B73F184F81C0600B699116EA1D45C39F96B646DBF65DF28D9473F5B6DA72A
+
+*Contract Address*
+juno12szwyek4ngpd96zqykdj8ghuzzff8u5wc2e70chzkay8etzpqzsq7vrkft
+
+*Register Profile and check formatting (lowercase + remove space)*
+junod tx wasm execute juno12szwyek4ngpd96zqykdj8ghuzzff8u5wc2e70chzkay8etzpqzsq7vrkft '{"register_profile_name":{"profile_name":"Vitali k"}}' --from testnet --fees 500ujunox --gas 200000 -y
+
+https://testnet.juno.explorers.guru/transaction/7091D1A51EB10928EA2D6094A0C45A7CE110DA48D89E1A611895AF8A9D210DFD
+
+*Create Post With Profile Name*
+junod tx wasm execute juno12szwyek4ngpd96zqykdj8ghuzzff8u5wc2e70chzkay8etzpqzsq7vrkft '{"create_post":{"post_title":"Post 1","external_id":"https://alxandria.infura-ipfs.io/ipfs/QmQSXMeJRyodyVESWVXT8gd7kQhjrV7sguLnsrXSd6YzvT","text":"This post should pass!","tags":["pass", "funds","attempt"]}}' --amount 1000000ujunox --from testnet --fees 500ujunox --gas 200000 -y
+
+https://testnet.juno.explorers.guru/transaction/E3E3EA760C62C5D91AFD9DDBA5493079DA17E209CCC43253791F86E1A67E9A1A
+
+*Query All Posts*
+junod query wasm contract-state smart juno12szwyek4ngpd96zqykdj8ghuzzff8u5wc2e70chzkay8etzpqzsq7vrkft '{"all_posts":{}}'
+
+*Create Post Without Profile Name*
+junod tx wasm execute juno12szwyek4ngpd96zqykdj8ghuzzff8u5wc2e70chzkay8etzpqzsq7vrkft '{"create_post":{"post_title":"Post 2","external_id":"https://alxandria.infura-ipfs.io/ipfs/QmQSXMeJRyodyVESWVXT8gd7kQhjrV7sguLnsrXSd6YzvT","text":"This post should pass!","tags":["no", "profile","name"]}}' --from ADDRESS --fees 500ujunox --gas 200000 -y
+
+https://testnet.juno.explorers.guru/transaction/5A3ADF0D0DA56B774324EA4DB90FC2A4CBC5F0E1D7BD9617CC194F5D5AEE1E09
+
+*Register Profile without validation requirement*
+junod tx wasm execute juno12szwyek4ngpd96zqykdj8ghuzzff8u5wc2e70chzkay8etzpqzsq7vrkft '{"register_profile_name":{"profile_name":"satoshi"}}' --from ADDRESS --fees 500ujunox --gas 200000 -y
+
+https://testnet.juno.explorers.guru/transaction/48CCD0D6B3E8A87C2E6A1B6D92028E4FC6921A00F6CE380141EDA0BB4504461A
+
 # test migrate for profile query
 
 *Store*
@@ -18,40 +57,6 @@ junod query wasm contract-state smart juno1w9jw3j2rdm5f9t9mvqsg88z7nkd7j95ezxctk
 
 # Test for profile branch Dec 8
 
-*Store*
-junod tx wasm store alxandria.wasm --from testnet --fees 500ujunox --gas 2000000 --instantiate-only-address juno1w5aespcyddns7y696q9wlch4ehflk2wglu9vv4 -y
-
-*Code ID*
-3159
-
-*Instantiation*
-junod tx wasm instantiate 3159 '{"admin":"juno1w5aespcyddns7y696q9wlch4ehflk2wglu9vv4"}' --label alxandria-test --admin juno1w5aespcyddns7y696q9wlch4ehflk2wglu9vv4 --from testnet --fees 500ujunox --gas 2000000 -y
-
-*Contract Address*
-juno1w9jw3j2rdm5f9t9mvqsg88z7nkd7j95ezxctkeundp66dxvwp5xq3pqa56
-
-*Register Profile and check formatting (lowercase + remove space)*
-junod tx wasm execute juno1w9jw3j2rdm5f9t9mvqsg88z7nkd7j95ezxctkeundp66dxvwp5xq3pqa56 '{"register_profile_name":{"profile_name":"Vitali k"}}' --from testnet --fees 500ujunox --gas 200000 -y
-
-https://testnet.juno.explorers.guru/transaction/8E2511A655AB80F220421BCB017FA873BF1D07EEDF5D228B22F812F17856BEF3
-
-*Create Post With Profile Name*
-junod tx wasm execute juno1w9jw3j2rdm5f9t9mvqsg88z7nkd7j95ezxctkeundp66dxvwp5xq3pqa56 '{"create_post":{"post_title":"Post 1","external_id":"https://alxandria.infura-ipfs.io/ipfs/QmQSXMeJRyodyVESWVXT8gd7kQhjrV7sguLnsrXSd6YzvT","text":"This post should pass!","tags":["pass", "funds","attempt"]}}' --amount 1000000ujunox --from testnet --fees 500ujunox --gas 200000 -y
-
-https://testnet.juno.explorers.guru/transaction/6393C7F45D4F37A2543AA096435164C416643D9B29B6D724773FC67D882B7E35
-
-*Query All Posts*
-junod query wasm contract-state smart juno1w9jw3j2rdm5f9t9mvqsg88z7nkd7j95ezxctkeundp66dxvwp5xq3pqa56 '{"all_posts":{}}'
-
-*Create Post Without Profile Name*
-junod tx wasm execute juno1w9jw3j2rdm5f9t9mvqsg88z7nkd7j95ezxctkeundp66dxvwp5xq3pqa56 '{"create_post":{"post_title":"Post 2","external_id":"https://alxandria.infura-ipfs.io/ipfs/QmQSXMeJRyodyVESWVXT8gd7kQhjrV7sguLnsrXSd6YzvT","text":"This post should pass!","tags":["no", "profile","name"]}}' --amount 1000000ujunox --from ADDRESS --fees 500ujunox --gas 200000 -y
-
-https://testnet.juno.explorers.guru/transaction/D026CEB0F01C3A1B69F9D06CACEC5734A2673A5D07841B2DE5959752E5E403A0
-
-*Register Profile without validation requirement*
-junod tx wasm execute juno1w9jw3j2rdm5f9t9mvqsg88z7nkd7j95ezxctkeundp66dxvwp5xq3pqa56 '{"register_profile_name":{"profile_name":"satoshi"}}' --from ADDRESS --fees 500ujunox --gas 200000 -y
-
-https://testnet.juno.explorers.guru/transaction/0FC642D289B3565E0851325DBEF0A5FEF8083C960F47F38D1D1BB55503D4E0BC
 
 *Migrate*
 Code ID: 3249

@@ -7,7 +7,7 @@ use cosmwasm_std::{
 use cw2::{get_contract_version, set_contract_version};
 use cw_storage_plus::Bound;
 use is_false::is_false;
-use std::{env, vec};
+use std::env;
 
 use crate::coin_helpers::assert_sent_exact_coin;
 use crate::error::ContractError;
@@ -211,31 +211,10 @@ fn execute_edit_post(
         likes: post.likes,
     };
     POST.save(deps.storage, post_id, &new_post)?;
-    let share_address = REVERSE_LOOKUP.may_load(deps.storage, new_post.author.clone())?;
-    match share_address {
-        Some(share_address) => {
-            let share = BankMsg::Send {
-                to_address: share_address.to_string(),
-                amount: vec![coin(500_000, JUNO)],
-            };
-            Ok(Response::new()
-                .add_message(share)
-                .add_attribute("action", "edit_post")
-                .add_attribute("post_id", new_post.post_id.to_string())
-                .add_attribute("editor", new_post.editor.unwrap()))
-        }
-        None => {
-            let share = BankMsg::Send {
-                to_address: new_post.author,
-                amount: vec![coin(500_000, JUNO)],
-            };
-            Ok(Response::new()
-                .add_message(share)
-                .add_attribute("action", "edit_post")
-                .add_attribute("post_id", new_post.post_id.to_string())
-                .add_attribute("editor", new_post.editor.unwrap()))
-        }
-    }
+    Ok(Response::new()
+        .add_attribute("action", "edit_post")
+        .add_attribute("post_id", new_post.post_id.to_string())
+        .add_attribute("editor", new_post.editor.unwrap()))
 }
 fn execute_delete_post(
     deps: DepsMut,
