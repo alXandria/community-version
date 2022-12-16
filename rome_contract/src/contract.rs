@@ -115,7 +115,7 @@ fn execute_create_post(
     text: String,
     tags: Vec<String>,
 ) -> Result<Response, ContractError> {
-    assert_sent_exact_coin(&info.funds, Some(coin(1_000_000, JUNO)))?;
+    // assert_sent_exact_coin(&info.funds, Some(coin(1_000_000, JUNO)))?;
     if text.len() > MAX_TEXT_LENGTH {
         return Err(ContractError::TooMuchText {});
     }
@@ -185,7 +185,7 @@ fn execute_edit_post(
     text: String,
     tags: Vec<String>,
 ) -> Result<Response, ContractError> {
-    assert_sent_exact_coin(&info.funds, Some(Coin::new(2_000_000, JUNO)))?;
+    assert_sent_exact_coin(&info.funds, Some(Coin::new(200_000, JUNO)))?;
     if text.len() > MAX_TEXT_LENGTH {
         return Err(ContractError::TooMuchText {});
     }
@@ -255,9 +255,10 @@ fn execute_delete_post(
 fn execute_like_post(
     deps: DepsMut,
     _env: Env,
-    _info: MessageInfo,
+    info: MessageInfo,
     post_id: u64,
 ) -> Result<Response, ContractError> {
+    assert_sent_exact_coin(&info.funds, Some(coin(10_000, JUNO)))?;
     let post = POST.load(deps.storage, post_id)?;
     let liked_post: Post = Post {
         post_id: post.post_id,
@@ -273,8 +274,8 @@ fn execute_like_post(
     };
     POST.save(deps.storage, post_id, &liked_post)?;
     Ok(Response::new()
-    .add_attribute("action", "like post")
-    .add_attribute("post_id", post_id.to_string()))
+        .add_attribute("action", "like post")
+        .add_attribute("post_id", post_id.to_string()))
 }
 fn execute_withdraw(deps: DepsMut, env: Env, info: MessageInfo) -> Result<Response, ContractError> {
     if info.sender != ADMIN {

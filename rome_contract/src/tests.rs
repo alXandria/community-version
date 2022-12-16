@@ -127,7 +127,7 @@ fn test_execute_edit_post_valid() {
     };
     let _res = execute(deps.as_mut(), env.clone(), info, msg).unwrap();
     //edit message
-    let info = mock_info(ADDR1, &[coin(2_000_000, "ujunox")]);
+    let info = mock_info(ADDR1, &[coin(200_000, "ujunox")]);
     let msg = ExecuteMsg::EditPost {
         post_id: 1,
         external_id:
@@ -434,8 +434,9 @@ fn test_like_post() {
         ],
         text: "".to_string(),
     };
-    let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
+    let _res = execute(deps.as_mut(), env.clone(), info, msg).unwrap();
     //like post
+    let info = mock_info(ADDR1, &[coin(10_000, "ujunox")]);
     let msg = ExecuteMsg::LikePost { post_id: 1 };
     let _res = execute(deps.as_mut(), env.clone(), info, msg).unwrap();
     //query post
