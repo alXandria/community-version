@@ -25,11 +25,11 @@ const ADDRESS: &str = "juno1ggtuwvungvx5t3awqpcqvxxvgt7gvwdkanuwtm";
 const ADMIN: &str = "juno1w5aespcyddns7y696q9wlch4ehflk2wglu9vv4";
 //limit ipfs link size to prevent link duplication
 const MAX_ID_LENGTH: usize = 128;
-//Block size is limited so make sure text input is less than 500 characters 
+//Block size is limited so make sure text input is less than 500 characters
 const MAX_TEXT_LENGTH: usize = 499;
 //alXandria dedicated gateway
 const IPFS: &str = "https://alxandria.infura-ipfs.io/ipfs/";
-//Token Contract currently uses 
+//Token Contract currently uses
 const JUNO: &str = "ujunox";
 
 #[entry_point]
