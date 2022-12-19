@@ -23,4 +23,7 @@ pub enum ContractError {
 
     #[error("The profile name {taken_profile_name} is already taken. Please choose another")]
     ProfileNameTaken { taken_profile_name: String },
+
+    #[error("This wallet address has already registered a profile name.")]
+    CanOnlyRegisterOneName { },
 }

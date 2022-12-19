@@ -413,6 +413,27 @@ fn test_register_profile_name() {
     assert!(res.profile_name.is_some())
 }
 #[test]
+fn test_reregister_profile_name() {
+    let mut deps = mock_dependencies();
+    let env = mock_env();
+    let info = mock_info(ADDR1, &[]);
+    //instantiate
+    let msg = InstantiateMsg {
+        admin: ADDR1.to_string(),
+    };
+    let _res = instantiate(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
+    //register profile name
+    let msg = ExecuteMsg::RegisterProfileName {
+        profile_name: "v i T".to_string(),
+    };
+    let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
+    //attempt to register second profile name, should fail
+    let msg = ExecuteMsg::RegisterProfileName {
+        profile_name: "satoshi".to_string(),
+    };
+    let _err = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap_err();
+}
+#[test]
 fn test_like_post() {
     let mut deps = mock_dependencies();
     let env = mock_env();

@@ -1,5 +1,3 @@
-//profile name query
-
 use cosmwasm_std::{
     coin, entry_point, to_binary, BankMsg, Binary, Coin, Deps, DepsMut, Env, MessageInfo, Order,
     Response, StdError, StdResult,
@@ -23,10 +21,15 @@ const CONTRACT_NAME: &str = env!("CARGO_PKG_NAME");
 const CONTRACT_VERSION: &str = env!("CARGO_PKG_VERSION");
 //Withdraw address
 const ADDRESS: &str = "juno1ggtuwvungvx5t3awqpcqvxxvgt7gvwdkanuwtm";
+//Admin wallet
 const ADMIN: &str = "juno1w5aespcyddns7y696q9wlch4ehflk2wglu9vv4";
+//limit ipfs link size to prevent link duplication
 const MAX_ID_LENGTH: usize = 128;
+//Block size is limited so make sure text input is less than 500 characters 
 const MAX_TEXT_LENGTH: usize = 499;
+//alXandria dedicated gateway
 const IPFS: &str = "https://alxandria.infura-ipfs.io/ipfs/";
+//Token Contract currently uses 
 const JUNO: &str = "ujunox";
 
 #[entry_point]
@@ -86,6 +89,12 @@ fn execute_register_profile_name(
     info: MessageInfo,
     profile_name: String,
 ) -> Result<Response, ContractError> {
+    //check to see if wallet has already registered a name, fail if so
+    let existing_name_check = PROFILE_NAME.may_load(deps.storage, info.sender.clone())?;
+    if existing_name_check.is_some() {
+        return Err(ContractError::CanOnlyRegisterOneName {});
+    }
+    //trim, remove any spaces, and lowercase the input
     #[allow(clippy::single_char_pattern)]
     let formatted_profile_name = profile_name.trim().to_lowercase().replace(" ", "");
     //1) Check to see if there is the desired profile name is registered
@@ -115,6 +124,7 @@ fn execute_create_post(
     text: String,
     tags: Vec<String>,
 ) -> Result<Response, ContractError> {
+    //In future, fees will be turned on for post creation, reference line below.
     // assert_sent_exact_coin(&info.funds, Some(coin(1_000_000, JUNO)))?;
     if text.len() > MAX_TEXT_LENGTH {
         return Err(ContractError::TooMuchText {});
@@ -125,12 +135,16 @@ fn execute_create_post(
     if is_false(external_id.starts_with(IPFS)) {
         return Err(ContractError::MustUseAlxandriaGateway {});
     }
+    //load article count from state and increment
     let counter = ARTICLE_COUNT.load(deps.storage)?;
     let updated_counter = counter + 1;
+    //load last post id from state and increment
     let last_post_id = LAST_POST_ID.load(deps.storage)?;
     let incremented_id = last_post_id + 1;
+    //check to see if address is matched to a profile name
     let load = PROFILE_NAME.may_load(deps.storage, info.sender.clone())?;
     match load {
+        //if profile name exists, save profile name to author
         Some(load) => {
             let post: Post = Post {
                 post_id: incremented_id,
@@ -144,6 +158,7 @@ fn execute_create_post(
                 editor: None,
                 likes: 0,
             };
+            //save incremented id, post, and incremented article count
             LAST_POST_ID.save(deps.storage, &incremented_id)?;
             POST.save(deps.storage, post.post_id, &post)?;
             ARTICLE_COUNT.save(deps.storage, &updated_counter)?;
@@ -152,6 +167,7 @@ fn execute_create_post(
                 .add_attribute("post_id", post.post_id.to_string())
                 .add_attribute("author", load))
         }
+        //if no profile name is registered, save wallet address as author
         None => {
             let post: Post = Post {
                 post_id: incremented_id,
@@ -165,6 +181,7 @@ fn execute_create_post(
                 editor: None,
                 likes: 0,
             };
+            //save incremented id, post, and incremented article count
             LAST_POST_ID.save(deps.storage, &incremented_id)?;
             POST.save(deps.storage, post.post_id, &post)?;
             ARTICLE_COUNT.save(deps.storage, &updated_counter)?;
@@ -185,6 +202,7 @@ fn execute_edit_post(
     text: String,
     tags: Vec<String>,
 ) -> Result<Response, ContractError> {
+    //ensure .2 of crypto denom was sent
     assert_sent_exact_coin(&info.funds, Some(Coin::new(200_000, JUNO)))?;
     if text.len() > MAX_TEXT_LENGTH {
         return Err(ContractError::TooMuchText {});
@@ -195,9 +213,12 @@ fn execute_edit_post(
     if is_false(external_id.starts_with(IPFS)) {
         return Err(ContractError::MustUseAlxandriaGateway {});
     }
+    //load post by ID passed
     let post = POST.load(deps.storage, post_id)?;
+    //make sure editor is valid address
     let editor = info.sender.to_string();
     let validated_editor = deps.api.addr_validate(&editor)?;
+    //update post content
     let new_post: Post = Post {
         post_id: post.post_id,
         post_title: post.post_title,
@@ -210,6 +231,7 @@ fn execute_edit_post(
         editor: Some(validated_editor.to_string()),
         likes: post.likes,
     };
+    //save post
     POST.save(deps.storage, post_id, &new_post)?;
     Ok(Response::new()
         .add_attribute("action", "edit_post")
@@ -222,10 +244,14 @@ fn execute_delete_post(
     info: MessageInfo,
     post_id: u64,
 ) -> Result<Response, ContractError> {
+    //ensure 10 of crypto denom was sent
     assert_sent_exact_coin(&info.funds, Some(Coin::new(10_000_000, JUNO)))?;
+    //remove post from state via post id
     POST.remove(deps.storage, post_id);
+    //load counter and decrement
     let counter = ARTICLE_COUNT.load(deps.storage)?;
     let updated_counter = counter - 1;
+    //save decremented counter
     ARTICLE_COUNT.save(deps.storage, &updated_counter)?;
     Ok(Response::new()
         .add_attribute("action", "delete_post")
@@ -237,7 +263,9 @@ fn execute_like_post(
     info: MessageInfo,
     post_id: u64,
 ) -> Result<Response, ContractError> {
+    //ensure .01 of crypto denom was sent
     assert_sent_exact_coin(&info.funds, Some(coin(10_000, JUNO)))?;
+    //load post and increment like count
     let post = POST.load(deps.storage, post_id)?;
     let liked_post: Post = Post {
         post_id: post.post_id,
@@ -251,21 +279,23 @@ fn execute_like_post(
         editor: post.editor,
         likes: post.likes + 1,
     };
+    //save post with incremented like count
     POST.save(deps.storage, post_id, &liked_post)?;
     Ok(Response::new()
         .add_attribute("action", "like post")
         .add_attribute("post_id", post_id.to_string()))
 }
 fn execute_withdraw(deps: DepsMut, env: Env, info: MessageInfo) -> Result<Response, ContractError> {
+    //verify wallet address is hardcoded admin
     if info.sender != ADMIN {
         return Err(ContractError::Unauthorized {});
     }
+    //go through balances owned by contract and send to ADMIN
     let balance = deps.querier.query_all_balances(&env.contract.address)?;
     let bank_msg = BankMsg::Send {
         to_address: ADDRESS.to_string(),
         amount: balance,
     };
-
     let resp = Response::new()
         .add_message(bank_msg)
         .add_attribute("action", "withdraw");
@@ -282,7 +312,7 @@ pub fn query(deps: Deps, env: Env, msg: QueryMsg) -> StdResult<Binary> {
     }
 }
 
-//pagination
+//pagination fields
 const MAX_LIMIT: u32 = 30;
 const DEFAULT_LIMIT: u32 = 10;
 
@@ -323,7 +353,7 @@ pub fn migrate(deps: DepsMut, _env: Env, _msg: MigrateMsg) -> Result<Response, C
     if ver.contract != CONTRACT_NAME {
         return Err(StdError::generic_err("Can only upgrade from same type").into());
     }
-    //canonical way from official docs
+    //canonical way from official docs https://docs.cosmwasm.com/docs/1.0/smart-contracts/migration/#migrate-which-updates-the-version-only-if-newer
     #[allow(clippy::cmp_owned)]
     if ver.version > (*CONTRACT_VERSION).to_string() {
         return Err(StdError::generic_err("Must upgrade from a lower version").into());
