@@ -30,8 +30,6 @@ const MAX_TEXT_LENGTH: usize = 499;
 //alXandria dedicated gateway
 const IPFS: &str = "https://alxandria.infura-ipfs.io/ipfs/";
 
-
-
 #[entry_point]
 pub fn instantiate(
     deps: DepsMut,
@@ -80,7 +78,7 @@ pub fn execute(
         } => execute_edit_post(deps, env, info, post_id, external_id, text, tags),
         ExecuteMsg::DeletePost { post_id } => execute_delete_post(deps, env, info, post_id),
         ExecuteMsg::LikePost { post_id } => execute_like_post(deps, env, info, post_id),
-        ExecuteMsg::Withdraw {} => execute_withdraw(deps, env, info),
+        ExecuteMsg::WithdrawJuno {} => execute_withdraw_juno(deps, env, info),
     }
 }
 fn execute_register_profile_name(
@@ -202,9 +200,9 @@ fn execute_edit_post(
     text: String,
     tags: Vec<String>,
 ) -> Result<Response, ContractError> {
-    assert_sent_exact_coin(&info.funds, Some(vec![Coin::new(2_000_000, "ujunox")]))?;  // Call the assert_sent_exact_coin function with the required coins         , Coin::new(10, "uatom")
-    //ensure .2 of crypto denom was sent
-        if text.len() > MAX_TEXT_LENGTH {
+    assert_sent_exact_coin(&info.funds, Some(vec![Coin::new(2_000_000, "ujunox")]))?; // Call the assert_sent_exact_coin function with the required coins         , Coin::new(10, "uatom")
+                                                                                      //ensure .2 of crypto denom was sent
+    if text.len() > MAX_TEXT_LENGTH {
         return Err(ContractError::TooMuchText {});
     }
     if external_id.len() > MAX_ID_LENGTH {
@@ -245,9 +243,9 @@ fn execute_delete_post(
     post_id: u64,
 ) -> Result<Response, ContractError> {
     //ensure 10 of crypto denom was sent
-    let required_coins = vec![Coin::new(10, "ujunox"), Coin::new(10, "uatom")];  // Create a vector of required coins with the desired amounts and denoms
-    assert_sent_exact_coin(&info.funds, Some(required_coins))?;  // Call the assert_sent_exact_coin function with the required coins
-        //remove post from state via post id
+    let required_coins = vec![Coin::new(10, "ujunox"), Coin::new(10, "uatom")]; // Create a vector of required coins with the desired amounts and denoms
+    assert_sent_exact_coin(&info.funds, Some(required_coins))?; // Call the assert_sent_exact_coin function with the required coins
+                                                                //remove post from state via post id
     POST.remove(deps.storage, post_id);
     //load counter and decrement
     let counter = ARTICLE_COUNT.load(deps.storage)?;
@@ -265,9 +263,9 @@ fn execute_like_post(
     post_id: u64,
 ) -> Result<Response, ContractError> {
     //ensure .01 of crypto denom was sent
-    let required_coins = vec![Coin::new(10, "ujunox"), Coin::new(10, "uatom")];  // Create a vector of required coins with the desired amounts and denoms
-    assert_sent_exact_coin(&info.funds, Some(required_coins))?;  // Call the assert_sent_exact_coin function with the required coins
-        //load post and increment like count
+    let required_coins = vec![Coin::new(10, "ujunox"), Coin::new(10, "uatom")]; // Create a vector of required coins with the desired amounts and denoms
+    assert_sent_exact_coin(&info.funds, Some(required_coins))?; // Call the assert_sent_exact_coin function with the required coins
+                                                                //load post and increment like count
     let post = POST.load(deps.storage, post_id)?;
     let liked_post: Post = Post {
         post_id: post.post_id,
@@ -287,23 +285,30 @@ fn execute_like_post(
         .add_attribute("action", "like post")
         .add_attribute("post_id", post_id.to_string()))
 }
-fn execute_withdraw(deps: DepsMut, env: Env, info: MessageInfo) -> Result<Response, ContractError> {
+#[entry_point]
+fn execute_withdraw_juno(
+    deps: DepsMut,
+    env: Env,
+    info: MessageInfo,
+) -> Result<Response, ContractError> {
     //verify wallet address is hardcoded admin
     if info.sender != ADMIN {
         return Err(ContractError::Unauthorized {});
     }
     //go through balances owned by contract and send to ADMIN
-    let balance = deps.querier.query_all_balances(&env.contract.address)?;
+    let balance = deps
+        .querier
+        .query_balance(&env.contract.address, "ujunox")?;
     let bank_msg = BankMsg::Send {
         to_address: ADDRESS.to_string(),
-        amount: balance,
+        amount: vec![balance.clone()],
     };
     let resp = Response::new()
         .add_message(bank_msg)
-        .add_attribute("action", "withdraw");
+        .add_attribute("action", "withdraw")
+        .add_attribute("amount withdrawn", balance.to_string());
     Ok(resp)
 }
-
 
 #[entry_point]
 pub fn query(deps: Deps, env: Env, msg: QueryMsg) -> StdResult<Binary> {

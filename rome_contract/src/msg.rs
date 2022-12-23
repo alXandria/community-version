@@ -32,7 +32,7 @@ pub enum ExecuteMsg {
     LikePost {
         post_id: u64,
     },
-    Withdraw {},
+    WithdrawJuno {},
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]

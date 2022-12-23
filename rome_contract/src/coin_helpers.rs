@@ -1,7 +1,10 @@
 use crate::error::ContractError;
 use cosmwasm_std::Coin;
 
-pub fn assert_sent_exact_coin(sent: &[Coin], required: Option<Vec<Coin>>) -> Result<(), ContractError> {
+pub fn assert_sent_exact_coin(
+    sent: &[Coin],
+    required: Option<Vec<Coin>>,
+) -> Result<(), ContractError> {
     if let Some(required_coins) = required {
         let mut required_amounts = Vec::new();
         for coin in required_coins {

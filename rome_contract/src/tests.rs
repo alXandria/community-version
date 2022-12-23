@@ -253,7 +253,7 @@ fn test_withdraw_valid() {
         text: "".to_string(),
     };
     let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
-    let msg = ExecuteMsg::Withdraw {};
+    let msg = ExecuteMsg::WithdrawJuno {};
     let _res = execute(deps.as_mut(), env, info, msg).unwrap();
 }
 #[test]
@@ -280,7 +280,7 @@ fn test_withdraw_invalid() {
     };
     let _res = execute(deps.as_mut(), env.clone(), info, msg).unwrap();
     let info = mock_info(ADDR2, &[]);
-    let msg = ExecuteMsg::Withdraw {};
+    let msg = ExecuteMsg::WithdrawJuno {};
     let _res = execute(deps.as_mut(), env, info, msg).unwrap_err();
 }
 #[test]

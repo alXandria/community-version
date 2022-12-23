@@ -28,5 +28,5 @@ pub enum ContractError {
     CanOnlyRegisterOneName {},
 
     #[error("Denom not accepted: {denom}")]
-    InvalidDenom { denom: String},
+    InvalidDenom { denom: String },
 }
