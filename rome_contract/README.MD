@@ -15,7 +15,19 @@ junod tx wasm instantiate 3773 '{"admin":"juno1w5aespcyddns7y696q9wlch4ehflk2wgl
 juno167h49ng8gftcc5njsvfz9a2x78lc7wps7f34ysurfpk6kdkj5w2q0j39z4
 
 *Create Post Without Profile Name*
-junod tx wasm execute juno12szwyek4ngpd96zqykdj8ghuzzff8u5wc2e70chzkay8etzpqzsq7vrkft '{"create_post":{"post_title":"Post 2","external_id":"https://alxandria.infura-ipfs.io/ipfs/QmQSXMeJRyodyVESWVXT8gd7kQhjrV7sguLnsrXSd6YzvT","text":"This post should pass!","tags":["no",  "profile", "name"]}}' --from ADDRESS --fees 500ujunox --gas 200000 -y
+junod tx wasm execute juno167h49ng8gftcc5njsvfz9a2x78lc7wps7f34ysurfpk6kdkj5w2q0j39z4 '{"create_post":{"post_title":"Post 2","external_id":"https://alxandria.infura-ipfs.io/ipfs/QmQSXMeJRyodyVESWVXT8gd7kQhjrV7sguLnsrXSd6YzvT","text":"This post should pass!","tags":["no",  "profile", "name"]}}' --from ADDRESS --fees 500ujunox --gas 200000 -y
+
+https://testnet.juno.explorers.guru/transaction/6650743A1E6FD2C04F745381B7257F860920FAE80383E9FEC49DE5EF1D48DB31
+
+*Test Edit*
+junod tx wasm execute juno167h49ng8gftcc5njsvfz9a2x78lc7wps7f34ysurfpk6kdkj5w2q0j39z4 '{"edit_post":{"post_id":1,"external_id":"https://alxandria.infura-ipfs.io/ipfs/QmQSXMeJRyodyVESWVXT8gd7kQhjrV7sguLnsrXSd6YzvT","text":"This edit should pass!","tags":["pass","double funds","edited post"]}}' --amount 200000ujunox --from ADDRESS --fees 500ujunox --gas 200000 -y
+
+https://testnet.juno.explorers.guru/transaction/E9D83FC344C80BD3A8EB8E907CC60A72C2D4825496FA3C4856B6076BD3CE18DA
+
+*Withdraw*
+junod tx wasm execute juno167h49ng8gftcc5njsvfz9a2x78lc7wps7f34ysurfpk6kdkj5w2q0j39z4 '{"withdraw":{}}' --from testnet --fees 500ujunox --gas 200000 -y
+
+https://testnet.juno.explorers.guru/transaction/94924F8D282574E5F0B7DA02CF49B423BAAE864324A5CD41D63673872B99CA5B
 
 # December 16 Full Test
 
