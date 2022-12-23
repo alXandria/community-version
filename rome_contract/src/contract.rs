@@ -1,5 +1,5 @@
 use cosmwasm_std::{
-    coin, entry_point, to_binary, BankMsg, Binary, Coin, Deps, DepsMut, Env, MessageInfo, Order,
+    entry_point, to_binary, BankMsg, Binary, Coin, Deps, DepsMut, Env, MessageInfo, Order,
     Response, StdError, StdResult,
 };
 use cw2::{get_contract_version, set_contract_version};
@@ -29,8 +29,8 @@ const MAX_ID_LENGTH: usize = 128;
 const MAX_TEXT_LENGTH: usize = 499;
 //alXandria dedicated gateway
 const IPFS: &str = "https://alxandria.infura-ipfs.io/ipfs/";
-//Token Contract currently uses
-const JUNO: &str = "ujunox";
+
+
 
 #[entry_point]
 pub fn instantiate(
@@ -202,9 +202,9 @@ fn execute_edit_post(
     text: String,
     tags: Vec<String>,
 ) -> Result<Response, ContractError> {
+    assert_sent_exact_coin(&info.funds, Some(vec![Coin::new(2_000_000, "ujunox")]))?;  // Call the assert_sent_exact_coin function with the required coins         , Coin::new(10, "uatom")
     //ensure .2 of crypto denom was sent
-    assert_sent_exact_coin(&info.funds, Some(Coin::new(200_000, JUNO)))?;
-    if text.len() > MAX_TEXT_LENGTH {
+        if text.len() > MAX_TEXT_LENGTH {
         return Err(ContractError::TooMuchText {});
     }
     if external_id.len() > MAX_ID_LENGTH {
@@ -245,8 +245,9 @@ fn execute_delete_post(
     post_id: u64,
 ) -> Result<Response, ContractError> {
     //ensure 10 of crypto denom was sent
-    assert_sent_exact_coin(&info.funds, Some(Coin::new(10_000_000, JUNO)))?;
-    //remove post from state via post id
+    let required_coins = vec![Coin::new(10, "ujunox"), Coin::new(10, "uatom")];  // Create a vector of required coins with the desired amounts and denoms
+    assert_sent_exact_coin(&info.funds, Some(required_coins))?;  // Call the assert_sent_exact_coin function with the required coins
+        //remove post from state via post id
     POST.remove(deps.storage, post_id);
     //load counter and decrement
     let counter = ARTICLE_COUNT.load(deps.storage)?;
@@ -264,8 +265,9 @@ fn execute_like_post(
     post_id: u64,
 ) -> Result<Response, ContractError> {
     //ensure .01 of crypto denom was sent
-    assert_sent_exact_coin(&info.funds, Some(coin(10_000, JUNO)))?;
-    //load post and increment like count
+    let required_coins = vec![Coin::new(10, "ujunox"), Coin::new(10, "uatom")];  // Create a vector of required coins with the desired amounts and denoms
+    assert_sent_exact_coin(&info.funds, Some(required_coins))?;  // Call the assert_sent_exact_coin function with the required coins
+        //load post and increment like count
     let post = POST.load(deps.storage, post_id)?;
     let liked_post: Post = Post {
         post_id: post.post_id,
@@ -301,6 +303,7 @@ fn execute_withdraw(deps: DepsMut, env: Env, info: MessageInfo) -> Result<Respon
         .add_attribute("action", "withdraw");
     Ok(resp)
 }
+
 
 #[entry_point]
 pub fn query(deps: Deps, env: Env, msg: QueryMsg) -> StdResult<Binary> {

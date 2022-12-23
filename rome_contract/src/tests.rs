@@ -127,7 +127,7 @@ fn test_execute_edit_post_valid() {
     };
     let _res = execute(deps.as_mut(), env.clone(), info, msg).unwrap();
     //edit message
-    let info = mock_info(ADDR1, &[coin(200_000, "ujunox")]);
+    let info = mock_info(ADDR1, &[coin(1_900_000, "ujunox")]);
     let msg = ExecuteMsg::EditPost {
         post_id: 1,
         external_id:

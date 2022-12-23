@@ -26,4 +26,7 @@ pub enum ContractError {
 
     #[error("This wallet address has already registered a profile name.")]
     CanOnlyRegisterOneName {},
+
+    #[error("Denom not accepted: {denom}")]
+    InvalidDenom { denom: String},
 }
