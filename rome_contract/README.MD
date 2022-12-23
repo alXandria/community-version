@@ -1,5 +1,22 @@
 # This contract is a decentralized encyclopedia. It is live on Juno testnet and functioning! 
 
+# Test Withdraw
+
+*Store*
+junod tx wasm store alxandria.wasm --from testnet --fees 500ujunox --gas 2000000 --instantiate-only-address juno1w5aespcyddns7y696q9wlch4ehflk2wglu9vv4 -y
+
+*Code ID*
+3773
+
+*Instantiation*
+junod tx wasm instantiate 3773 '{"admin":"juno1w5aespcyddns7y696q9wlch4ehflk2wglu9vv4"}' --label alxandria-test --admin juno1w5aespcyddns7y696q9wlch4ehflk2wglu9vv4 --from testnet --fees 500ujunox --gas 2000000 -y
+
+*Contract Address*
+juno167h49ng8gftcc5njsvfz9a2x78lc7wps7f34ysurfpk6kdkj5w2q0j39z4
+
+*Create Post Without Profile Name*
+junod tx wasm execute juno12szwyek4ngpd96zqykdj8ghuzzff8u5wc2e70chzkay8etzpqzsq7vrkft '{"create_post":{"post_title":"Post 2","external_id":"https://alxandria.infura-ipfs.io/ipfs/QmQSXMeJRyodyVESWVXT8gd7kQhjrV7sguLnsrXSd6YzvT","text":"This post should pass!","tags":["no",  "profile", "name"]}}' --from ADDRESS --fees 500ujunox --gas 200000 -y
+
 # December 16 Full Test
 
 *Store*
