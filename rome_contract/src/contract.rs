@@ -200,8 +200,8 @@ fn execute_edit_post(
     text: String,
     tags: Vec<String>,
 ) -> Result<Response, ContractError> {
-    assert_sent_exact_coin(&info.funds, Some(vec![Coin::new(2_000_000, "ujunox")]))?; // Call the assert_sent_exact_coin function with the required coins         , Coin::new(10, "uatom")
-                                                                                      //ensure .2 of crypto denom was sent
+    //ensure .2 of crypto denom was sent
+    assert_sent_exact_coin(&info.funds, Some(vec![Coin::new(200_000, "ujunox")]))?;
     if text.len() > MAX_TEXT_LENGTH {
         return Err(ContractError::TooMuchText {});
     }
@@ -242,10 +242,10 @@ fn execute_delete_post(
     info: MessageInfo,
     post_id: u64,
 ) -> Result<Response, ContractError> {
-    //ensure 10 of crypto denom was sent
-    let required_coins = vec![Coin::new(10, "ujunox"), Coin::new(10, "uatom")]; // Create a vector of required coins with the desired amounts and denoms
-    assert_sent_exact_coin(&info.funds, Some(required_coins))?; // Call the assert_sent_exact_coin function with the required coins
-                                                                //remove post from state via post id
+    //ensure 10 of crypto denom was sent & Create a vector of required coins with the desired amounts and denoms
+    let required_coins = vec![Coin::new(10_000_000, "ujunox")];
+    assert_sent_exact_coin(&info.funds, Some(required_coins))?;
+    //remove post from state via post id
     POST.remove(deps.storage, post_id);
     //load counter and decrement
     let counter = ARTICLE_COUNT.load(deps.storage)?;

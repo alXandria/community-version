@@ -431,7 +431,7 @@ fn test_reregister_profile_name() {
     let msg = ExecuteMsg::RegisterProfileName {
         profile_name: "satoshi".to_string(),
     };
-    let _err = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap_err();
+    let _err = execute(deps.as_mut(), env, info, msg).unwrap_err();
 }
 #[test]
 fn test_like_post() {
