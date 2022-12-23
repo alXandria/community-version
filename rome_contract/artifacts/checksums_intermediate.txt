@@ -1,1 +1,1 @@
-d9b5adafd74a3c10cb902ee9f2d9c20b579e7f796d241dd704a129a781581016  ./target/wasm32-unknown-unknown/release/alxandria.wasm
+59eb50ce69b13422843de8fb8ddb8627fb8cb1d33c9a3333a6c7319c655855a8  ./target/wasm32-unknown-unknown/release/alxandria.wasm

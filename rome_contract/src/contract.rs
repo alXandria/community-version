@@ -285,7 +285,6 @@ fn execute_like_post(
         .add_attribute("action", "like post")
         .add_attribute("post_id", post_id.to_string()))
 }
-#[entry_point]
 fn execute_withdraw_juno(
     deps: DepsMut,
     env: Env,
