@@ -24,8 +24,8 @@ pub enum ContractError {
     #[error("The profile name {taken_profile_name} is already taken. Please choose another")]
     ProfileNameTaken { taken_profile_name: String },
 
-    #[error("This wallet address has already registered a profile name.")]
-    CanOnlyRegisterOneName {},
+    #[error("To prevent misattribution, profile names are immutably tied to wallet addresses.")]
+    ProfileNameImmutable {},
 
     #[error("Denom not accepted: {denom}")]
     InvalidDenom { denom: String },

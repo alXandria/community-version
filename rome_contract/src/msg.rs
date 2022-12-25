@@ -33,6 +33,10 @@ pub enum ExecuteMsg {
         post_id: u64,
     },
     WithdrawJuno {},
+    AdminRegisterProfileName {
+        profile_name: String,
+        address: String,
+    },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]

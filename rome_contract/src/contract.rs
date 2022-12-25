@@ -79,6 +79,7 @@ pub fn execute(
         ExecuteMsg::DeletePost { post_id } => execute_delete_post(deps, env, info, post_id),
         ExecuteMsg::LikePost { post_id } => execute_like_post(deps, env, info, post_id),
         ExecuteMsg::WithdrawJuno {} => execute_withdraw_juno(deps, env, info),
+        ExecuteMsg::AdminRegisterProfileName { profile_name, address } => execute_admin_register_profile_name(deps, env, info, profile_name, address),
     }
 }
 fn execute_register_profile_name(
@@ -90,7 +91,7 @@ fn execute_register_profile_name(
     //check to see if wallet has already registered a name, fail if so
     let existing_name_check = PROFILE_NAME.may_load(deps.storage, info.sender.clone())?;
     if existing_name_check.is_some() {
-        return Err(ContractError::CanOnlyRegisterOneName {});
+        return Err(ContractError::ProfileNameImmutable {});
     }
     //trim, remove any spaces, and lowercase the input
     #[allow(clippy::single_char_pattern)]
@@ -308,6 +309,30 @@ fn execute_withdraw_juno(
         .add_attribute("amount withdrawn", balance.to_string());
     Ok(resp)
 }
+fn execute_admin_register_profile_name(
+    deps: DepsMut,
+    _env: Env,
+    info: MessageInfo,
+    profile_name: String,
+    address: String,
+) -> Result<Response, ContractError> {
+    //check to see if admin
+    if info.sender != ADMIN {
+        return Err(ContractError::Unauthorized {});
+    }
+    //trim, remove any spaces, and lowercase the input
+    #[allow(clippy::single_char_pattern)]
+    let formatted_profile_name = profile_name.trim().to_lowercase().replace(" ", "");
+    let validated_address = deps.api.addr_validate(&address)?;
+    //1) Check to see if there is the desired profile name is registered
+    PROFILE_NAME.save(deps.storage, validated_address.clone(), &formatted_profile_name)?;
+    REVERSE_LOOKUP.save(deps.storage, formatted_profile_name.clone(), &validated_address)?;
+    Ok(Response::new()
+        .add_attribute("action", "create profile name")
+        .add_attribute("new profile name", formatted_profile_name))
+}
+
+
 
 #[entry_point]
 pub fn query(deps: Deps, env: Env, msg: QueryMsg) -> StdResult<Binary> {
