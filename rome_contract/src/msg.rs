@@ -37,9 +37,21 @@ pub enum ExecuteMsg {
         profile_name: String,
         address: String,
     },
+    AdminCreatePost {
+        post_title: String,
+        external_id: String,
+        text: String,
+        tags: Vec<String>,
+        address: String,
+        creation: String,
+        edit_date: String,
+        editor_address: String,
+        like_number: u64,
+    }
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+#[serde(rename_all = "snake_case")]
 pub struct AllPostsResponse {
     pub posts: Vec<Post>,
 }

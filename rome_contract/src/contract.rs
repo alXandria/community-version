@@ -11,7 +11,7 @@ use crate::coin_helpers::assert_sent_exact_coin;
 use crate::error::ContractError;
 use crate::msg::{
     AllPostsResponse, ArticleCountResponse, ExecuteMsg, InstantiateMsg, MigrateMsg, PostResponse,
-    ProfileNameResponse, QueryMsg,
+    ProfileNameResponse, QueryMsg
 };
 use crate::state::{
     Config, Post, ARTICLE_COUNT, CONFIG, LAST_POST_ID, POST, PROFILE_NAME, REVERSE_LOOKUP,
@@ -80,6 +80,7 @@ pub fn execute(
         ExecuteMsg::LikePost { post_id } => execute_like_post(deps, env, info, post_id),
         ExecuteMsg::WithdrawJuno {} => execute_withdraw_juno(deps, env, info),
         ExecuteMsg::AdminRegisterProfileName { profile_name, address } => execute_admin_register_profile_name(deps, env, info, profile_name, address),
+        ExecuteMsg::AdminCreatePost { post_title, external_id, text, tags, address, creation, edit_date, editor_address, like_number } => execute_admin_create_post(deps, env, info, post_title, external_id, text, tags, address, creation, edit_date, editor_address, like_number),
     }
 }
 fn execute_register_profile_name(
@@ -191,7 +192,54 @@ fn execute_create_post(
         }
     }
 }
-
+//clippy defaults to max value of 7
+#[allow(clippy::too_many_arguments)]
+fn execute_admin_create_post(
+    deps: DepsMut,
+    _env: Env,
+    info: MessageInfo,
+    post_title: String,
+    external_id: String,
+    text: String,
+    tags: Vec<String>,
+    address: String,
+    creation: String,
+    edit_date: String,
+    editor_address: String,
+    like_number: u64,
+) -> Result<Response, ContractError> {
+    //check to see if admin
+    if info.sender != ADMIN {
+        return Err(ContractError::Unauthorized {});
+    }
+    //load article count from state and increment
+    let counter = ARTICLE_COUNT.load(deps.storage)?;
+    let updated_counter = counter + 1;
+    //load last post id from state and increment
+    let last_post_id = LAST_POST_ID.load(deps.storage)?;
+    let incremented_id = last_post_id + 1;
+    //check to see if address is matched to a profile name
+    let post: Post = Post {
+        post_id: incremented_id,
+        post_title,
+        external_id,
+        text,
+        tags,
+        author: address,
+        creation_date: creation,
+        last_edit_date: Some(edit_date),
+        editor: Some(editor_address),
+        likes: like_number,
+    };
+    //save incremented id, post, and incremented article count
+    LAST_POST_ID.save(deps.storage, &incremented_id)?;
+    POST.save(deps.storage, post.post_id, &post)?;
+    ARTICLE_COUNT.save(deps.storage, &updated_counter)?;
+    Ok(Response::new()
+        .add_attribute("action", "create_post")
+        .add_attribute("post_id", post.post_id.to_string())
+        .add_attribute("author", info.sender.to_string()))
+}
 fn execute_edit_post(
     deps: DepsMut,
     env: Env,
@@ -364,7 +412,6 @@ fn query_all_posts(
 
     to_binary(&AllPostsResponse { posts })
 }
-
 fn query_post(deps: Deps, _env: Env, post_id: u64) -> StdResult<Binary> {
     let post = POST.may_load(deps.storage, post_id)?;
     to_binary(&PostResponse { post })
