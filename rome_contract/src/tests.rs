@@ -129,7 +129,7 @@ fn test_execute_edit_post_valid() {
     //edit message
     let info = mock_info(ADDR1, &[coin(1_900_000, "ujunox")]);
     let msg = ExecuteMsg::EditPost {
-        post_title: "Mintscan Prop 320".to_string(),
+        post_id: 1,
         external_id:
             "https://alxandria.infura-ipfs.io/ipfs/QmQSXMeJRyodyVESWVXT8gd7kQhjrV7sguLnsrXSd6YzvT"
                 .to_string(),
@@ -162,7 +162,7 @@ fn test_execute_edit_post_invalid() {
     };
     let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
     let msg = ExecuteMsg::EditPost {
-            post_title: "Mintscan Prop 320".to_string(),
+            post_id: 1,
             external_id: "https://stake.tax/".to_string(),
             //too much text
             text: "This will fail vdfjkvjdfnksvkndsvjsndjkvnkjfnvnsdjkvnsdfnvjkdfnsvnjdksnvkldsnvjkdfnvjkfdnvkdnfjvkndjsknvjksdnknjfknvjkdsfnjvknskdnvjkndsjkvsjkdnvjksdfnvjksdfnvjkdfsnjvksvndfjkvnjsdkfnvjksdfnvkjlsdfvjnldsfknvjkdsvnjdksjkvcjkdnkm dkfs vkdnjkvndfkjsvjkfdnvjksdfnjkvkdfnvdnskvnsdfvjkdsnvjkdfnvjkdnvjksdnvjkdsvnjkdfnsdvfdknvjksdnvjfkdsnvjkdfsnvjksdnvjkfdsnvjkdsvlnsjknvjkdsnvjksdfnvkndsfjkvnjdskvnksdflvnjdknvjksdnvjkdfsnvjkdsnvjksdnvkdsnvfjkdnvjkdnvjkfndsvkdsfnjvksdnvsdfjklnvjdkslnvjdksnvjdfknvsdfjklnvdjksfnvjkdlsfnvkd".to_string(),
@@ -196,10 +196,10 @@ fn test_execute_delete_post_valid() {
     let _res = execute(deps.as_mut(), env.clone(), info, msg).unwrap();
     //delete message
     let info = mock_info(ADDR1, &[coin(10_000_000, "ujunox")]);
-    let msg = ExecuteMsg::DeletePost { post_title: "Mintscan Prop 320".to_string() };
+    let msg = ExecuteMsg::DeletePost { post_id: 1 };
     let _res = execute(deps.as_mut(), env.clone(), info, msg).unwrap();
     //query deleted post
-    let msg = QueryMsg::Post { post_title: "Mintscan Prop 320".to_string() };
+    let msg = QueryMsg::Post { post_id: 1 };
     let bin = query(deps.as_ref(), env, msg).unwrap();
     let res: PostResponse = from_binary(&bin).unwrap();
     assert!(res.post.is_none());
@@ -227,7 +227,7 @@ fn test_execute_delete_post_invalid() {
         text: "".to_string(),
     };
     let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
-    let msg = ExecuteMsg::DeletePost { post_title: "Mintscan Prop 320".to_string() };
+    let msg = ExecuteMsg::DeletePost { post_id: 3 };
     let _err = execute(deps.as_mut(), env, info, msg).unwrap_err();
 }
 #[test]
@@ -349,12 +349,12 @@ fn test_query_post() {
     };
     let _res = execute(deps.as_mut(), env.clone(), info, msg).unwrap();
     //query post
-    let msg = QueryMsg::Post { post_title: "mintscanprop320".to_string() };
+    let msg = QueryMsg::Post { post_id: 1 };
     let bin = query(deps.as_ref(), env.clone(), msg).unwrap();
     let res: PostResponse = from_binary(&bin).unwrap();
     assert!(res.post.is_some());
     //query nonexistent post
-    let msg = QueryMsg::Post { post_title: "nonexistent post".to_string() };
+    let msg = QueryMsg::Post { post_id: 78476 };
     let bin = query(deps.as_ref(), env, msg).unwrap();
     let res: PostResponse = from_binary(&bin).unwrap();
     assert!(res.post.is_none());
@@ -458,10 +458,10 @@ fn test_like_post() {
     let _res = execute(deps.as_mut(), env.clone(), info, msg).unwrap();
     //like post
     let info = mock_info(ADDR1, &[coin(10_000, "ujunox")]);
-    let msg = ExecuteMsg::LikePost { post_title: "Mintscan Prop 320".to_string() };
+    let msg = ExecuteMsg::LikePost { post_id: 1 };
     let _res = execute(deps.as_mut(), env.clone(), info, msg).unwrap();
     //query post
-    let msg = QueryMsg::Post { post_title: "mintscanprop320".to_string() };
+    let msg = QueryMsg::Post { post_id: 1 };
     let bin = query(deps.as_ref(), env, msg).unwrap();
     let res: PostResponse = from_binary(&bin).unwrap();
     println!("{:?}", res);
