@@ -1,4 +1,3 @@
-//add tests for admin post creation and admin name registration
 use cosmwasm_std::{
     entry_point, to_binary, BankMsg, Binary, Coin, Deps, DepsMut, Env, MessageInfo, Order,
     Response, StdError, StdResult,
@@ -72,13 +71,13 @@ pub fn execute(
             tags,
         } => execute_create_post(deps, env, info, post_title, external_id, text, tags),
         ExecuteMsg::EditPost {
-            post_title,
+            post_id,
             external_id,
             text,
             tags,
-        } => execute_edit_post(deps, env, info, post_title, external_id, text, tags),
-        ExecuteMsg::DeletePost { post_title } => execute_delete_post(deps, env, info, post_title),
-        ExecuteMsg::LikePost { post_title } => execute_like_post(deps, env, info, post_title),
+        } => execute_edit_post(deps, env, info, post_id, external_id, text, tags),
+        ExecuteMsg::DeletePost { post_id } => execute_delete_post(deps, env, info, post_id),
+        ExecuteMsg::LikePost { post_id } => execute_like_post(deps, env, info, post_id),
         ExecuteMsg::WithdrawJuno {} => execute_withdraw_juno(deps, env, info),
         ExecuteMsg::AdminRegisterProfileName { profile_name, address } => execute_admin_register_profile_name(deps, env, info, profile_name, address),
         ExecuteMsg::AdminCreatePost { post_title, external_id, text, tags, address, creation, edit_date, editor_address, like_number } => execute_admin_create_post(deps, env, info, post_title, external_id, text, tags, address, creation, edit_date, editor_address, like_number),
@@ -136,60 +135,60 @@ fn execute_create_post(
     if is_false(external_id.starts_with(IPFS)) {
         return Err(ContractError::MustUseAlxandriaGateway {});
     }
-    #[allow(clippy::single_char_pattern)]
-    let formatted_post_title = post_title.trim().to_lowercase().replace(" ", "");
-    let article = POST.may_load(deps.storage, formatted_post_title)?;
-    match article {
-        Some(article) => Err(ContractError::PostAlreadyExists { title: formatted_post_title }),
+    //load article count from state and increment
+    let counter = ARTICLE_COUNT.load(deps.storage)?;
+    let updated_counter = counter + 1;
+    //load last post id from state and increment
+    let last_post_id = LAST_POST_ID.load(deps.storage)?;
+    let incremented_id = last_post_id + 1;
+    //check to see if address is matched to a profile name
+    let load = PROFILE_NAME.may_load(deps.storage, info.sender.clone())?;
+    match load {
+        //if profile name exists, save profile name to author
+        Some(load) => {
+            let post: Post = Post {
+                post_id: incremented_id,
+                post_title,
+                external_id,
+                text,
+                tags,
+                author: load.clone(),
+                creation_date: env.block.time.to_string(),
+                last_edit_date: None,
+                editor: None,
+                likes: 0,
+            };
+            //save incremented id, post, and incremented article count
+            LAST_POST_ID.save(deps.storage, &incremented_id)?;
+            POST.save(deps.storage, post.post_id, &post)?;
+            ARTICLE_COUNT.save(deps.storage, &updated_counter)?;
+            Ok(Response::new()
+                .add_attribute("action", "create_post")
+                .add_attribute("post_id", post.post_id.to_string())
+                .add_attribute("author", load))
+        }
+        //if no profile name is registered, save wallet address as author
         None => {
-                //load article count from state and increment
-            let counter = ARTICLE_COUNT.load(deps.storage)?;
-            let updated_counter = counter + 1;
-            //check to see if address is matched to a profile name
-            let load = PROFILE_NAME.may_load(deps.storage, info.sender.clone())?;
-            match load {
-                //if profile name exists, save profile name to author
-                Some(load) => {
-                    let post: Post = Post {
-                        post_title: formatted_post_title,
-                        external_id,
-                        text,
-                        tags,
-                        author: load.clone(),
-                        creation_date: env.block.time.to_string(),
-                        last_edit_date: None,
-                        editor: None,
-                        likes: 0,
-                    };
-                    //save incremented id, post, and incremented article count
-                    POST.save(deps.storage, post.post_title, &post)?;
-                    ARTICLE_COUNT.save(deps.storage, &updated_counter)?;
-                    Ok(Response::new()
-                        .add_attribute("action", "create_post")
-                        .add_attribute("post", post.post_title)
-                        .add_attribute("author", load))
-                }
-                //if no profile name is registered, save wallet address as author
-                None => {
-                    let post: Post = Post {
-                        post_title: formatted_post_title,
-                        external_id,
-                        text,
-                        tags,
-                        author: info.sender.to_string(),
-                        creation_date: env.block.time.to_string(),
-                        last_edit_date: None,
-                        editor: None,
-                        likes: 0,
-                    };
-                    POST.save(deps.storage, post.post_title, &post)?;
-                    ARTICLE_COUNT.save(deps.storage, &updated_counter)?;
-                    Ok(Response::new()
-                        .add_attribute("action", "create_post")
-                        .add_attribute("post_id", post.post_title)
-                        .add_attribute("author", info.sender.to_string()))
-                }
-            }
+            let post: Post = Post {
+                post_id: incremented_id,
+                post_title,
+                external_id,
+                text,
+                tags,
+                author: info.sender.to_string(),
+                creation_date: env.block.time.to_string(),
+                last_edit_date: None,
+                editor: None,
+                likes: 0,
+            };
+            //save incremented id, post, and incremented article count
+            LAST_POST_ID.save(deps.storage, &incremented_id)?;
+            POST.save(deps.storage, post.post_id, &post)?;
+            ARTICLE_COUNT.save(deps.storage, &updated_counter)?;
+            Ok(Response::new()
+                .add_attribute("action", "create_post")
+                .add_attribute("post_id", post.post_id.to_string())
+                .add_attribute("author", info.sender.to_string()))
         }
     }
 }
@@ -213,14 +212,16 @@ fn execute_admin_create_post(
     if info.sender != ADMIN {
         return Err(ContractError::Unauthorized {});
     }
-    #[allow(clippy::single_char_pattern)]
-    let formatted_post_title = post_title.trim().to_lowercase().replace(" ", "");
     //load article count from state and increment
     let counter = ARTICLE_COUNT.load(deps.storage)?;
     let updated_counter = counter + 1;
+    //load last post id from state and increment
+    let last_post_id = LAST_POST_ID.load(deps.storage)?;
+    let incremented_id = last_post_id + 1;
     //check to see if address is matched to a profile name
     let post: Post = Post {
-        post_title: formatted_post_title,
+        post_id: incremented_id,
+        post_title,
         external_id,
         text,
         tags,
@@ -230,16 +231,20 @@ fn execute_admin_create_post(
         editor: Some(editor_address),
         likes: like_number,
     };
-    //save post and incremented article count
-    POST.save(deps.storage, post.post_title, &post)?;
+    //save incremented id, post, and incremented article count
+    LAST_POST_ID.save(deps.storage, &incremented_id)?;
+    POST.save(deps.storage, post.post_id, &post)?;
     ARTICLE_COUNT.save(deps.storage, &updated_counter)?;
-    Ok(Response::new())
+    Ok(Response::new()
+        .add_attribute("action", "create_post")
+        .add_attribute("post_id", post.post_id.to_string())
+        .add_attribute("author", info.sender.to_string()))
 }
 fn execute_edit_post(
     deps: DepsMut,
     env: Env,
     info: MessageInfo,
-    post_title: String,
+    post_id: u64,
     external_id: String,
     text: String,
     tags: Vec<String>,
@@ -255,15 +260,14 @@ fn execute_edit_post(
     if is_false(external_id.starts_with(IPFS)) {
         return Err(ContractError::MustUseAlxandriaGateway {});
     }
-    #[allow(clippy::single_char_pattern)]
-    let formatted_post_title = post_title.trim().to_lowercase().replace(" ", "");
     //load post by ID passed
-    let post = POST.load(deps.storage, formatted_post_title)?;
+    let post = POST.load(deps.storage, post_id)?;
     //make sure editor is valid address
     let editor = info.sender.to_string();
     let validated_editor = deps.api.addr_validate(&editor)?;
     //update post content
     let new_post: Post = Post {
+        post_id: post.post_id,
         post_title: post.post_title,
         external_id,
         text,
@@ -275,25 +279,23 @@ fn execute_edit_post(
         likes: post.likes,
     };
     //save post
-    POST.save(deps.storage, post_title, &new_post)?;
+    POST.save(deps.storage, post_id, &new_post)?;
     Ok(Response::new()
         .add_attribute("action", "edit_post")
-        .add_attribute("post", new_post.post_title)
+        .add_attribute("post_id", new_post.post_id.to_string())
         .add_attribute("editor", new_post.editor.unwrap()))
 }
 fn execute_delete_post(
     deps: DepsMut,
     _env: Env,
     info: MessageInfo,
-    post_title: String,
+    post_id: u64,
 ) -> Result<Response, ContractError> {
     //ensure 10 of crypto denom was sent & Create a vector of required coins with the desired amounts and denoms
     let required_coins = vec![Coin::new(10_000_000, "ujunox")];
     assert_sent_exact_coin(&info.funds, Some(required_coins))?;
-    #[allow(clippy::single_char_pattern)]
-    let formatted_post_title = post_title.trim().to_lowercase().replace(" ", "");
     //remove post from state via post id
-    POST.remove(deps.storage, post_title);
+    POST.remove(deps.storage, post_id);
     //load counter and decrement
     let counter = ARTICLE_COUNT.load(deps.storage)?;
     let updated_counter = counter - 1;
@@ -301,24 +303,21 @@ fn execute_delete_post(
     ARTICLE_COUNT.save(deps.storage, &updated_counter)?;
     Ok(Response::new()
         .add_attribute("action", "delete_post")
-        .add_attribute("post", post_title))
+        .add_attribute("post_id", post_id.to_string()))
 }
 fn execute_like_post(
     deps: DepsMut,
     _env: Env,
     info: MessageInfo,
-    post_title: String,
+    post_id: u64,
 ) -> Result<Response, ContractError> {
-    // Create a vector of required coins with the desired amounts and denoms
-    let required_coins = vec![Coin::new(10_000, "ujunox")];
-    // Call the assert_sent_exact_coin function with the required coins
-    assert_sent_exact_coin(&info.funds, Some(required_coins))?;
-    //format post title
-    #[allow(clippy::single_char_pattern)]
-    let formatted_post_title = post_title.trim().to_lowercase().replace(" ", "");
-    //load post and increment like count
-    let post = POST.load(deps.storage, formatted_post_title)?;
+    //ensure .01 of crypto denom was sent
+    let required_coins = vec![Coin::new(10, "ujunox"), Coin::new(10, "uatom")]; // Create a vector of required coins with the desired amounts and denoms
+    assert_sent_exact_coin(&info.funds, Some(required_coins))?; // Call the assert_sent_exact_coin function with the required coins
+                                                                //load post and increment like count
+    let post = POST.load(deps.storage, post_id)?;
     let liked_post: Post = Post {
+        post_id: post.post_id,
         post_title: post.post_title,
         external_id: post.external_id,
         text: post.text,
@@ -330,10 +329,10 @@ fn execute_like_post(
         likes: post.likes + 1,
     };
     //save post with incremented like count
-    POST.save(deps.storage, liked_post.post_title, &liked_post)?;
+    POST.save(deps.storage, post_id, &liked_post)?;
     Ok(Response::new()
         .add_attribute("action", "like post")
-        .add_attribute("post", liked_post.post_title))
+        .add_attribute("post_id", post_id.to_string()))
 }
 fn execute_withdraw_juno(
     deps: DepsMut,
@@ -387,7 +386,7 @@ fn execute_admin_register_profile_name(
 pub fn query(deps: Deps, env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
         QueryMsg::AllPosts { limit, start_after } => query_all_posts(deps, env, limit, start_after),
-        QueryMsg::Post { post_title } => query_post(deps, env, post_title),
+        QueryMsg::Post { post_id } => query_post(deps, env, post_id),
         QueryMsg::ArticleCount {} => query_article_count(deps, env),
         QueryMsg::ProfileName { address } => query_profile_name(deps, env, address),
     }
@@ -413,8 +412,8 @@ fn query_all_posts(
 
     to_binary(&AllPostsResponse { posts })
 }
-fn query_post(deps: Deps, _env: Env, title: String) -> StdResult<Binary> {
-    let post = POST.may_load(deps.storage, title)?;
+fn query_post(deps: Deps, _env: Env, post_id: u64) -> StdResult<Binary> {
+    let post = POST.may_load(deps.storage, post_id)?;
     to_binary(&PostResponse { post })
 }
 fn query_article_count(deps: Deps, _env: Env) -> StdResult<Binary> {
