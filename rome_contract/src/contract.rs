@@ -311,10 +311,11 @@ fn execute_like_post(
     info: MessageInfo,
     post_id: u64,
 ) -> Result<Response, ContractError> {
-    //ensure .01 of crypto denom was sent
-    let required_coins = vec![Coin::new(10, "ujunox"), Coin::new(10, "uatom")]; // Create a vector of required coins with the desired amounts and denoms
-    assert_sent_exact_coin(&info.funds, Some(required_coins))?; // Call the assert_sent_exact_coin function with the required coins
-                                                                //load post and increment like count
+    //// Create a vector of required coins with the desired amounts and denoms
+    let required_coins = vec![Coin::new(10_000, "ujunox")];
+    // Call the assert_sent_exact_coin function with the required coins
+    assert_sent_exact_coin(&info.funds, Some(required_coins))?;
+    //load post and increment like count
     let post = POST.load(deps.storage, post_id)?;
     let liked_post: Post = Post {
         post_id: post.post_id,
