@@ -51,7 +51,6 @@ fn migrate_works() {
     let msg = MigrateMsg {};
     let _res: Response = migrate(deps.as_mut(), mock_env(), msg).unwrap();
 }
-
 #[test]
 fn test_execute_create_post_valid() {
     let mut deps = mock_dependencies();
@@ -63,6 +62,36 @@ fn test_execute_create_post_valid() {
     };
     let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
     let info = mock_info(ADDR1, &[coin(1_000_000, "ujunox")]);
+    //new execute message
+    let msg = ExecuteMsg::CreatePost {
+        post_title: "Mintscan Prop 320".to_string(),
+        external_id:
+            "https://alxandria.infura-ipfs.io/ipfs/QmQSXMeJRyodyVESWVXT8gd7kQhjrV7sguLnsrXSd6YzvT"
+                .to_string(),
+        tags: vec![
+            "Blockchain".to_string(),
+            "Governance".to_string(),
+            "Rejected".to_string(),
+        ],
+        text: "Hi".to_string(),
+    };
+    let _res = execute(deps.as_mut(), env, info, msg).unwrap();
+}
+#[test]
+fn test_create_post_with_profile_name() {
+    let mut deps = mock_dependencies();
+    let env = mock_env();
+    let info = mock_info(ADDR1, &[]);
+    //instantiate
+    let msg = InstantiateMsg {
+        admin: ADDR1.to_string(),
+    };
+    let _res = instantiate(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
+    //register profile
+    let msg = ExecuteMsg::RegisterProfileName {
+        profile_name: "v i T".to_string(),
+    };
+    let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
     //new execute message
     let msg = ExecuteMsg::CreatePost {
         post_title: "Mintscan Prop 320".to_string(),
