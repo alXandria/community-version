@@ -15,6 +15,9 @@ pub enum ContractError {
     #[error("Only One Link Allowed")]
     OnlyOneLink {},
 
+    #[error("A post by the name {title} already exists. Please edit the title or edit the existing article.")]
+    PostAlreadyExists { title: String },
+
     #[error("Insufficient funds. Needed: {needed} Sent: {received}")]
     NotEnoughFunds { needed: String, received: String },
 

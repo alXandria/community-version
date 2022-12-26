@@ -21,16 +21,16 @@ pub enum ExecuteMsg {
         tags: Vec<String>,
     },
     EditPost {
-        post_id: u64,
+        post_title: String,
         external_id: String,
         text: String,
         tags: Vec<String>,
     },
     DeletePost {
-        post_id: u64,
+        post_title: String,
     },
     LikePost {
-        post_id: u64,
+        post_title: String,
     },
     WithdrawJuno {},
     AdminRegisterProfileName {
@@ -78,7 +78,7 @@ pub enum QueryMsg {
         start_after: Option<u64>,
     },
     Post {
-        post_id: u64,
+        post_title: String,
     },
     ArticleCount {},
     ProfileName {
