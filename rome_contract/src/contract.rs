@@ -404,7 +404,7 @@ fn query_all_posts(
     start_after: Option<u64>,
 ) -> StdResult<Binary> {
     let limit = limit.unwrap_or(DEFAULT_LIMIT).min(MAX_LIMIT) as usize;
-    let start = start_after.map(|n| Bound::exclusive(n.to_string()));
+    let start = start_after.map(|n| Bound::inclusive(n.to_string()));
     let posts = POST
         .range(deps.storage, start, None, Order::Ascending)
         .take(limit)
