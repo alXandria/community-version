@@ -15,7 +15,7 @@ use crate::msg::{
     ProfileNameResponse, QueryMsg
 };
 use crate::state::{
-    Config, Post, ARTICLE_COUNT, CONFIG, LAST_POST_ID, POST, PROFILE_NAME, REVERSE_LOOKUP,
+    Config, Post, ARTICLE_COUNT, CONFIG, POST, PROFILE_NAME, REVERSE_LOOKUP,
 };
 
 const CONTRACT_NAME: &str = env!("CARGO_PKG_NAME");
@@ -47,7 +47,6 @@ pub fn instantiate(
         admin: validated_admin.clone(),
     };
     CONFIG.save(deps.storage, &config)?;
-    LAST_POST_ID.save(deps.storage, &0)?;
     ARTICLE_COUNT.save(deps.storage, &0)?;
     Ok(Response::new()
         .add_attribute("action", "instantiate")
@@ -138,9 +137,9 @@ fn execute_create_post(
     }
     #[allow(clippy::single_char_pattern)]
     let formatted_post_title = post_title.trim().to_lowercase().replace(" ", "");
-    let article = POST.may_load(deps.storage, formatted_post_title)?;
+    let article = POST.may_load(deps.storage, formatted_post_title.clone())?;
     match article {
-        Some(article) => Err(ContractError::PostAlreadyExists { title: formatted_post_title }),
+        Some(_article) => Err(ContractError::PostAlreadyExists { title: formatted_post_title }),
         None => {
                 //load article count from state and increment
             let counter = ARTICLE_COUNT.load(deps.storage)?;
@@ -162,7 +161,7 @@ fn execute_create_post(
                         likes: 0,
                     };
                     //save incremented id, post, and incremented article count
-                    POST.save(deps.storage, post.post_title, &post)?;
+                    POST.save(deps.storage, post.post_title.clone(), &post)?;
                     ARTICLE_COUNT.save(deps.storage, &updated_counter)?;
                     Ok(Response::new()
                         .add_attribute("action", "create_post")
@@ -182,7 +181,7 @@ fn execute_create_post(
                         editor: None,
                         likes: 0,
                     };
-                    POST.save(deps.storage, post.post_title, &post)?;
+                    POST.save(deps.storage, post.post_title.clone(), &post)?;
                     ARTICLE_COUNT.save(deps.storage, &updated_counter)?;
                     Ok(Response::new()
                         .add_attribute("action", "create_post")
@@ -231,7 +230,7 @@ fn execute_admin_create_post(
         likes: like_number,
     };
     //save post and incremented article count
-    POST.save(deps.storage, post.post_title, &post)?;
+    POST.save(deps.storage, post.post_title.clone(), &post)?;
     ARTICLE_COUNT.save(deps.storage, &updated_counter)?;
     Ok(Response::new())
 }
@@ -290,10 +289,11 @@ fn execute_delete_post(
     //ensure 10 of crypto denom was sent & Create a vector of required coins with the desired amounts and denoms
     let required_coins = vec![Coin::new(10_000_000, "ujunox")];
     assert_sent_exact_coin(&info.funds, Some(required_coins))?;
+    //format post title
     #[allow(clippy::single_char_pattern)]
     let formatted_post_title = post_title.trim().to_lowercase().replace(" ", "");
     //remove post from state via post id
-    POST.remove(deps.storage, post_title);
+    POST.remove(deps.storage, formatted_post_title);
     //load counter and decrement
     let counter = ARTICLE_COUNT.load(deps.storage)?;
     let updated_counter = counter - 1;
@@ -330,7 +330,7 @@ fn execute_like_post(
         likes: post.likes + 1,
     };
     //save post with incremented like count
-    POST.save(deps.storage, liked_post.post_title, &liked_post)?;
+    POST.save(deps.storage, liked_post.post_title.clone(), &liked_post)?;
     Ok(Response::new()
         .add_attribute("action", "like post")
         .add_attribute("post", liked_post.post_title))
@@ -404,7 +404,7 @@ fn query_all_posts(
     start_after: Option<u64>,
 ) -> StdResult<Binary> {
     let limit = limit.unwrap_or(DEFAULT_LIMIT).min(MAX_LIMIT) as usize;
-    let start = start_after.map(Bound::exclusive);
+    let start = start_after.map(|n| Bound::exclusive(n.to_string()));
     let posts = POST
         .range(deps.storage, start, None, Order::Ascending)
         .take(limit)
