@@ -103,6 +103,46 @@ fn test_execute_create_post_invalid() {
     let _err = execute(deps.as_mut(), env, info, msg).unwrap_err();
 }
 #[test]
+fn test_execute_create_post_invalid_duplicate_titles() {
+    let mut deps = mock_dependencies();
+    let env = mock_env();
+    let info = mock_info(ADDR1, &[]);
+    //instatiate
+    let msg = InstantiateMsg {
+        admin: ADDR1.to_string(),
+    };
+    let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
+    let info = mock_info(ADDR1, &[coin(1_000_000, "ujunox")]);
+    //new execute message
+    let msg = ExecuteMsg::CreatePost {
+        post_title: "Mintscan Prop 320".to_string(),
+        external_id:
+            "https://alxandria.infura-ipfs.io/ipfs/QmQSXMeJRyodyVESWVXT8gd7kQhjrV7sguLnsrXSd6YzvT"
+                .to_string(),
+        tags: vec![
+            "Blockchain".to_string(),
+            "Governance".to_string(),
+            "Rejected".to_string(),
+        ],
+        text: "Hi".to_string(),
+    };
+    let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
+    //new post same title
+    let msg = ExecuteMsg::CreatePost {
+        post_title: "Mintscan Prop 320".to_string(),
+        external_id:
+            "https://alxandria.infura-ipfs.io/ipfs/QmQSXMeJRyodyVESWVXT8gd7kQhjrV7sguLnsrXSd6YzvT"
+                .to_string(),
+        tags: vec![
+            "Duplicate".to_string(),
+            "Post".to_string(),
+            "Rejected".to_string(),
+        ],
+        text: "Hi".to_string(),
+    };
+    let _err = execute(deps.as_mut(), env, info, msg).unwrap_err();
+}
+#[test]
 fn test_execute_edit_post_valid() {
     let mut deps = mock_dependencies();
     let env = mock_env();
@@ -409,7 +449,7 @@ fn test_register_profile_name() {
     let bin = query(deps.as_ref(), env, msg).unwrap();
     let res: ProfileNameResponse = from_binary(&bin).unwrap();
     println!("{:?}", res);
-    //switch to is_none to intentionally fail and check output to verify editable is true
+    //switch to is_none to intentionally fail and check output to verify profile name
     assert!(res.profile_name.is_some())
 }
 #[test]
@@ -467,4 +507,61 @@ fn test_like_post() {
     println!("{:?}", res);
     //switch to is_none to intentionally fail and check output to verify like = 1
     assert!(res.post.is_some());
+}
+#[test]
+fn test_execute_admin_create_post_valid() {
+    let mut deps = mock_dependencies();
+    let env = mock_env();
+    let info = mock_info(ADDR1, &[]);
+    //instatiate
+    let msg = InstantiateMsg {
+        admin: ADDR1.to_string(),
+    };
+    let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
+    let info = mock_info(ADDR1, &[coin(1_000_000, "ujunox")]);
+    //new execute message
+    let msg = ExecuteMsg::AdminCreatePost {
+        post_title: "Mintscan Prop 320".to_string(),
+        external_id:
+            "https://alxandria.infura-ipfs.io/ipfs/QmQSXMeJRyodyVESWVXT8gd7kQhjrV7sguLnsrXSd6YzvT"
+                .to_string(),
+        tags: vec![
+            "Blockchain".to_string(),
+            "Governance".to_string(),
+            "Rejected".to_string(),
+        ],
+        text: "Hi".to_string(),
+        address: "juno1x23423".to_string(),
+        creation: "1920382392".to_string(),
+        edit_date: "1832983".to_string(),
+        editor_address: "juno8243989".to_string(),
+        like_number: 5,
+    };
+    let _res = execute(deps.as_mut(), env, info, msg).unwrap();
+}
+#[test]
+fn test_admin_register_profile_name() {
+    let mut deps = mock_dependencies();
+    let env = mock_env();
+    let info = mock_info(ADDR1, &[]);
+    //instantiate
+    let msg = InstantiateMsg {
+        admin: ADDR1.to_string(),
+    };
+    let _res = instantiate(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
+    //register profile
+    let msg = ExecuteMsg::AdminRegisterProfileName {
+        address: info.sender.to_string(),
+        profile_name: "v i T".to_string(),
+    };
+    let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
+    //query profile name
+    let msg = QueryMsg::ProfileName {
+        address: info.sender.to_string(),
+    };
+    let bin = query(deps.as_ref(), env, msg).unwrap();
+    let res: ProfileNameResponse = from_binary(&bin).unwrap();
+    println!("{:?}", res);
+    //switch to is_none to intentionally fail and check output to verify profile name
+    assert!(res.profile_name.is_some())
 }
