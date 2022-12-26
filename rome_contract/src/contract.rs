@@ -14,7 +14,7 @@ use crate::msg::{
     ProfileNameResponse, QueryMsg
 };
 use crate::state::{
-    Config, Post, ARTICLE_COUNT, CONFIG, LAST_POST_ID, POST, PROFILE_NAME, REVERSE_LOOKUP,
+    Config, Post, ARTICLE_COUNT, CONFIG, LAST_POST_ID, POST, PROFILE_NAME, REVERSE_LOOKUP, POST_TITLES,
 };
 
 const CONTRACT_NAME: &str = env!("CARGO_PKG_NAME");
@@ -135,6 +135,10 @@ fn execute_create_post(
     if is_false(external_id.starts_with(IPFS)) {
         return Err(ContractError::MustUseAlxandriaGateway {});
     }
+    let title_checker = POST_TITLES.may_load(deps.storage, post_title.clone())?;
+    if title_checker.is_some() {
+       return Err(ContractError::PostAlreadyExists {  });
+    }
     //load article count from state and increment
     let counter = ARTICLE_COUNT.load(deps.storage)?;
     let updated_counter = counter + 1;
@@ -160,8 +164,9 @@ fn execute_create_post(
             };
             //save incremented id, post, and incremented article count
             LAST_POST_ID.save(deps.storage, &incremented_id)?;
-            POST.save(deps.storage, post.post_id, &post)?;
+            POST.save(deps.storage, post.post_id.clone(), &post)?;
             ARTICLE_COUNT.save(deps.storage, &updated_counter)?;
+            POST_TITLES.save(deps.storage, post.post_title, &post.post_id)?;
             Ok(Response::new()
                 .add_attribute("action", "create_post")
                 .add_attribute("post_id", post.post_id.to_string())

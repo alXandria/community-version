@@ -27,6 +27,9 @@ pub enum ContractError {
     #[error("To prevent misattribution, profile names are immutably tied to wallet addresses.")]
     ProfileNameImmutable {},
 
+    #[error("This post already exists. Please edit the existing post or change the title.")]
+    PostAlreadyExists {},
+
     #[error("Denom not accepted: {denom}")]
     InvalidDenom { denom: String },
 }
