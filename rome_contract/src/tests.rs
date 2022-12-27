@@ -688,5 +688,5 @@ fn test_admin_register_profile_name_invalid() {
         address: info.sender.to_string(),
         profile_name: "v i T".to_string(),
     };
-    let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
+    let _err = execute(deps.as_mut(), env, info, msg).unwrap_err();
 }
