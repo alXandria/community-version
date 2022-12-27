@@ -149,6 +149,87 @@
         }
       },
       "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "admin_register_profile_name"
+      ],
+      "properties": {
+        "admin_register_profile_name": {
+          "type": "object",
+          "required": [
+            "address",
+            "profile_name"
+          ],
+          "properties": {
+            "address": {
+              "type": "string"
+            },
+            "profile_name": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "admin_create_post"
+      ],
+      "properties": {
+        "admin_create_post": {
+          "type": "object",
+          "required": [
+            "address",
+            "creation",
+            "edit_date",
+            "editor_address",
+            "external_id",
+            "like_number",
+            "post_title",
+            "tags",
+            "text"
+          ],
+          "properties": {
+            "address": {
+              "type": "string"
+            },
+            "creation": {
+              "type": "string"
+            },
+            "edit_date": {
+              "type": "string"
+            },
+            "editor_address": {
+              "type": "string"
+            },
+            "external_id": {
+              "type": "string"
+            },
+            "like_number": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0.0
+            },
+            "post_title": {
+              "type": "string"
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "text": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "additionalProperties": false
     }
   ]
 }

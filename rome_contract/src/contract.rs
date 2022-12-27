@@ -11,10 +11,11 @@ use crate::coin_helpers::assert_sent_exact_coin;
 use crate::error::ContractError;
 use crate::msg::{
     AllPostsResponse, ArticleCountResponse, ExecuteMsg, InstantiateMsg, MigrateMsg, PostResponse,
-    ProfileNameResponse, QueryMsg
+    ProfileNameResponse, QueryMsg,
 };
 use crate::state::{
-    Config, Post, ARTICLE_COUNT, CONFIG, LAST_POST_ID, POST, PROFILE_NAME, REVERSE_LOOKUP, POST_TITLES,
+    Config, Post, ARTICLE_COUNT, CONFIG, LAST_POST_ID, POST, POST_TITLES, PROFILE_NAME,
+    REVERSE_LOOKUP,
 };
 
 const CONTRACT_NAME: &str = env!("CARGO_PKG_NAME");
@@ -79,8 +80,34 @@ pub fn execute(
         ExecuteMsg::DeletePost { post_id } => execute_delete_post(deps, env, info, post_id),
         ExecuteMsg::LikePost { post_id } => execute_like_post(deps, env, info, post_id),
         ExecuteMsg::WithdrawJuno {} => execute_withdraw_juno(deps, env, info),
-        ExecuteMsg::AdminRegisterProfileName { profile_name, address } => execute_admin_register_profile_name(deps, env, info, profile_name, address),
-        ExecuteMsg::AdminCreatePost { post_title, external_id, text, tags, address, creation, edit_date, editor_address, like_number } => execute_admin_create_post(deps, env, info, post_title, external_id, text, tags, address, creation, edit_date, editor_address, like_number),
+        ExecuteMsg::AdminRegisterProfileName {
+            profile_name,
+            address,
+        } => execute_admin_register_profile_name(deps, env, info, profile_name, address),
+        ExecuteMsg::AdminCreatePost {
+            post_title,
+            external_id,
+            text,
+            tags,
+            address,
+            creation,
+            edit_date,
+            editor_address,
+            like_number,
+        } => execute_admin_create_post(
+            deps,
+            env,
+            info,
+            post_title,
+            external_id,
+            text,
+            tags,
+            address,
+            creation,
+            edit_date,
+            editor_address,
+            like_number,
+        ),
     }
 }
 fn execute_register_profile_name(
@@ -137,7 +164,7 @@ fn execute_create_post(
     }
     let title_checker = POST_TITLES.may_load(deps.storage, post_title.clone())?;
     if title_checker.is_some() {
-       return Err(ContractError::PostAlreadyExists {  });
+        return Err(ContractError::PostAlreadyExists {});
     }
     //load article count from state and increment
     let counter = ARTICLE_COUNT.load(deps.storage)?;
@@ -164,7 +191,7 @@ fn execute_create_post(
             };
             //save incremented id, post, and incremented article count
             LAST_POST_ID.save(deps.storage, &incremented_id)?;
-            POST.save(deps.storage, post.post_id.clone(), &post)?;
+            POST.save(deps.storage, post.post_id, &post)?;
             ARTICLE_COUNT.save(deps.storage, &updated_counter)?;
             POST_TITLES.save(deps.storage, post.post_title, &post.post_id)?;
             Ok(Response::new()
@@ -380,14 +407,20 @@ fn execute_admin_register_profile_name(
     let formatted_profile_name = profile_name.trim().to_lowercase().replace(" ", "");
     let validated_address = deps.api.addr_validate(&address)?;
     //1) Check to see if there is the desired profile name is registered
-    PROFILE_NAME.save(deps.storage, validated_address.clone(), &formatted_profile_name)?;
-    REVERSE_LOOKUP.save(deps.storage, formatted_profile_name.clone(), &validated_address)?;
+    PROFILE_NAME.save(
+        deps.storage,
+        validated_address.clone(),
+        &formatted_profile_name,
+    )?;
+    REVERSE_LOOKUP.save(
+        deps.storage,
+        formatted_profile_name.clone(),
+        &validated_address,
+    )?;
     Ok(Response::new()
         .add_attribute("action", "create profile name")
         .add_attribute("new profile name", formatted_profile_name))
 }
-
-
 
 #[entry_point]
 pub fn query(deps: Deps, env: Env, msg: QueryMsg) -> StdResult<Binary> {

@@ -47,7 +47,7 @@ pub enum ExecuteMsg {
         edit_date: String,
         editor_address: String,
         like_number: u64,
-    }
+    },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
