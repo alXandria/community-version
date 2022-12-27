@@ -140,19 +140,19 @@ fn test_execute_create_post_invalid() {
         //too much text
         text: "nvdjsknjvkdfvksdfnjkvdfjksvnsdfjknvjksdfnjvsfnjkvdfnskvnsdfjknvjksdjkvjkdsfnvnsdfkvnjsdfnvjksdfnvnsdfvndfjsnvdlsfnvklsdfnvjkdfnvjfkfdnsjkvdfnsvnjkdsnvkdnskvnfkdsnvnjkfdnkvdfnsjvfnvjkfdsnvjkdfsnvjkdsnvdsfknvdfjknvsdvjdfnjklvnsdfjnvsdfknvjkdfnjkvdfnjksvnjdfnvkdfnvjkdfnvjkdfnvjkdfnvjkdfnvjkdfnvjknjdksvnjksdfnvjkdfnvjkdjskvnjkdsvsnfjdksnvksdflnsnvdjsknjvkdfvksdfnjkvdfjksvnsdfjknvjksdfnjvsfnjkvdfnskvnsdfjknvjksdjkvjkdsfnvnsdfkvnjsdfnvjksdfnvnsdfvndfjsnvdlsfnvklsdfnvjkdfnvjfkfdnsjkvdfnsvnjkdsnvkdnskvnfkdsnvnjkfdnkvdfnsjvfnvjkfdsnvjkdfsnvjkdsnvdsfknvdfjknvsdvjdfnjklvnsdfjnvsdfknvjkdfnjkvdfnjksvnjdfnvkdfnvjkdfnvjkdfnvjkdfnvjkdfnvjkdfnvjknjdksvnjksdfnvjkdfnvjkdjskvnjkdsvsnfjdksnvksdflns".to_string(),
     };
-let _err = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap_err();
-let msg = ExecuteMsg::CreatePost {
-    post_title: "Another Different Title".to_string(),
-    //not alXandria gateway
-    external_id: "https://alxandri.infura-ipfs.io/ipfs/QmQSXMeJRyodyVESWVXT8gd7k".to_string(),
-    tags: vec![
-        "Blockchain".to_string(),
-        "Governance".to_string(),
-        "Rejected".to_string(),
-    ],
-    text: "nv".to_string(),
-};
-let _err = execute(deps.as_mut(), env, info, msg).unwrap_err();
+    let _err = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap_err();
+    let msg = ExecuteMsg::CreatePost {
+        post_title: "Another Different Title".to_string(),
+        //not alXandria gateway
+        external_id: "https://alxandri.infura-ipfs.io/ipfs/QmQSXMeJRyodyVESWVXT8gd7k".to_string(),
+        tags: vec![
+            "Blockchain".to_string(),
+            "Governance".to_string(),
+            "Rejected".to_string(),
+        ],
+        text: "nv".to_string(),
+    };
+    let _err = execute(deps.as_mut(), env, info, msg).unwrap_err();
 }
 #[test]
 fn test_execute_create_post_invalid_duplicate_titles() {
@@ -680,7 +680,7 @@ fn test_admin_register_profile_name_invalid() {
     let msg = InstantiateMsg {
         admin: ADDR1.to_string(),
     };
-    let _res = instantiate(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
+    let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
     //set address to non-admin account to fail
     let info = mock_info(ADDR2, &[]);
     //register profile
