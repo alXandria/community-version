@@ -260,6 +260,22 @@ fn test_execute_edit_post_invalid() {
             text: "This will fail vdfjkvjdfnksvkndsvjsndjkvnkjfnvnsdjkvnsdfnvjkdfnsvnjdksnvkldsnvjkdfnvjkfdnvkdnfjvkndjsknvjksdnknjfknvjkdsfnjvknskdnvjkndsjkvsjkdnvjksdfnvjksdfnvjkdfsnjvksvndfjkvnjsdkfnvjksdfnvkjlsdfvjnldsfknvjkdsvnjdksjkvcjkdnkm dkfs vkdnjkvndfkjsvjkfdnvjksdfnjkvkdfnvdnskvnsdfvjkdsnvjkdfnvjkdnvjksdnvjkdsvnjkdfnsdvfdknvjksdnvjfkdsnvjkdfsnvjksdnvjkfdsnvjkdsvlnsjknvjkdsnvjksdfnvkndsfjkvnjdskvnksdflvnjdknvjksdnvjkdfsnvjkdsnvjksdnvkdsnvfjkdnvjkdnvjkfndsvkdsfnjvksdnvsdfjklnvjdkslnvjdksnvjdfknvsdfjklnvdjksfnvjkdlsfnvkd".to_string(),
             tags: vec!["Tax".to_string(), "Website".to_string()],
         };
+    let _err = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap_err();
+    let msg = ExecuteMsg::EditPost {
+        post_id: 1,
+        //URL too long
+        external_id: "https://alxandria.infura-ipfs.io/ipfs/QmQSXMeJRyodyVESWVXT8gd7kQhjrV7sguLnsrXSd6YzvTvnfjkvndfjknvdfnjkvvjndfjkvldnsjsdnvklsnnjksndjkvjkdfsnvjkdfnnsdjkvndfks".to_string(),
+        text: "Text".to_string(),
+        tags: vec!["Tax".to_string(), "Website".to_string()],
+    };
+    let _err = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap_err();
+    let msg = ExecuteMsg::EditPost {
+        post_id: 1,
+        //must use alXandria gateway
+        external_id: "https://stake.tax/".to_string(),
+        text: "Text".to_string(),
+        tags: vec!["Tax".to_string(), "Website".to_string()],
+    };
     let _err = execute(deps.as_mut(), env, info, msg).unwrap_err();
 }
 #[test]
@@ -654,4 +670,23 @@ fn test_admin_register_profile_name() {
     println!("{:?}", res);
     //switch to is_none to intentionally fail and check output to verify profile name
     assert!(res.profile_name.is_some())
+}
+#[test]
+fn test_admin_register_profile_name_invalid() {
+    let mut deps = mock_dependencies();
+    let env = mock_env();
+    let info = mock_info(ADDR1, &[]);
+    //instantiate
+    let msg = InstantiateMsg {
+        admin: ADDR1.to_string(),
+    };
+    let _res = instantiate(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
+    //set address to non-admin account to fail
+    let info = mock_info(ADDR2, &[]);
+    //register profile
+    let msg = ExecuteMsg::AdminRegisterProfileName {
+        address: info.sender.to_string(),
+        profile_name: "v i T".to_string(),
+    };
+    let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
 }
