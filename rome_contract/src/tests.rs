@@ -119,17 +119,28 @@ fn test_execute_create_post_invalid() {
     //new execute message
     let msg = ExecuteMsg::CreatePost {
             post_title: "Mintscan Prop 320".to_string(),
-            //wrong URL
-            external_id: "https://alxandri.infura-ipfs.io/ipfs/QmQSXMeJRyodyVESWVXT8gd7kQhjrV7sguLnsrXSd6YzvT".to_string(),
+            //URL too long
+            external_id: "https://alxandri.infura-ipfs.io/ipfs/QmQSXMeJRyodyVESWVXT8gd7kQhjrV7sguLnsrXSd6YzvTnjvkdfkvdfvnksdnvkjdfnskvfndsnvjsdfkfdvkvfjnkfjknfvjkfdsvjdf".to_string(),
             tags: vec![
                 "Blockchain".to_string(),
                 "Governance".to_string(),
                 "Rejected".to_string(),
             ],
-            //text over 500 characters
-            text: "This will fail vdfjkvjdfnksvkndsvjsndjkvnkjfnvnsdjkvnsdfnvjkdfnsvnjdksnvkldsnvjkdfnvjkfdnvkdnfjvkndjsknvjksdnknjfknvjkdsfnjvknskdnvjkndsjkvsjkdnvjksdfnvjksdfnvjkdfsnjvksvndfjkvnjsdkfnvjksdfnvkjlsdfvjnldsfknvjkdsvnjdksjkvcjkdnkm dkfs vkdnjkvndfkjsvjkfdnvjksdfnjkvkdfnvdnskvnsdfvjkdsnvjkdfnvjkdnvjksdnvjkdsvnjkdfnsdvfdknvjksdnvjfkdsnvjkdfsnvjksdnvjkfdsnvjkdsvlnsjknvjkdsnvjksdfnvkndsfjkvnjdskvnksdflvnjdknvjksdnvjkdfsnvjkdsnvjksdnvkdsnvfjkdnvjkdnvjkfndsvkdsfnjvksdnvsdfjklnvjdkslnvjdksnvjdfknvsdfjklnvdjksfnvjkdlsfnvkd".to_string(),
+            text: "Text".to_string(),
         };
-    let _err = execute(deps.as_mut(), env, info, msg).unwrap_err();
+    let _err = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap_err();
+    let msg = ExecuteMsg::CreatePost {
+        post_title: "Mintscan prop 320".to_string(),
+        external_id: "https://alxandri.infura-ipfs.io/ipfs/QmQSXMeJRyodyVESWVXT8gd7kQhjrV7sguLnsrXSd6YzvTnjvkdfkvdfvnksdnvkjdfnskvfndsnvjsdfkfdvkvfjnkfjknfvjkfdsvjdf".to_string(),
+        tags: vec![
+            "Blockchain".to_string(),
+            "Governance".to_string(),
+            "Rejected".to_string(),
+        ],
+        //too much text
+        text: "nvdjsknjvkdfvksdfnjkvdfjksvnsdfjknvjksdfnjvsfnjkvdfnskvnsdfjknvjksdjkvjkdsfnvnsdfkvnjsdfnvjksdfnvnsdfvndfjsnvdlsfnvklsdfnvjkdfnvjfkfdnsjkvdfnsvnjkdsnvkdnskvnfkdsnvnjkfdnkvdfnsjvfnvjkfdsnvjkdfsnvjkdsnvdsfknvdfjknvsdvjdfnjklvnsdfjnvsdfknvjkdfnjkvdfnjksvnjdfnvkdfnvjkdfnvjkdfnvjkdfnvjkdfnvjkdfnvjknjdksvnjksdfnvjkdfnvjkdjskvnjkdsvsnfjdksnvksdflnsnvdjsknjvkdfvksdfnjkvdfjksvnsdfjknvjksdfnjvsfnjkvdfnskvnsdfjknvjksdjkvjkdsfnvnsdfkvnjsdfnvjksdfnvnsdfvndfjsnvdlsfnvklsdfnvjkdfnvjfkfdnsjkvdfnsvnjkdsnvkdnskvnfkdsnvnjkfdnkvdfnsjvfnvjkfdsnvjkdfsnvjkdsnvdsfknvdfjknvsdvjdfnjklvnsdfjnvsdfknvjkdfnjkvdfnjksvnjdfnvkdfnvjkdfnvjkdfnvjkdfnvjkdfnvjkdfnvjknjdksvnjksdfnvjkdfnvjkdjskvnjkdsvsnfjdksnvksdflns".to_string(),
+    };
+let _err = execute(deps.as_mut(), env, info, msg).unwrap_err();
 }
 #[test]
 fn test_execute_create_post_invalid_duplicate_titles() {
@@ -499,6 +510,12 @@ fn test_reregister_profile_name() {
     //attempt to register second profile name, should fail
     let msg = ExecuteMsg::RegisterProfileName {
         profile_name: "satoshi".to_string(),
+    };
+    let _err = execute(deps.as_mut(), env.clone(), info, msg).unwrap_err();
+    //attempt to register same profile name with different account
+    let info = mock_info(ADDR2, &[]);
+    let msg = ExecuteMsg::RegisterProfileName {
+        profile_name: "v i T".to_string(),
     };
     let _err = execute(deps.as_mut(), env, info, msg).unwrap_err();
 }
