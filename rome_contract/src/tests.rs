@@ -130,7 +130,7 @@ fn test_execute_create_post_invalid() {
         };
     let _err = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap_err();
     let msg = ExecuteMsg::CreatePost {
-        post_title: "Mintscan prop 320".to_string(),
+        post_title: "Different Title".to_string(),
         external_id: "https://alxandri.infura-ipfs.io/ipfs/QmQSXMeJRyodyVESWVXT8gd7kQhjrV7sguLnsrXSd6YzvTnjvkdfkvdfvnksdnvkjdfnskvfndsnvjsdfkfdvkvfjnkfjknfvjkfdsvjdf".to_string(),
         tags: vec![
             "Blockchain".to_string(),
@@ -140,6 +140,18 @@ fn test_execute_create_post_invalid() {
         //too much text
         text: "nvdjsknjvkdfvksdfnjkvdfjksvnsdfjknvjksdfnjvsfnjkvdfnskvnsdfjknvjksdjkvjkdsfnvnsdfkvnjsdfnvjksdfnvnsdfvndfjsnvdlsfnvklsdfnvjkdfnvjfkfdnsjkvdfnsvnjkdsnvkdnskvnfkdsnvnjkfdnkvdfnsjvfnvjkfdsnvjkdfsnvjkdsnvdsfknvdfjknvsdvjdfnjklvnsdfjnvsdfknvjkdfnjkvdfnjksvnjdfnvkdfnvjkdfnvjkdfnvjkdfnvjkdfnvjkdfnvjknjdksvnjksdfnvjkdfnvjkdjskvnjkdsvsnfjdksnvksdflnsnvdjsknjvkdfvksdfnjkvdfjksvnsdfjknvjksdfnjvsfnjkvdfnskvnsdfjknvjksdjkvjkdsfnvnsdfkvnjsdfnvjksdfnvnsdfvndfjsnvdlsfnvklsdfnvjkdfnvjfkfdnsjkvdfnsvnjkdsnvkdnskvnfkdsnvnjkfdnkvdfnsjvfnvjkfdsnvjkdfsnvjkdsnvdsfknvdfjknvsdvjdfnjklvnsdfjnvsdfknvjkdfnjkvdfnjksvnjdfnvkdfnvjkdfnvjkdfnvjkdfnvjkdfnvjkdfnvjknjdksvnjksdfnvjkdfnvjkdjskvnjkdsvsnfjdksnvksdflns".to_string(),
     };
+let _err = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap_err();
+let msg = ExecuteMsg::CreatePost {
+    post_title: "Another Different Title".to_string(),
+    //not alXandria gateway
+    external_id: "https://alxandri.infura-ipfs.io/ipfs/QmQSXMeJRyodyVESWVXT8gd7k".to_string(),
+    tags: vec![
+        "Blockchain".to_string(),
+        "Governance".to_string(),
+        "Rejected".to_string(),
+    ],
+    text: "nv".to_string(),
+};
 let _err = execute(deps.as_mut(), env, info, msg).unwrap_err();
 }
 #[test]
@@ -584,6 +596,38 @@ fn test_execute_admin_create_post_valid() {
         like_number: 5,
     };
     let _res = execute(deps.as_mut(), env, info, msg).unwrap();
+}
+#[test]
+fn test_execute_admin_create_post_invalid() {
+    let mut deps = mock_dependencies();
+    let env = mock_env();
+    let info = mock_info(ADDR1, &[]);
+    //instatiate
+    let msg = InstantiateMsg {
+        admin: ADDR1.to_string(),
+    };
+    let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
+    //have post creation be from non-admin account, failing
+    let info = mock_info(ADDR2, &[coin(1_000_000, "ujunox")]);
+    //new execute message
+    let msg = ExecuteMsg::AdminCreatePost {
+        post_title: "Mintscan Prop 320".to_string(),
+        external_id:
+            "https://alxandria.infura-ipfs.io/ipfs/QmQSXMeJRyodyVESWVXT8gd7kQhjrV7sguLnsrXSd6YzvT"
+                .to_string(),
+        tags: vec![
+            "Blockchain".to_string(),
+            "Governance".to_string(),
+            "Rejected".to_string(),
+        ],
+        text: "Hi".to_string(),
+        address: "juno1x23423".to_string(),
+        creation: "1920382392".to_string(),
+        edit_date: "1832983".to_string(),
+        editor_address: "juno8243989".to_string(),
+        like_number: 5,
+    };
+    let _err = execute(deps.as_mut(), env, info, msg).unwrap_err();
 }
 #[test]
 fn test_admin_register_profile_name() {

@@ -219,7 +219,7 @@ fn execute_create_post(
             LAST_POST_ID.save(deps.storage, &incremented_id)?;
             POST.save(deps.storage, post.post_id, &post)?;
             ARTICLE_COUNT.save(deps.storage, &updated_counter)?;
-            POST_TITLES.save(deps.storage, post.post_title, &post.post_id)?;
+            POST_TITLES.save(deps.storage, formatted_title, &post.post_id)?;
             Ok(Response::new()
                 .add_attribute("action", "create_post")
                 .add_attribute("post_id", post.post_id.to_string())
