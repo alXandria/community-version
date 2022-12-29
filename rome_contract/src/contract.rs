@@ -21,15 +21,16 @@ use crate::state::{
 const CONTRACT_NAME: &str = env!("CARGO_PKG_NAME");
 const CONTRACT_VERSION: &str = env!("CARGO_PKG_VERSION");
 //Withdraw address
-const ADDRESS: &str = "juno1ggtuwvungvx5t3awqpcqvxxvgt7gvwdkanuwtm";
+const ADDRESS: &str = "juno1kxxz03ejkv2le4xmp0yda0xg40la3wp3t7wnrx";
 //Admin wallet
-const ADMIN: &str = "juno1w5aespcyddns7y696q9wlch4ehflk2wglu9vv4";
+const ADMIN: &str = "juno1xh3mylsdmpvn0cp8mpz6uja34nev9w7ur8f945";
 //limit ipfs link size to prevent link duplication
 const MAX_ID_LENGTH: usize = 128;
 //Block size is limited so make sure text input is less than 500 characters
 const MAX_TEXT_LENGTH: usize = 499;
 //alXandria dedicated gateway
 const IPFS: &str = "https://alxandria.infura-ipfs.io/ipfs/";
+const JUNO: &str = "ujuno";
 
 #[entry_point]
 pub fn instantiate(
@@ -285,7 +286,7 @@ fn execute_edit_post(
     tags: Vec<String>,
 ) -> Result<Response, ContractError> {
     //ensure .2 of crypto denom was sent
-    assert_sent_exact_coin(&info.funds, Some(vec![Coin::new(200_000, "ujunox")]))?;
+    assert_sent_exact_coin(&info.funds, Some(vec![Coin::new(200_000, JUNO)]))?;
     if text.len() > MAX_TEXT_LENGTH {
         return Err(ContractError::TooMuchText {});
     }
@@ -327,7 +328,7 @@ fn execute_delete_post(
     post_id: u64,
 ) -> Result<Response, ContractError> {
     //ensure 10 of crypto denom was sent & Create a vector of required coins with the desired amounts and denoms
-    let required_coins = vec![Coin::new(10_000_000, "ujunox")];
+    let required_coins = vec![Coin::new(10_000_000, JUNO)];
     assert_sent_exact_coin(&info.funds, Some(required_coins))?;
     //remove post from state via post id
     POST.remove(deps.storage, post_id);
@@ -347,7 +348,7 @@ fn execute_like_post(
     post_id: u64,
 ) -> Result<Response, ContractError> {
     //// Create a vector of required coins with the desired amounts and denoms
-    let required_coins = vec![Coin::new(10_000, "ujunox")];
+    let required_coins = vec![Coin::new(10_000, JUNO)];
     // Call the assert_sent_exact_coin function with the required coins
     assert_sent_exact_coin(&info.funds, Some(required_coins))?;
     //load post and increment like count
@@ -380,9 +381,7 @@ fn execute_withdraw_juno(
         return Err(ContractError::Unauthorized {});
     }
     //go through balances owned by contract and send to ADMIN
-    let balance = deps
-        .querier
-        .query_balance(&env.contract.address, "ujunox")?;
+    let balance = deps.querier.query_balance(&env.contract.address, JUNO)?;
     let bank_msg = BankMsg::Send {
         to_address: ADDRESS.to_string(),
         amount: vec![balance.clone()],

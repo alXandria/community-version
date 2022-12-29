@@ -1,5 +1,23 @@
 # This contract is a decentralized encyclopedia. It is live on Juno testnet and functioning! 
 
+# Mainnet upgrade
+
+*Store*
+junod tx wasm store alxandria.wasm --from mainnet_admin_wallet --fees 500ujuno --gas 2000000 --instantiate-only-address juno1xh3mylsdmpvn0cp8mpz6uja34nev9w7ur8f945 -y
+
+https://www.mintscan.io/juno/txs/A0FEAFD86867F5A2490127B92DA9AE1A7055AD3AA5400BF032268FD310C03689
+
+*Code ID*
+1622
+
+*Instantiation*
+junod tx wasm instantiate 1622 '{"admin":"juno1xh3mylsdmpvn0cp8mpz6uja34nev9w7ur8f945"}' --label rome_contract --admin juno1xh3mylsdmpvn0cp8mpz6uja34nev9w7ur8f945 --from mainnet_admin_wallet --fees 5000ujuno --gas 2000000 -y
+
+https://www.mintscan.io/juno/txs/A965E82A6D35AEF8B8BF98661AEA961EBD8481F738DB3FF207C9AA73888F2345
+
+*Contract Address*
+juno1d86vnmmnhc30m24mxeea0d99q3xkkh0h04mezjp38k9l79ucqdnskynj6q
+
 # Full Test December 27
 
 *Store*
@@ -80,5 +98,3 @@ junod tx wasm migrate juno12szwyek4ngpd96zqykdj8ghuzzff8u5wc2e70chzkay8etzpqzsq7
 
 https://testnet.juno.explorers.guru/transaction/960A1C5C0315AF4F7954E4A9A0CCE28FE85F68A1D30333CB8D44A3F743B110C6
 
-# Live Contract
-juno1thdtalue0s0zkc2k7edph475uud0y8dpyjmvdad2vdqpelk65jdsu2m4vv
