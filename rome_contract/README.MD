@@ -80,5 +80,3 @@ junod tx wasm migrate juno12szwyek4ngpd96zqykdj8ghuzzff8u5wc2e70chzkay8etzpqzsq7
 
 https://testnet.juno.explorers.guru/transaction/960A1C5C0315AF4F7954E4A9A0CCE28FE85F68A1D30333CB8D44A3F743B110C6
 
-# Live Contract
-juno1thdtalue0s0zkc2k7edph475uud0y8dpyjmvdad2vdqpelk65jdsu2m4vv
