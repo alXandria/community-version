@@ -18,6 +18,12 @@ https://www.mintscan.io/juno/txs/A965E82A6D35AEF8B8BF98661AEA961EBD8481F738DB3FF
 *Contract Address*
 juno1d86vnmmnhc30m24mxeea0d99q3xkkh0h04mezjp38k9l79ucqdnskynj6q
 
+*Create Post With Profile Name*
+junod tx wasm execute juno1d86vnmmnhc30m24mxeea0d99q3xkkh0h04mezjp38k9l79ucqdnskynj6q '{"create_post":{"post_title":"Bitcoin Whitepaper","external_id":"https://alxandria.infura-ipfs.io/ipfs/QmRfYVREfwTajdbarkxwmCcn78TM16rN7W22RZNUMiaCED","text":"Satoshis original whitepaper for his invention, Bitcoin","tags":["Bitcoin", "Crypto", "Satoshi"]}}' --from mainnet_admin_wallet --fees 500ujuno --gas 200000 -y
+
+*Query All Posts*
+junod query wasm contract-state smart juno1d86vnmmnhc30m24mxeea0d99q3xkkh0h04mezjp38k9l79ucqdnskynj6q '{"all_posts":{}}'
+
 # Full Test December 27
 
 *Store*
