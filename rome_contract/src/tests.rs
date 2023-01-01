@@ -1,3 +1,4 @@
+//cargo tarpaulin --ignore-tests = 97.53%
 use crate::contract::{execute, instantiate, migrate, query};
 use crate::msg::{
     AllPostsResponse, ArticleCountResponse, ExecuteMsg, InstantiateMsg, MigrateMsg, PostResponse,
