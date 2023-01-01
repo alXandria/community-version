@@ -331,7 +331,12 @@ fn execute_delete_post(
     let required_coins = vec![Coin::new(10_000_000, JUNO)];
     assert_sent_exact_coin(&info.funds, Some(required_coins))?;
     let deleted_post = POST.load(deps.storage, post_id)?;
-    let formatted_title = deleted_post.post_title.trim().to_lowercase().replace(" ", "");
+    #[allow(clippy::single_char_pattern)]
+    let formatted_title = deleted_post
+        .post_title
+        .trim()
+        .to_lowercase()
+        .replace(" ", "");
     POST_TITLES.remove(deps.storage, formatted_title);
     //remove post from state via post id
     POST.remove(deps.storage, post_id);
