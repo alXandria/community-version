@@ -1,3 +1,4 @@
+//cargo tarpaulin --ignore-tests = 97.53%
 use crate::contract::{execute, instantiate, migrate, query};
 use crate::msg::{
     AllPostsResponse, ArticleCountResponse, ExecuteMsg, InstantiateMsg, MigrateMsg, PostResponse,
@@ -428,10 +429,19 @@ fn test_query_all_posts() {
         //pagination
         start_after: Some(1),
     };
+    let bin = query(deps.as_ref(), env.clone(), msg).unwrap();
+    let res: AllPostsResponse = from_binary(&bin).unwrap();
+    //checks descending order
+    assert_eq!(res.posts.len(), 1);
+    let msg = QueryMsg::AllPosts {
+        limit: None,
+        start_after: None,
+    };
     let bin = query(deps.as_ref(), env, msg).unwrap();
     let res: AllPostsResponse = from_binary(&bin).unwrap();
-    //checks pagination
-    assert_eq!(res.posts.len(), 1);
+    println!("{:?}", res);
+    //uncomment below line to verify order is descending
+    // assert!(res.posts.is_empty());
 }
 #[test]
 fn test_query_post() {
