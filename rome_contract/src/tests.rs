@@ -1,4 +1,4 @@
-//cargo tarpaulin --ignore-tests = 97.53%
+//cargo tarpaulin --ignore-tests = 97.56%
 use crate::contract::{execute, instantiate, migrate, query};
 use crate::msg::{
     AllPostsResponse, ArticleCountResponse, ExecuteMsg, InstantiateMsg, MigrateMsg, PostResponse,
@@ -306,12 +306,26 @@ fn test_execute_delete_post_valid() {
     //delete message
     let info = mock_info(ADDR1, &[coin(10_000_000, "ujuno")]);
     let msg = ExecuteMsg::DeletePost { post_id: 1 };
-    let _res = execute(deps.as_mut(), env.clone(), info, msg).unwrap();
+    let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
     //query deleted post
     let msg = QueryMsg::Post { post_id: 1 };
-    let bin = query(deps.as_ref(), env, msg).unwrap();
+    let bin = query(deps.as_ref(), env.clone(), msg).unwrap();
     let res: PostResponse = from_binary(&bin).unwrap();
     assert!(res.post.is_none());
+    //ensure same title is available
+    let msg = ExecuteMsg::CreatePost {
+        post_title: "Mintscan Prop 320".to_string(),
+        external_id:
+            "https://alxandria.infura-ipfs.io/ipfs/QmQSXMeJRyodyVESWVXT8gd7kQhjrV7sguLnsrXSd6YzvT"
+                .to_string(),
+        tags: vec![
+            "Blockchain".to_string(),
+            "Governance".to_string(),
+            "Rejected".to_string(),
+        ],
+        text: "".to_string(),
+    };
+    let _res = execute(deps.as_mut(), env, info, msg).unwrap();
 }
 #[test]
 fn test_execute_delete_post_invalid() {
