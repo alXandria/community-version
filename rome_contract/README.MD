@@ -1,4 +1,4 @@
-# This contract is a decentralized encyclopedia. It is live on Juno testnet and functioning! 
+# This contract is a decentralized encyclopedia. It is live on Juno! https://alxandria.org
 
 # Mainnet upgrade
 
@@ -24,10 +24,7 @@ junod tx wasm execute juno1d86vnmmnhc30m24mxeea0d99q3xkkh0h04mezjp38k9l79ucqdnsk
 *Query All Posts*
 junod query wasm contract-state smart juno1d86vnmmnhc30m24mxeea0d99q3xkkh0h04mezjp38k9l79ucqdnskynj6q '{"all_posts":{}}'
 
-*Query Article Count*
-junod query wasm contract-state smart juno1d86vnmmnhc30m24mxeea0d99q3xkkh0h04mezjp38k9l79ucqdnskynj6q '{"article_count":{}}'
-
-# Full Test December 27
+# Full Testnet Test December 27, 2022
 
 *Store*
 junod tx wasm store alxandria.wasm --from testnet --fees 500ujunox --gas 2000000 --instantiate-only-address juno1w5aespcyddns7y696q9wlch4ehflk2wglu9vv4 -y
