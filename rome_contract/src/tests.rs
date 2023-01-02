@@ -441,7 +441,7 @@ fn test_query_all_posts() {
     let msg = QueryMsg::AllPosts {
         limit: None,
         //pagination
-        start_after: Some(1),
+        start_after: Some(2),
     };
     let bin = query(deps.as_ref(), env.clone(), msg).unwrap();
     let res: AllPostsResponse = from_binary(&bin).unwrap();
