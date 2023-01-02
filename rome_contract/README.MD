@@ -3,7 +3,7 @@
 # Mainnet upgrade
 
 *Store*
-junod tx wasm store alxandria.wasm --from mainnet_admin_wallet --fees 500ujuno --gas 2000000 --instantiate-only-address juno1xh3mylsdmpvn0cp8mpz6uja34nev9w7ur8f945 -y
+junod tx wasm store alxandria.wasm --from mainnet_admin_wallet --fees 5000ujuno --gas 2000000 --instantiate-only-address juno1xh3mylsdmpvn0cp8mpz6uja34nev9w7ur8f945 -y
 
 https://www.mintscan.io/juno/txs/A0FEAFD86867F5A2490127B92DA9AE1A7055AD3AA5400BF032268FD310C03689
 
@@ -26,6 +26,24 @@ junod query wasm contract-state smart juno1d86vnmmnhc30m24mxeea0d99q3xkkh0h04mez
 
 *Query Article Count*
 junod query wasm contract-state smart juno1d86vnmmnhc30m24mxeea0d99q3xkkh0h04mezjp38k9l79ucqdnskynj6q '{"article_count":{}}'
+
+*Withdraw*
+junod tx wasm execute juno1d86vnmmnhc30m24mxeea0d99q3xkkh0h04mezjp38k9l79ucqdnskynj6q '{"withdraw_juno":{}}' --from mainnet_admin_wallet --fees 500ujuno --gas 200000 -y
+
+https://www.mintscan.io/juno/txs/7F2310F01DABABC24B4850135CA5BF154F6EDA4DFA0247D74249C26F5FA7FC96
+
+*Migrate Store*
+junod tx wasm store alxandria.wasm --from mainnet_admin_wallet --fees 5000ujuno --gas 2000000 --instantiate-only-address juno1xh3mylsdmpvn0cp8mpz6uja34nev9w7ur8f945 -y
+
+https://www.mintscan.io/juno/txs/C6CD21F8C1A67D345B761D6EE9ABCA2CEF8A8694240D6FF2A760388DC9ED0FE7
+
+*Code ID*
+1627
+
+*Migrate*
+junod tx wasm migrate juno1d86vnmmnhc30m24mxeea0d99q3xkkh0h04mezjp38k9l79ucqdnskynj6q 1627 '{"migrate_msg":{}}' --from mainnet_admin_wallet --fees 5000ujuno --gas 2000000 -y
+
+https://www.mintscan.io/juno/txs/4FB41FC00B152BA61B8EC629A8327165E4D237D473A4FD4973EC8C9550DE94C0
 
 # Full Testnet Test December 27, 2022
 
@@ -98,12 +116,4 @@ junod query wasm contract-state smart juno18v27s236gawlfq00x6qmauhgerqvwm3neyfv6
 *Query Profile Name*
 junod query wasm contract-state smart juno18v27s236gawlfq00x6qmauhgerqvwm3neyfv643rwkmfcn329j9s9exhzd '{"profile_name":{"address":"juno1w5aespcyddns7y696q9wlch4ehflk2wglu9vv4"}}'
 
-# Migrate Example
-*Code ID*
-3486
-
-*Migrate*
-junod tx wasm migrate juno12szwyek4ngpd96zqykdj8ghuzzff8u5wc2e70chzkay8etzpqzsq7vrkft 3486 '{"migrate_msg":{}}' --from testnet --fees 500ujunox --gas 2000000 -y
-
-https://testnet.juno.explorers.guru/transaction/960A1C5C0315AF4F7954E4A9A0CCE28FE85F68A1D30333CB8D44A3F743B110C6
 
