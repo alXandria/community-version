@@ -454,7 +454,7 @@ fn query_all_posts(
     let limit = limit.unwrap_or(DEFAULT_LIMIT).min(MAX_LIMIT) as usize;
     let start = start_after.map(Bound::exclusive);
     let posts = POST
-        .range(deps.storage, start, None, Order::Descending)
+        .range(deps.storage, None, start, Order::Descending)
         .take(limit)
         .map(|p| Ok(p?.1))
         .collect::<StdResult<Vec<_>>>()?;

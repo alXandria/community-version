@@ -35,15 +35,15 @@ https://www.mintscan.io/juno/txs/7F2310F01DABABC24B4850135CA5BF154F6EDA4DFA0247D
 *Migrate Store*
 junod tx wasm store alxandria.wasm --from mainnet_admin_wallet --fees 5000ujuno --gas 2000000 --instantiate-only-address juno1xh3mylsdmpvn0cp8mpz6uja34nev9w7ur8f945 -y
 
-https://www.mintscan.io/juno/txs/C6CD21F8C1A67D345B761D6EE9ABCA2CEF8A8694240D6FF2A760388DC9ED0FE7
+https://www.mintscan.io/juno/txs/E7ABFB92CA45300F4C2F680B67E8C5871C07E2479E0C17CF490D5FA8EF1054E1
 
 *Code ID*
-1627
+1628
 
 *Migrate*
-junod tx wasm migrate juno1d86vnmmnhc30m24mxeea0d99q3xkkh0h04mezjp38k9l79ucqdnskynj6q 1627 '{"migrate_msg":{}}' --from mainnet_admin_wallet --fees 5000ujuno --gas 2000000 -y
+junod tx wasm migrate juno1d86vnmmnhc30m24mxeea0d99q3xkkh0h04mezjp38k9l79ucqdnskynj6q 1628 '{"migrate_msg":{}}' --from mainnet_admin_wallet --fees 5000ujuno --gas 2000000 -y
 
-https://www.mintscan.io/juno/txs/4FB41FC00B152BA61B8EC629A8327165E4D237D473A4FD4973EC8C9550DE94C0
+https://www.mintscan.io/juno/txs/9F7EEA286493342C640CCF1985D04CEFB3A26502545B856BE06F9DB2F994B29C
 
 # Full Testnet Test December 27, 2022
 

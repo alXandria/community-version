@@ -45,8 +45,12 @@ pub fn assert_sent_exact_coin(
             for (denom, received_amount) in received_amounts.iter() {
                 received_amount_strings.push(received_amount.to_string() + " " + denom);
             }
+            let mut required_amount_strings = vec![];
+            for (denom, required_amount) in required_amounts.iter() {
+                required_amount_strings.push(required_amount.to_string() + " " + denom);
+            }
             return Err(ContractError::NotEnoughFunds {
-                needed: "10 junox or 10 uatom".to_string(),
+                needed: convert_vector_of_string_slices_to_string(required_amount_strings),
                 received: convert_vector_of_string_slices_to_string(received_amount_strings),
             });
         }

@@ -415,7 +415,7 @@ fn test_query_all_posts() {
         admin: ADDR1.to_string(),
     };
     let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
-    let info = mock_info(ADDR1, &[coin(1_000_000, "ujuno")]);
+    let info = mock_info(ADDR1, &[coin(01, "ujuno")]);
     let msg = ExecuteMsg::CreatePost {
         post_title: "Mintscan Prop 320".to_string(),
         external_id:
@@ -441,7 +441,7 @@ fn test_query_all_posts() {
     let msg = QueryMsg::AllPosts {
         limit: None,
         //pagination
-        start_after: Some(1),
+        start_after: Some(2),
     };
     let bin = query(deps.as_ref(), env.clone(), msg).unwrap();
     let res: AllPostsResponse = from_binary(&bin).unwrap();
