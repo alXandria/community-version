@@ -31,6 +31,7 @@ const MAX_TEXT_LENGTH: usize = 499;
 //alXandria dedicated gateway
 const IPFS: &str = "https://alxandria.infura-ipfs.io/ipfs/";
 const JUNO: &str = "ujuno";
+const ALTER: &str = "ibc/8301f2e358bbcbf0e44dffca61889bf21b086b57ac39d48be3164e68e443ccef";
 
 #[entry_point]
 pub fn instantiate(
@@ -286,7 +287,7 @@ fn execute_edit_post(
     tags: Vec<String>,
 ) -> Result<Response, ContractError> {
     //ensure .2 of crypto denom was sent
-    assert_sent_exact_coin(&info.funds, Some(vec![Coin::new(200_000, JUNO)]))?;
+    assert_sent_exact_coin(&info.funds, Some(vec![Coin::new(200_000, JUNO), Coin::new(3_000_000, ALTER)]))?;
     if text.len() > MAX_TEXT_LENGTH {
         return Err(ContractError::TooMuchText {});
     }
@@ -328,7 +329,7 @@ fn execute_delete_post(
     post_id: u64,
 ) -> Result<Response, ContractError> {
     //ensure 10 of crypto denom was sent & Create a vector of required coins with the desired amounts and denoms
-    let required_coins = vec![Coin::new(10_000_000, JUNO)];
+    let required_coins = vec![Coin::new(10_000_000, JUNO), Coin::new(300_000_000, ALTER)];
     assert_sent_exact_coin(&info.funds, Some(required_coins))?;
     let deleted_post = POST.load(deps.storage, post_id)?;
     #[allow(clippy::single_char_pattern)]
