@@ -10,6 +10,8 @@ use cosmwasm_std::{attr, coin, from_binary, Response};
 pub const ADDR1: &str = "juno1xh3mylsdmpvn0cp8mpz6uja34nev9w7ur8f945";
 pub const ADDR2: &str = "addr2";
 
+const JUNO: &str = "ujuno";
+
 #[test]
 fn test_instantiate() {
     let mut deps = mock_dependencies();
@@ -62,7 +64,7 @@ fn test_execute_create_post_valid() {
         admin: ADDR1.to_string(),
     };
     let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
-    let info = mock_info(ADDR1, &[coin(1_000_000, "ujuno")]);
+    let info = mock_info(ADDR1, &[coin(1_000_000, JUNO)]);
     //new execute message
     let msg = ExecuteMsg::CreatePost {
         post_title: "Mintscan Prop 320".to_string(),
@@ -165,7 +167,7 @@ fn test_execute_create_post_invalid_duplicate_titles() {
         admin: ADDR1.to_string(),
     };
     let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
-    let info = mock_info(ADDR1, &[coin(1_000_000, "ujuno")]);
+    let info = mock_info(ADDR1, &[coin(1_000_000, JUNO)]);
     //new execute message
     let msg = ExecuteMsg::CreatePost {
         post_title: "Mintscan Prop 320".to_string(),
@@ -204,7 +206,7 @@ fn test_execute_edit_post_valid() {
         admin: ADDR1.to_string(),
     };
     let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
-    let info = mock_info(ADDR1, &[coin(1_000_000, "ujuno")]);
+    let info = mock_info(ADDR1, &[coin(1_000_000, JUNO)]);
     //create a post
     let msg = ExecuteMsg::CreatePost {
         post_title: "Mintscan Prop 320".to_string(),
@@ -220,7 +222,7 @@ fn test_execute_edit_post_valid() {
     };
     let _res = execute(deps.as_mut(), env.clone(), info, msg).unwrap();
     //edit message
-    let info = mock_info(ADDR1, &[coin(1_900_000, "ujuno")]);
+    let info = mock_info(ADDR1, &[coin(1_900_000, JUNO)]);
     let msg = ExecuteMsg::EditPost {
         post_id: 1,
         external_id:
@@ -240,7 +242,7 @@ fn test_execute_edit_post_invalid() {
         admin: ADDR1.to_string(),
     };
     let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
-    let info = mock_info(ADDR1, &[coin(1_000_000, "ujuno")]);
+    let info = mock_info(ADDR1, &[coin(1_000_000, JUNO)]);
     let msg = ExecuteMsg::CreatePost {
         post_title: "Mintscan Prop 320".to_string(),
         external_id:
@@ -288,7 +290,7 @@ fn test_execute_delete_post_valid() {
         admin: ADDR1.to_string(),
     };
     let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
-    let info = mock_info(ADDR1, &[coin(1_000_000, "ujuno")]);
+    let info = mock_info(ADDR1, &[coin(1_000_000, JUNO)]);
     //create a post
     let msg = ExecuteMsg::CreatePost {
         post_title: "Mintscan Prop 320".to_string(),
@@ -304,7 +306,7 @@ fn test_execute_delete_post_valid() {
     };
     let _res = execute(deps.as_mut(), env.clone(), info, msg).unwrap();
     //delete message
-    let info = mock_info(ADDR1, &[coin(10_000_000, "ujuno")]);
+    let info = mock_info(ADDR1, &[coin(10_000_000, JUNO)]);
     let msg = ExecuteMsg::DeletePost { post_id: 1 };
     let _res = execute(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
     //query deleted post
@@ -331,12 +333,12 @@ fn test_execute_delete_post_valid() {
 fn test_execute_delete_post_invalid() {
     let mut deps = mock_dependencies();
     let env = mock_env();
-    let info = mock_info(ADDR1, &[coin(1_000_000, "ujuno")]);
+    let info = mock_info(ADDR1, &[coin(1_000_000, JUNO)]);
     let msg = InstantiateMsg {
         admin: ADDR1.to_string(),
     };
     let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
-    let info = mock_info(ADDR1, &[coin(1_000_000, "ujuno")]);
+    let info = mock_info(ADDR1, &[coin(1_000_000, JUNO)]);
     let msg = ExecuteMsg::CreatePost {
         post_title: "Mintscan Prop 320".to_string(),
         external_id:
@@ -362,7 +364,7 @@ fn test_withdraw_valid() {
         admin: ADDR1.to_string(),
     };
     let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
-    let info = mock_info(ADDR1, &[coin(1_000_000, "ujuno")]);
+    let info = mock_info(ADDR1, &[coin(1_000_000, JUNO)]);
     let msg = ExecuteMsg::CreatePost {
         post_title: "Mintscan Prop 320".to_string(),
         external_id:
@@ -388,7 +390,7 @@ fn test_withdraw_invalid() {
         admin: ADDR1.to_string(),
     };
     let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
-    let info = mock_info(ADDR1, &[coin(1_000_000, "ujuno")]);
+    let info = mock_info(ADDR1, &[coin(1_000_000, JUNO)]);
     let msg = ExecuteMsg::CreatePost {
         post_title: "Mintscan Prop 320".to_string(),
         external_id:
@@ -415,7 +417,7 @@ fn test_query_all_posts() {
         admin: ADDR1.to_string(),
     };
     let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
-    let info = mock_info(ADDR1, &[coin(01, "ujuno")]);
+    let info = mock_info(ADDR1, &[coin(1, JUNO)]);
     let msg = ExecuteMsg::CreatePost {
         post_title: "Mintscan Prop 320".to_string(),
         external_id:
@@ -466,7 +468,7 @@ fn test_query_post() {
         admin: ADDR1.to_string(),
     };
     let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
-    let info = mock_info(ADDR1, &[coin(1_000_000, "ujuno")]);
+    let info = mock_info(ADDR1, &[coin(1_000_000, JUNO)]);
     let msg = ExecuteMsg::CreatePost {
         post_title: "Mintscan Prop 320".to_string(),
         external_id:
@@ -500,7 +502,7 @@ fn test_query_article_count() {
         admin: ADDR1.to_string(),
     };
     let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
-    let info = mock_info(ADDR1, &[coin(1_000_000, "ujuno")]);
+    let info = mock_info(ADDR1, &[coin(1_000_000, JUNO)]);
     let msg = ExecuteMsg::CreatePost {
         post_title: "Mintscan Prop 320".to_string(),
         external_id:
@@ -580,7 +582,7 @@ fn test_like_post() {
         admin: ADDR1.to_string(),
     };
     let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
-    let info = mock_info(ADDR1, &[coin(1_000_000, "ujuno")]);
+    let info = mock_info(ADDR1, &[coin(1_000_000, JUNO)]);
     let msg = ExecuteMsg::CreatePost {
         post_title: "Mintscan Prop 320".to_string(),
         external_id:
@@ -595,7 +597,7 @@ fn test_like_post() {
     };
     let _res = execute(deps.as_mut(), env.clone(), info, msg).unwrap();
     //like post
-    let info = mock_info(ADDR1, &[coin(10_000, "ujuno")]);
+    let info = mock_info(ADDR1, &[coin(10_000, JUNO)]);
     let msg = ExecuteMsg::LikePost { post_id: 1 };
     let _res = execute(deps.as_mut(), env.clone(), info, msg).unwrap();
     //query post
@@ -616,7 +618,7 @@ fn test_execute_admin_create_post_valid() {
         admin: ADDR1.to_string(),
     };
     let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
-    let info = mock_info(ADDR1, &[coin(1_000_000, "ujuno")]);
+    let info = mock_info(ADDR1, &[coin(1_000_000, JUNO)]);
     //new execute message
     let msg = ExecuteMsg::AdminCreatePost {
         post_title: "Mintscan Prop 320".to_string(),
@@ -648,7 +650,7 @@ fn test_execute_admin_create_post_invalid() {
     };
     let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
     //have post creation be from non-admin account, failing
-    let info = mock_info(ADDR2, &[coin(1_000_000, "ujuno")]);
+    let info = mock_info(ADDR2, &[coin(1_000_000, JUNO)]);
     //new execute message
     let msg = ExecuteMsg::AdminCreatePost {
         post_title: "Mintscan Prop 320".to_string(),

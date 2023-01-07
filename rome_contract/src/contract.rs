@@ -389,7 +389,7 @@ fn execute_withdraw_juno(
         return Err(ContractError::Unauthorized {});
     }
     //go through balances owned by contract and send to ADMIN
-    let balance = deps.querier.query_balance(&env.contract.address, JUNO)?;
+    let balance = deps.querier.query_balance(env.contract.address, JUNO)?;
     let bank_msg = BankMsg::Send {
         to_address: ADDRESS.to_string(),
         amount: vec![balance.clone()],
