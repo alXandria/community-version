@@ -24,6 +24,9 @@ junod tx wasm execute juno1d86vnmmnhc30m24mxeea0d99q3xkkh0h04mezjp38k9l79ucqdnsk
 *Query All Posts*
 junod query wasm contract-state smart juno1d86vnmmnhc30m24mxeea0d99q3xkkh0h04mezjp38k9l79ucqdnskynj6q '{"all_posts":{}}'
 
+*Query One Post*
+junod query wasm contract-state smart juno1d86vnmmnhc30m24mxeea0d99q3xkkh0h04mezjp38k9l79ucqdnskynj6q '{"post":{"post_id": 1}}'
+
 *Query Article Count*
 junod query wasm contract-state smart juno1d86vnmmnhc30m24mxeea0d99q3xkkh0h04mezjp38k9l79ucqdnskynj6q '{"article_count":{}}'
 
