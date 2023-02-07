@@ -30,6 +30,9 @@ junod query wasm contract-state smart juno1d86vnmmnhc30m24mxeea0d99q3xkkh0h04mez
 *Query Article Count*
 junod query wasm contract-state smart juno1d86vnmmnhc30m24mxeea0d99q3xkkh0h04mezjp38k9l79ucqdnskynj6q '{"article_count":{}}'
 
+*Query Profile Name*
+junod query wasm contract-state smart juno1d86vnmmnhc30m24mxeea0d99q3xkkh0h04mezjp38k9l79ucqdnskynj6q '{"profile_name":{"address":"juno1rmxl4fps24pe8s9uv8an3nqpng3ggyf8j8f20z"}}'
+
 *Withdraw*
 junod tx wasm execute juno1d86vnmmnhc30m24mxeea0d99q3xkkh0h04mezjp38k9l79ucqdnskynj6q '{"withdraw_juno":{}}' --from mainnet_admin_wallet --fees 500ujuno --gas 200000 -y
 
